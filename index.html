@@ -1348,23 +1348,21 @@ function handleStateChange(state) {
 }
 
 function handleTrackEnd() {
-  if (repeatMode === 2) {
-    // Repeat one
+  if (repeatMode === 2) { 
     reloadCurrentTrack();
   } else if (musicQueue.length > 0) {
-    // Play from queue first
-    var next = musicQueue.shift();
+    var nextTrackFromQueue = musicQueue.shift(); 
+    
     renderQueueList();
     updateQueueBadge();
-    var pill = document.getElementById('pill-queue');
-    if (pill) {
-      if (musicQueue.length > 0) { pill.textContent = 'Queue: ' + musicQueue.length; pill.classList.add('show'); }
-      else { pill.classList.remove('show'); }
+    
+    var foundIdx = tracks.findIndex(t => t.id === nextTrackFromQueue.id);
+    
+    if (foundIdx !== -1) {
+      playTrack(foundIdx);
+    } else {
+      playTrack(0); // Fallback ke lagu pertama jika tidak ditemukan
     }
-    // Find track in playlist or play directly
-    var idx = tracks.findIndex(function(t) { return t.id === next.id; });
-    if (idx >= 0) playTrack(idx);
-    else { tracks.push(next); renderTracks(); playTrack(tracks.length - 1); }
   } else {
     nextTrack();
   }
@@ -1561,17 +1559,27 @@ function prevTrack() {
 
 function nextTrack() {
   if (!tracks.length) return;
-  // Queue takes priority
-  if (musicQueue.length > 0) { handleTrackEnd(); return; }
+
+  // Cek apakah ada lagu di antrean (Queue)
+  if (musicQueue.length > 0) {
+    handleTrackEnd(); // Alihkan ke logika handleTrackEnd untuk memproses antrean
+    return;
+  }
+
   var idx;
   if (isShuffle) {
     idx = getNextShuffleIdx();
   } else {
-    if (repeatMode === 1) {
+    if (repeatMode === 1) { // Repeat Playlist
       idx = (curIdx + 1) % tracks.length;
     } else {
       idx = curIdx + 1;
-      if (idx >= tracks.length) { toast('Playlist selesai'); setPlayState(false); return; }
+      if (idx >= tracks.length) {
+        toast('Playlist selesai');
+        setPlayState(false);
+        stopProgTimer(); // Pastikan timer berhenti
+        return;
+      }
     }
   }
   playTrack(idx);
