@@ -1348,25 +1348,46 @@ function handleStateChange(state) {
 }
 
 function handleTrackEnd() {
-  if (repeatMode === 2) { 
+  // Mode 1: Repeat satu lagu
+  if (repeatMode === 2) {
     reloadCurrentTrack();
-  } else if (musicQueue.length > 0) {
-    var nextTrackFromQueue = musicQueue.shift(); 
-    
+    return;
+  }
+
+  // Mode 2: Ada lagu di antrean → AUTO PLAY queue
+  if (musicQueue.length > 0) {
+    var nextTrackFromQueue = musicQueue.shift();
     renderQueueList();
     updateQueueBadge();
-    
-    var foundIdx = tracks.findIndex(t => t.id === nextTrackFromQueue.id);
-    
+
+    var pill = document.getElementById('pill-queue');
+    if (pill) {
+      if (musicQueue.length > 0) {
+        pill.textContent = 'Queue: ' + musicQueue.length;
+        pill.classList.add('show');
+      } else {
+        pill.classList.remove('show');
+      }
+    }
+
+    // Cari di playlist; kalau tidak ada, sisipkan di posisi setelah curIdx
+    var foundIdx = tracks.findIndex(function(t) { return t.id === nextTrackFromQueue.id; });
     if (foundIdx !== -1) {
       playTrack(foundIdx);
     } else {
-      playTrack(0); // Fallback ke lagu pertama jika tidak ditemukan
+      var insertAt = (curIdx >= 0 ? curIdx + 1 : tracks.length);
+      tracks.splice(insertAt, 0, nextTrackFromQueue);
+      renderTracks();
+      playTrack(insertAt);
     }
-  } else {
-    nextTrack();
+    toast('▶ Memutar dari antrean');
+    return;
   }
+
+  // Mode 3: Tidak ada queue → next biasa
+  nextTrack();
 }
+
 
 function startInfoRequests() {
   stopInfoRequests();
@@ -1393,7 +1414,15 @@ function startProgTimer() {
   progTimer = setInterval(function() {
     if (!isPlaying) return;
     simCur += 0.9;
-    if (simDur > 0 && simCur > simDur) simCur = simDur;
+    if (simDur > 0 && simCur >= simDur - 0.5) {
+      // Lagu selesai — pastikan auto-play ter-trigger
+      simCur = simDur;
+      updateProgressUI();
+      stopProgTimer();
+      setPlayState(false);
+      handleTrackEnd();
+      return;
+    }
     updateProgressUI();
     progLastUpdate++;
     if (progLastUpdate % 5 === 0) {
@@ -1404,6 +1433,7 @@ function startProgTimer() {
     }
   }, 900);
 }
+
 function stopProgTimer() {
   if (progTimer) { clearInterval(progTimer); progTimer = null; }
 }
@@ -1560,9 +1590,29 @@ function prevTrack() {
 function nextTrack() {
   if (!tracks.length) return;
 
-  // Cek apakah ada lagu di antrean (Queue)
+  // Prioritas: queue dulu (manual next juga ikut antrean)
   if (musicQueue.length > 0) {
-    handleTrackEnd(); // Alihkan ke logika handleTrackEnd untuk memproses antrean
+    var nextFromQ = musicQueue.shift();
+    renderQueueList();
+    updateQueueBadge();
+    var pill = document.getElementById('pill-queue');
+    if (pill) {
+      if (musicQueue.length > 0) {
+        pill.textContent = 'Queue: ' + musicQueue.length;
+        pill.classList.add('show');
+      } else {
+        pill.classList.remove('show');
+      }
+    }
+    var fIdx = tracks.findIndex(function(t) { return t.id === nextFromQ.id; });
+    if (fIdx !== -1) {
+      playTrack(fIdx);
+    } else {
+      var ins = (curIdx >= 0 ? curIdx + 1 : tracks.length);
+      tracks.splice(ins, 0, nextFromQ);
+      renderTracks();
+      playTrack(ins);
+    }
     return;
   }
 
@@ -1570,20 +1620,21 @@ function nextTrack() {
   if (isShuffle) {
     idx = getNextShuffleIdx();
   } else {
-    if (repeatMode === 1) { // Repeat Playlist
+    if (repeatMode === 1) {
       idx = (curIdx + 1) % tracks.length;
     } else {
       idx = curIdx + 1;
       if (idx >= tracks.length) {
         toast('Playlist selesai');
         setPlayState(false);
-        stopProgTimer(); // Pastikan timer berhenti
+        stopProgTimer();
         return;
       }
     }
   }
   playTrack(idx);
 }
+
 
 function setPlayState(state) {
   isPlaying = state;
