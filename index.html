@@ -1560,21 +1560,69 @@ function prevTrack() {
 }
 
 function nextTrack() {
-  if (!tracks.length) return;
-  // Queue takes priority
-  if (musicQueue.length > 0) { handleTrackEnd(); return; }
+  if (!tracks.length && musicQueue.length === 0) return;
+
+  // Prioritas Utama: Antrean (Queue)
+  if (musicQueue.length > 0) {
+    playFromQueue(); // Gunakan fungsi khusus untuk memutar antrean
+    return;
+  }
+
+  // Jika antrean kosong, lanjut ke playlist normal
   var idx;
   if (isShuffle) {
     idx = getNextShuffleIdx();
   } else {
-    if (repeatMode === 1) {
+    if (repeatMode === 1) { // Repeat Playlist
       idx = (curIdx + 1) % tracks.length;
-    } else {
+    } else { // No Repeat
       idx = curIdx + 1;
-      if (idx >= tracks.length) { toast('Playlist selesai'); setPlayState(false); return; }
+      if (idx >= tracks.length) {
+        toast('Playlist selesai');
+        setPlayState(false);
+        return;
+      }
     }
   }
   playTrack(idx);
+}
+
+function playFromQueue() {
+  if (musicQueue.length === 0) return;
+
+  var next = musicQueue.shift();
+  renderQueueList();
+  updateQueueBadge();
+  
+  // Update Pill UI
+  var pill = document.getElementById('pill-queue');
+  if (pill) {
+    if (musicQueue.length > 0) {
+      pill.textContent = 'Queue: ' + musicQueue.length;
+      pill.classList.add('show');
+    } else {
+      pill.classList.remove('show');
+    }
+  }
+
+  var tempTrack = {
+    id: next.id,
+    title: next.title,
+    ch: next.ch,
+    thumb: next.thumb
+  };
+
+  simCur = 0;
+  var iframe = document.getElementById('yt-iframe');
+  iframe.src = buildIframeSrc(tempTrack.id, true);
+  
+  document.getElementById('np-title').textContent = tempTrack.title;
+  document.getElementById('np-ch').textContent = tempTrack.ch;
+  
+  curIdx = -1;
+  showLdr();
+  addPlayHistory(tempTrack);
+  renderTracks();
 }
 
 function setPlayState(state) {
