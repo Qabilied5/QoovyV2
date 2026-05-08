@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Qoovy - Music Player</title>
+<style>
+:root {
+  --bg: #080810;
+  --orb1: rgba(99,68,255,0.22);
+  --orb2: rgba(236,64,162,0.16);
+  --orb3: rgba(0,200,255,0.12);
+  --glass: rgba(255,255,255,0.04);
+  --glass-border: rgba(255,255,255,0.09);
+  --glass-hover: rgba(255,255,255,0.07);
+  --surface: rgba(255,255,255,0.06);
+  --accent: #a78bfa;
+  --accent2: #ec64a2;
+  --accent3: #38bdf8;
+  --text: #f1f0ff;
+  --muted: #6b6a88;
+  --muted2: #4a4968;
+  --green: #4ade80;
+  --red: #f87171;
+  --yellow: #fbbf24;
+  --glow-a: rgba(167,139,250,0.35);
+  --glow-b: rgba(236,100,162,0.25);
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+  display: flex; flex-direction: column; min-height: 100vh;
+  position: relative;
+}
+
+/* BG */
+.bg-scene { position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+.orb { position:absolute; border-radius:50%; filter:blur(80px); animation:drift 12s ease-in-out infinite; }
+.orb-1 { width:600px; height:600px; background:var(--orb1); top:-200px; left:-200px; animation-duration:14s; }
+.orb-2 { width:500px; height:500px; background:var(--orb2); bottom:-150px; right:-100px; animation-duration:18s; animation-delay:-6s; }
+.orb-3 { width:400px; height:400px; background:var(--orb3); top:30%; left:40%; animation-duration:22s; animation-delay:-10s; }
+@keyframes drift {
+  0%,100% { transform:translate(0,0) scale(1); }
+  25% { transform:translate(40px,-30px) scale(1.05); }
+  50% { transform:translate(-20px,50px) scale(0.95); }
+  75% { transform:translate(60px,20px) scale(1.02); }
+}
+.grid-overlay {
+  position:absolute; inset:0;
+  background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size:48px 48px;
+}
+
+/* HEADER */
+header {
+  position:relative; z-index:1;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 28px;
+  background:rgba(8,8,16,0.7);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--glass-border);
+  flex-shrink: 0;
+}
+.logo-wrap { display:flex; align-items:baseline; gap:10px; }
+.logo-text {
+  font-size:22px; font-weight:800; letter-spacing:5px;
+  background:linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  text-transform:uppercase;
+}
+.logo-sub { font-size:10px; letter-spacing:2px; color:var(--muted); font-weight:500; text-transform:uppercase; }
+.header-right { display:flex; align-items:center; gap:8px; }
+
+/* ADBLOCK badge */
+.adb-badge {
+  display:flex; align-items:center; gap:6px;
+  background:rgba(74,222,128,0.08);
+  border:1px solid rgba(74,222,128,0.2);
+  color:var(--green);
+  padding:6px 12px; border-radius:10px;
+  font-size:11px; font-weight:700; letter-spacing:1px;
+  text-transform:uppercase; cursor:pointer;
+  transition:all 0.2s;
+}
+.adb-badge:hover { background:rgba(74,222,128,0.14); }
+.adb-badge.off { background:rgba(248,113,113,0.08); border-color:rgba(248,113,113,0.2); color:var(--red); }
+.adb-dot { width:6px; height:6px; border-radius:50%; background:currentColor; box-shadow:0 0 6px currentColor; }
+
+.api-btn {
+  display:flex; align-items:center; gap:7px;
+  background:var(--glass); border:1px solid var(--glass-border);
+  color:var(--text); padding:7px 14px; border-radius:10px;
+  font-size:12px; font-family:'Courier New',monospace; cursor:pointer;
+  letter-spacing:1px; transition:all 0.2s; backdrop-filter:blur(10px);
+}
+.api-btn:hover { background:var(--glass-hover); border-color:var(--accent); box-shadow:0 0 14px var(--glow-a); }
+.status-dot { width:7px; height:7px; border-radius:50%; background:var(--muted2); transition:all 0.4s; flex-shrink:0; }
+.status-dot.active { background:var(--green); box-shadow:0 0 8px var(--green); }
+
+/* LAYOUT */
+.app { position:relative; z-index:5; flex:1; display:flex; overflow:hidden; min-height:0; }
+
+/* SIDEBAR */
+.sidebar {
+  width:310px; min-width:310px;
+  display:flex; flex-direction:column; overflow:hidden;
+  background:rgba(8,8,16,0.5);
+  backdrop-filter:blur(20px);
+  border-right:1px solid var(--glass-border);
+  flex-shrink:0;
+}
+.search-section { padding:18px 16px 14px; border-bottom:1px solid var(--glass-border); }
+.section-label {
+  font-size:9px; letter-spacing:3px; color:var(--muted); text-transform:uppercase;
+  font-weight:600; margin-bottom:10px; display:flex; align-items:center; gap:6px;
+}
+.section-label::before { content:''; width:14px; height:1px; background:var(--accent); display:inline-block; }
+.search-wrap { display:flex; gap:8px; }
+.search-input {
+  flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border);
+  border-radius:10px; color:var(--text); font-size:13px; padding:9px 13px;
+  outline:none; font-family:inherit; transition:all 0.25s; backdrop-filter:blur(8px);
+}
+.search-input::placeholder { color:var(--muted); }
+.search-input:focus {
+  border-color:var(--accent); background:rgba(167,139,250,0.07);
+  box-shadow:0 0 0 3px rgba(167,139,250,0.12);
+}
+.btn-go {
+  background:linear-gradient(135deg, var(--accent), var(--accent2));
+  border:none; border-radius:10px; color:white; font-size:12px;
+  font-weight:700; letter-spacing:1px; padding:9px 14px;
+  cursor:pointer; font-family:inherit; text-transform:uppercase; transition:all 0.2s;
+}
+.btn-go:hover { transform:scale(1.04); box-shadow:0 0 20px var(--glow-a); }
+.btn-go:active { transform:scale(0.97); }
+.btn-go:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+
+/* PLAYLIST */
+.playlist-head { padding:14px 16px 8px; display:flex; align-items:center; justify-content:space-between; }
+.badge {
+  font-size:10px; font-family:'Courier New',monospace;
+  background:rgba(167,139,250,0.15); border:1px solid rgba(167,139,250,0.25);
+  color:var(--accent); padding:2px 8px; border-radius:20px;
+}
+.track-list { flex:1; overflow-y:auto; padding:4px 8px 12px; }
+.track-list::-webkit-scrollbar { width:3px; }
+.track-list::-webkit-scrollbar-track { background:transparent; }
+.track-list::-webkit-scrollbar-thumb { background:var(--muted2); border-radius:3px; }
+.track-item {
+  display:flex; align-items:center; gap:10px; padding:9px 10px;
+  border-radius:12px; cursor:pointer; transition:all 0.2s;
+  border:1px solid transparent; margin-bottom:3px;
+}
+.track-item:hover { background:var(--glass-hover); border-color:var(--glass-border); }
+.track-item.active {
+  background:rgba(167,139,250,0.1); border-color:rgba(167,139,250,0.25);
+  box-shadow:inset 0 0 20px rgba(167,139,250,0.05), 0 0 12px rgba(167,139,250,0.08);
+}
+.track-thumb { width:42px; height:42px; border-radius:9px; object-fit:cover; flex-shrink:0; background:var(--muted2); }
+.track-info { flex:1; min-width:0; }
+.track-title { font-size:12.5px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text); margin-bottom:2px; }
+.track-ch { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.track-idx { font-size:11px; color:var(--muted); font-family:'Courier New',monospace; min-width:20px; text-align:right; }
+.track-item.active .track-idx { display:none; }
+.wave-bars { display:none; align-items:flex-end; gap:2px; height:16px; }
+.track-item.active .wave-bars { display:flex; }
+.wave-bar { width:3px; border-radius:2px; background:var(--accent); animation:wave-anim 0.8s ease-in-out infinite; }
+.wave-bar:nth-child(1) { animation-delay:0s; }
+.wave-bar:nth-child(2) { animation-delay:0.15s; }
+.wave-bar:nth-child(3) { animation-delay:0.3s; }
+@keyframes wave-anim { 0%,100% { height:4px; opacity:0.5; } 50% { height:14px; opacity:1; } }
+
+/* EMPTY/LOADING */
+.empty-wrap { text-align:center; padding:44px 20px; }
+.empty-icon-wrap {
+  width:64px; height:64px; margin:0 auto 16px; border-radius:16px;
+  background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.15);
+  display:flex; align-items:center; justify-content:center;
+}
+.empty-icon-wrap svg { opacity:0.4; }
+.empty-title { font-size:13px; font-weight:600; color:var(--muted); margin-bottom:6px; }
+.empty-sub { font-size:11px; color:var(--muted2); line-height:1.7; }
+.spinner-sm { width:28px; height:28px; border:2px solid var(--muted2); border-top-color:var(--accent); border-radius:50%; animation:spin 0.7s linear infinite; margin:16px auto 0; }
+
+/* MAIN */
+.main-panel { flex:1; display:flex; flex-direction:column; overflow:hidden; min-width:0; }
+.video-area {
+  flex:1; display:flex; align-items:center; justify-content:center;
+  padding:28px 24px 16px; overflow:hidden; position:relative;
+}
+
+/* IDLE */
+.idle-view { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; text-align:center; }
+.idle-disc { width:110px; height:110px; border-radius:50%; position:relative; animation:disc-spin 10s linear infinite paused; }
+.idle-disc.spin { animation-play-state:running; }
+.disc-outer { position:absolute; inset:0; border-radius:50%; background:conic-gradient(from 0deg, #6344ff, #ec64a2, #38bdf8, #6344ff); opacity:0.3; }
+.disc-inner { position:absolute; inset:12px; border-radius:50%; background:var(--bg); border:1px solid var(--glass-border); display:flex; align-items:center; justify-content:center; }
+.disc-hole { width:18px; height:18px; border-radius:50%; background:var(--accent); opacity:0.6; }
+@keyframes disc-spin { to { transform:rotate(360deg); } }
+.idle-heading { font-size:28px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:var(--muted); }
+.idle-desc { font-size:13px; color:var(--muted2); max-width:280px; line-height:1.7; }
+
+/* PLAYER */
+.player-view { display:none; width:100%; max-width:700px; }
+.video-glass-wrap {
+  position:relative; border-radius:18px; overflow:hidden;
+  border:1px solid var(--glass-border);
+  box-shadow:0 0 0 1px rgba(167,139,250,0.08), 0 8px 64px rgba(0,0,0,0.8), 0 0 60px rgba(99,68,255,0.12);
+  aspect-ratio:16/9; background:#000;
+}
+#yt-iframe {
+  width:100%; height:100%; border:none; display:block;
+  pointer-events:none;
+}
+.video-shimmer { position:absolute; inset:0; pointer-events:none; border-radius:18px; box-shadow:inset 0 0 60px rgba(0,0,0,0.4); }
+
+/* AD BLOCKER OVERLAY */
+.ad-overlay {
+  display:none; position:absolute; inset:0; z-index:20;
+  background:rgba(8,8,16,0.96);
+  backdrop-filter:blur(12px);
+  align-items:center; justify-content:center; flex-direction:column; gap:14px;
+  border-radius:18px; text-align:center;
+}
+.ad-overlay.show { display:flex; }
+.ad-shield {
+  width:60px; height:60px; border-radius:50%;
+  background:rgba(74,222,128,0.1);
+  border:2px solid rgba(74,222,128,0.3);
+  display:flex; align-items:center; justify-content:center;
+  animation:pulse-shield 1.5s ease-in-out infinite;
+}
+@keyframes pulse-shield { 0%,100% { box-shadow:0 0 0 0 rgba(74,222,128,0.3); } 50% { box-shadow:0 0 0 12px rgba(74,222,128,0); } }
+.ad-title { font-size:15px; font-weight:800; color:var(--green); letter-spacing:2px; text-transform:uppercase; }
+.ad-sub { font-size:12px; color:var(--muted); }
+.ad-countdown {
+  font-size:28px; font-weight:900; color:var(--text);
+  font-family:'Courier New',monospace;
+}
+.btn-skip-now {
+  background:linear-gradient(135deg, var(--green), #22c55e);
+  border:none; border-radius:10px; color:#000;
+  font-size:12px; font-weight:800; letter-spacing:2px; text-transform:uppercase;
+  padding:10px 20px; cursor:pointer; transition:all 0.2s;
+}
+.btn-skip-now:hover { transform:scale(1.05); }
+
+/* VIDEO LOADING */
+.vid-loading { display:none; position:absolute; inset:0; background:rgba(8,8,16,0.7); align-items:center; justify-content:center; border-radius:18px; z-index:10; backdrop-filter:blur(4px); }
+.vid-loading.show { display:flex; }
+.spinner { width:44px; height:44px; border:3px solid rgba(167,139,250,0.2); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* NOW PLAYING */
+.now-playing-info { margin-top:18px; text-align:center; padding:0 8px; }
+.np-label { font-size:9px; letter-spacing:4px; color:var(--accent); text-transform:uppercase; font-weight:600; margin-bottom:6px; opacity:0.8; }
+.np-title {
+  font-size:22px; font-weight:800; letter-spacing:1px;
+  background:linear-gradient(135deg, var(--text) 0%, rgba(241,240,255,0.7) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:640px; margin:0 auto 4px;
+}
+.np-ch { font-size:13px; color:var(--muted); font-weight:300; }
+
+/* STATUS BAR */
+.status-bar {
+  display:flex; align-items:center; gap:8px; justify-content:center; margin-top:8px;
+}
+.status-pill {
+  font-size:10px; letter-spacing:1px; text-transform:uppercase; font-weight:600;
+  padding:3px 10px; border-radius:20px;
+}
+.pill-source { background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.2); color:var(--accent3); }
+.pill-adblock { background:rgba(74,222,128,0.08); border:1px solid rgba(74,222,128,0.15); color:var(--green); }
+.pill-adblock.off { background:rgba(248,113,113,0.08); border-color:rgba(248,113,113,0.15); color:var(--red); }
+
+/* CONTROLS */
+.controls-zone {
+  padding:14px 28px 22px;
+  background:rgba(8,8,16,0.6);
+  backdrop-filter:blur(24px);
+  border-top:1px solid var(--glass-border);
+  flex-shrink:0;
+}
+.progress-row { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+.time { font-size:11px; font-family:'Courier New',monospace; color:var(--muted); min-width:36px; text-align:center; }
+.prog-track { flex:1; height:4px; background:rgba(255,255,255,0.08); border-radius:4px; cursor:pointer; position:relative; overflow:visible; }
+.prog-fill { height:100%; background:linear-gradient(90deg, var(--accent), var(--accent2)); border-radius:4px; width:0%; transition:width 0.8s linear; position:relative; }
+.prog-fill::after { content:''; position:absolute; right:-5px; top:50%; transform:translateY(-50%); width:10px; height:10px; border-radius:50%; background:white; opacity:0; transition:opacity 0.2s; box-shadow:0 0 8px rgba(255,255,255,0.5); }
+.prog-track:hover .prog-fill::after { opacity:1; }
+
+.ctrl-row { display:flex; align-items:center; justify-content:space-between; }
+.ctrl-group { display:flex; align-items:center; gap:8px; }
+.c-btn { background:none; border:none; color:var(--muted); cursor:pointer; width:38px; height:38px; display:flex; align-items:center; justify-content:center; border-radius:10px; transition:all 0.2s; }
+.c-btn:hover { color:var(--text); background:var(--glass); }
+.c-btn.lit { color:var(--accent); }
+.play-btn {
+  width:54px; height:54px; border-radius:50%;
+  background:linear-gradient(135deg, var(--accent), var(--accent2));
+  border:none; color:white; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.25s;
+  box-shadow:0 0 24px var(--glow-a), 0 4px 16px rgba(0,0,0,0.4);
+}
+.play-btn:hover { transform:scale(1.08); box-shadow:0 0 36px var(--glow-a), 0 4px 24px rgba(0,0,0,0.5); }
+.play-btn:active { transform:scale(0.95); }
+.vol-group { display:flex; align-items:center; gap:8px; }
+input[type=range].vol-slider { -webkit-appearance:none; width:80px; height:4px; border-radius:4px; background:rgba(255,255,255,0.1); outline:none; cursor:pointer; }
+input[type=range].vol-slider::-webkit-slider-thumb { -webkit-appearance:none; width:12px; height:12px; border-radius:50%; background:var(--text); cursor:pointer; transition:all 0.2s; }
+input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--accent); box-shadow:0 0 8px var(--glow-a); }
+
+/* MODAL */
+.modal-backdrop { display:none; position:fixed; inset:0; z-index:100; background:rgba(8,8,16,0.85); backdrop-filter:blur(12px); align-items:center; justify-content:center; }
+.modal-backdrop.show { display:flex; }
+.modal {
+  background:rgba(18,18,28,0.95); border:1px solid var(--glass-border);
+  border-radius:20px; padding:36px 32px; width:100%; max-width:480px;
+  backdrop-filter:blur(20px);
+  box-shadow:0 0 80px rgba(167,139,250,0.12), 0 24px 64px rgba(0,0,0,0.6);
+  animation:modal-in 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes modal-in { from { opacity:0; transform:scale(0.9) translateY(20px); } to { opacity:1; transform:scale(1) translateY(0); } }
+.modal-icon { width:52px; height:52px; border-radius:14px; background:rgba(167,139,250,0.1); border:1px solid rgba(167,139,250,0.2); display:flex; align-items:center; justify-content:center; margin-bottom:20px; }
+.modal-title { font-size:20px; font-weight:800; letter-spacing:1px; margin-bottom:6px; }
+.modal-desc { font-size:13px; color:var(--muted); line-height:1.7; margin-bottom:22px; }
+.modal-desc a { color:var(--accent3); text-decoration:none; }
+.modal-desc a:hover { text-decoration:underline; }
+.modal-input-wrap { position:relative; margin-bottom:14px; }
+.modal-input { width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:12px; color:var(--text); font-size:13px; font-family:'Courier New',monospace; padding:12px 46px 12px 16px; outline:none; transition:all 0.25s; }
+.modal-input:focus { border-color:var(--accent); background:rgba(167,139,250,0.06); box-shadow:0 0 0 3px rgba(167,139,250,0.1); }
+.modal-input::placeholder { color:var(--muted); }
+.toggle-key { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--muted); cursor:pointer; padding:4px; transition:color 0.2s; }
+.toggle-key:hover { color:var(--text); }
+.modal-actions { display:flex; gap:10px; }
+.btn-confirm { flex:1; background:linear-gradient(135deg, var(--accent), var(--accent2)); border:none; border-radius:12px; color:white; font-size:14px; font-weight:700; padding:12px; cursor:pointer; font-family:inherit; text-transform:uppercase; letter-spacing:1px; transition:all 0.2s; }
+.btn-confirm:hover { transform:translateY(-1px); box-shadow:0 6px 24px var(--glow-a); }
+.btn-cancel { background:var(--glass); border:1px solid var(--glass-border); border-radius:12px; color:var(--muted); font-size:14px; font-weight:600; padding:12px 20px; cursor:pointer; font-family:inherit; transition:all 0.2s; }
+.btn-cancel:hover { color:var(--text); background:var(--glass-hover); }
+.modal-note { margin-top:14px; font-size:11px; color:var(--muted2); line-height:1.6; text-align:center; }
+
+/* SEARCH MODE INFO */
+.search-mode-info {
+  padding:8px 16px;
+  background:rgba(56,189,248,0.04);
+  border-bottom:1px solid var(--glass-border);
+  font-size:10px; color:var(--muted2); letter-spacing:0.5px;
+  display:flex; align-items:center; gap:6px;
+}
+.mode-dot { width:5px; height:5px; border-radius:50%; background:var(--accent3); }
+
+/* TOAST */
+.toast {
+  position:fixed; bottom:90px; right:20px; z-index:999;
+  background:rgba(22,22,34,0.95); border:1px solid var(--glass-border);
+  border-left:3px solid var(--accent); color:var(--text);
+  padding:10px 16px; border-radius:12px; font-size:12.5px;
+  backdrop-filter:blur(16px);
+  transform:translateY(16px) scale(0.97); opacity:0;
+  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events:none; max-width:300px;
+  box-shadow:0 4px 24px rgba(0,0,0,0.4);
+}
+.toast.show { transform:translateY(0) scale(1); opacity:1; }
+
+/* =============================================
+   MOBILE PLAYLIST TOGGLE BUTTON (hidden on desktop)
+   ============================================= */
+.mobile-playlist-toggle {
+  display: none;
+}
+
+/* =============================================
+   MOBILE BOTTOM SHEET OVERLAY
+   ============================================= */
+.mobile-sheet-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+}
+.mobile-sheet-overlay.show { display: block; }
+
+/* =============================================
+   RESPONSIVE — TABLET (max 900px)
+   ============================================= */
+@media (max-width: 900px) {
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+  }
+  .logo-sub { display: none; }
+  .api-btn { padding: 7px 10px; font-size: 11px; }
+  #api-btn-label { display: none; }
+  .video-area { padding: 16px 16px 12px; }
+  .controls-zone { 
+    position: sticky;
+    border-radius: 14px;
+    margin: 0 10px 30px 10px;
+    padding: 12px 16px 18px; }
+  .np-title { font-size: 18px; }
+}
+
+/* =============================================
+   RESPONSIVE — MOBILE (max 640px)
+   ============================================= */
+@media (max-width: 640px) {
+  /* HEADER */
+  header {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+  .logo-text { font-size: 16px; letter-spacing: 3px; }
+  .logo-sub { display: none; }
+  .header-right { gap: 6px; }
+
+  /* AdBlock badge — icon only on mobile */
+  .adb-badge { padding: 7px 9px; }
+  #adb-label { display: none; }
+
+  /* API btn — icon only on mobile */
+  .api-btn { padding: 7px 9px; font-size: 11px; gap: 5px; }
+  #api-btn-label { display: none; }
+
+  /* LAYOUT: stack vertically */
+  .app { flex-direction: column; position: relative; }
+
+  /* SIDEBAR: becomes fixed bottom sheet */
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    min-width: 0;
+    height: 72vh;
+    max-height: 72vh;
+    border-right: none;
+    border-top: 1px solid var(--glass-border);
+    border-radius: 20px 20px 0 0;
+    z-index: 50;
+    background: rgba(10,10,20,0.97);
+    backdrop-filter: blur(28px);
+    transform: translateY(100%);
+    transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 -8px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(167,139,250,0.08);
+  }
+  .sidebar.mobile-open {
+    transform: translateY(0);
+  }
+
+  /* Drag handle at top of sidebar sheet */
+  .sidebar::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: var(--muted2);
+    border-radius: 2px;
+    margin: 10px auto 6px;
+    flex-shrink: 0;
+  }
+
+  /* MAIN PANEL: takes full space */
+  .main-panel { flex: 1; width: 100%; }
+
+  /* VIDEO AREA */
+  .video-area {
+    padding: 12px 12px 8px;
+    align-items: flex-start;
+    padding-top: 14px;
+  }
+
+  /* PLAYER VIEW: full width */
+  .player-view { max-width: 100%; }
+
+  /* NOW PLAYING INFO: tighter on mobile */
+  .now-playing-info { margin-top: 10px; }
+  .np-title { font-size: 15px; max-width: 100%; }
+  .np-ch { font-size: 12px; }
+  .np-label { font-size: 8px; margin-bottom: 4px; }
+  .status-bar { margin-top: 5px; gap: 5px; }
+  .status-pill { font-size: 9px; padding: 2px 7px; }
+
+  /* CONTROLS ZONE */
+  .controls-zone { padding: 10px 14px 14px; }
+  .progress-row { gap: 8px; margin-bottom: 10px; }
+  .time { font-size: 10px; min-width: 30px; }
+
+  .ctrl-row { gap: 0; }
+  .ctrl-group { gap: 4px; }
+
+  /* Play button stays prominent */
+  .play-btn { width: 50px; height: 50px; }
+  .c-btn { width: 34px; height: 34px; }
+  .c-btn[onclick="prevTrack()"],
+  .c-btn[onclick="nextTrack()"] { width: 38px; height: 38px; }
+
+  /* Volume: hide slider, keep mute button */
+  input[type=range].vol-slider { display: none; }
+
+  /* MOBILE PLAYLIST TOGGLE BUTTON */
+  .mobile-playlist-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    position: fixed;
+    bottom: 20px;
+    right: 16px;
+    z-index: 48;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 11px 18px;
+    cursor: pointer;
+    box-shadow: 0 0 28px var(--glow-a), 0 4px 20px rgba(0,0,0,0.5);
+    transition: all 0.25s;
+  }
+  .mobile-playlist-toggle:active { transform: scale(0.95); }
+  .mobile-playlist-toggle.open { background: linear-gradient(135deg, var(--muted2), #2a2940); box-shadow: none; }
+
+  /* IDLE VIEW: smaller on mobile */
+  .idle-disc { width: 80px; height: 80px; }
+  .idle-heading { font-size: 20px; }
+  .idle-desc { font-size: 12px; }
+
+  /* TOAST: above toggle button */
+  .toast { bottom: 74px; right: 14px; max-width: calc(100vw - 28px); font-size: 12px; }
+
+  /* MODAL: full width on mobile */
+  .modal {
+    margin: 0 14px;
+    padding: 26px 20px;
+    border-radius: 20px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-title { font-size: 16px; }
+  .modal-desc { font-size: 12px; margin-bottom: 16px; }
+  .btn-confirm, .btn-cancel { font-size: 13px; padding: 11px; }
+
+  /* Progress track: taller tap target on mobile */
+  .prog-track {
+    height: 6px;
+    border-radius: 6px;
+    margin: 6px 0;
+  }
+  .prog-fill { border-radius: 6px; }
+  .prog-fill::after { width: 14px; height: 14px; right: -7px; opacity: 1; }
+}
+
+/* =============================================
+   RESPONSIVE — SMALL MOBILE (max 380px)
+   ============================================= */
+@media (max-width: 380px) {
+  header { padding: 9px 10px; }
+  .logo-text { font-size: 14px; letter-spacing: 2px; }
+  .controls-zone { padding: 8px 10px 12px; }
+  .ctrl-group { gap: 2px; }
+  .play-btn { width: 46px; height: 46px; }
+  .c-btn { width: 30px; height: 30px; }
+  .mobile-playlist-toggle { padding: 10px 14px; font-size: 11px; }
+  .np-title { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-scene">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="grid-overlay"></div>
+</div>
+
+<!-- Mobile sheet backdrop overlay -->
+<div class="mobile-sheet-overlay" id="mobile-sheet-overlay" onclick="closeMobilePlaylist()"></div>
+
+<header>
+  <div class="logo-wrap">
+    <span class="logo-text">Qoovy</span>
+    <span class="logo-sub">Music Streaming by Qabil</span>
+  </div>
+  <div class="header-right">
+    <button class="adb-badge" id="adb-badge" onclick="toggleAdBlock()">
+      <span class="adb-dot"></span>
+      <span id="adb-label">AD-FREE ON</span>
+    </button>
+    <button class="api-btn" onclick="openModal(false)" id="api-btn-header">
+      <span class="status-dot" id="status-dot"></span>
+      <span id="api-btn-label">SET API KEY</span>
+    </button>
+  </div>
+</header>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="search-section">
+      <div class="section-label">Cari Musik</div>
+      <div class="search-wrap">
+        <input class="search-input" id="search-input" type="text"
+          placeholder="Nama lagu atau artis..."
+          onkeydown="if(event.key==='Enter') doSearch()"/>
+        <button class="btn-go" id="btn-search" onclick="doSearch()">Cari</button>
+      </div>
+    </div>
+    <div class="search-mode-info" id="search-mode-info">
+      <span class="mode-dot"></span>
+      <span id="mode-text">Mode demo — masukkan API Key untuk pencarian nyata</span>
+    </div>
+    <div class="playlist-head">
+      <div class="section-label" style="margin:0">Playlist</div>
+      <span class="badge" id="track-badge">0 lagu</span>
+    </div>
+    <div class="track-list" id="track-list">
+      <div class="empty-wrap">
+        <div class="empty-icon-wrap">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18V5l12-2v13"/>
+            <circle cx="6" cy="18" r="3"/>
+            <circle cx="18" cy="16" r="3"/>
+          </svg>
+        </div>
+        <div class="empty-title">Belum ada lagu</div>
+        <div class="empty-sub">Set API Key lalu cari musik favoritmu</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-panel">
+    <div class="video-area">
+      <!-- IDLE -->
+      <div class="idle-view" id="idle-view">
+        <div class="idle-disc" id="idle-disc">
+          <div class="disc-outer"></div>
+          <div class="disc-inner"><div class="disc-hole"></div></div>
+        </div>
+        <div class="idle-heading">Siap Streaming</div>
+        <div class="idle-desc">Cari lagu di sidebar, dan pilih untuk mulai memutar.</div>
+      </div>
+
+      <!-- PLAYER -->
+      <div class="player-view" id="player-view">
+        <div class="video-glass-wrap">
+          <iframe id="yt-iframe" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+          <div class="video-shimmer"></div>
+          <div class="vid-loading" id="vid-loading"><div class="spinner"></div></div>
+          <!-- AD BLOCKER OVERLAY -->
+          <div class="ad-overlay" id="ad-overlay">
+            <div class="ad-shield">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <polyline points="9 12 11 14 15 10"/>
+              </svg>
+            </div>
+            <div class="ad-title">Iklan Diblokir</div>
+            <div class="ad-sub">Melewati iklan secara otomatis...</div>
+            <div class="ad-countdown" id="ad-countdown">5</div>
+            <button class="btn-skip-now" onclick="skipAdNow()">Lewati Sekarang</button>
+          </div>
+        </div>
+        <div class="now-playing-info">
+          <div class="np-label">Now Playing</div>
+          <div class="np-title" id="np-title">--</div>
+          <div class="np-ch" id="np-ch">--</div>
+          <div class="status-bar">
+            <span class="status-pill pill-source" id="pill-source">youtube-nocookie</span>
+            <span class="status-pill pill-adblock" id="pill-adblock">AdBlock ON</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls-zone">
+      <div class="progress-row">
+        <span class="time" id="t-cur">0:00</span>
+        <div class="prog-track" id="prog-track" onclick="seekTo(event)">
+          <div class="prog-fill" id="prog-fill"></div>
+        </div>
+        <span class="time" id="t-dur">0:00</span>
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-group">
+          <button class="c-btn" id="btn-shuf" onclick="toggleShuffle()" title="Acak">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 3 21 3 21 8"/>
+              <line x1="4" y1="20" x2="21" y2="3"/>
+              <polyline points="21 16 21 21 16 21"/>
+              <line x1="4" y1="4" x2="9" y2="9"/>
+            </svg>
+          </button>
+          <button class="c-btn" id="btn-rep" onclick="toggleRepeat()" title="Ulangi">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="17 1 21 5 17 9"/>
+              <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+              <polyline points="7 23 3 19 7 15"/>
+              <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="ctrl-group">
+          <button class="c-btn" onclick="prevTrack()" style="width:44px;height:44px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="19 20 9 12 19 4 19 20"/>
+              <rect x="5" y="4" width="3" height="16" rx="1"/>
+            </svg>
+          </button>
+          <button class="play-btn" id="btn-play" onclick="togglePlay()">
+            <svg id="ico-play" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg id="ico-pause" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+          </button>
+          <button class="c-btn" onclick="nextTrack()" style="width:44px;height:44px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 4 15 12 5 20 5 4"/>
+              <rect x="16" y="4" width="3" height="16" rx="1"/>
+            </svg>
+          </button>
+        </div>
+        <div class="ctrl-group">
+          <div class="vol-group">
+            <button class="c-btn" id="btn-mute" onclick="toggleMute()">
+              <svg id="ico-vol" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+              </svg>
+              <svg id="ico-mute" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <line x1="23" y1="9" x2="17" y2="15"/>
+                <line x1="17" y1="9" x2="23" y2="15"/>
+              </svg>
+            </button>
+            <input type="range" class="vol-slider" id="vol-slider" min="0" max="100" value="80" oninput="onVolSlider(this.value)"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Playlist Toggle Button -->
+<button class="mobile-playlist-toggle" id="mobile-playlist-toggle" onclick="toggleMobilePlaylist()">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="8" y1="6" x2="21" y2="6"/>
+    <line x1="8" y1="12" x2="21" y2="12"/>
+    <line x1="8" y1="18" x2="21" y2="18"/>
+    <line x1="3" y1="6" x2="3.01" y2="6"/>
+    <line x1="3" y1="12" x2="3.01" y2="12"/>
+    <line x1="3" y1="18" x2="3.01" y2="18"/>
+  </svg>
+  <span id="mob-toggle-label">Playlist</span>
+</button>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal">
+    <div class="modal-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+    </div>
+    <div class="modal-title">Qoovy Membutuhkan Code Key</div>
+    <div class="modal-desc">
+      Masukkan Code Key, tidak ada dan tidak Tahu? tanya Qabil.
+      Aktifkan <strong>Code Key</strong> Untuk bisa menggunakaan platoform Qoovy.
+      Tanpa Code Key, mode demo tetap bisa digunakan (Hanya 10 Lagu).
+    </div>
+    <div class="modal-input-wrap">
+      <input class="modal-input" id="api-key-input" type="password" placeholder="Key..." autocomplete="off" spellcheck="false"/>
+      <button class="toggle-key" onclick="toggleKeyVis()" title="Tampilkan/sembunyikan">
+        <svg id="eye-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+        <svg id="eye-closed" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+          <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+          <line x1="1" y1="1" x2="23" y2="23"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-confirm" onclick="saveApiKey()">Simpan & Aktifkan</button>
+      <button class="btn-cancel" id="btn-modal-cancel" onclick="closeModal()">Batal</button>
+    </div>
+    <div class="modal-note">
+      Code Key hanya tersimpan di sesi browser ini. Data Aman.
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  MOBILE PLAYLIST TOGGLE (UI only — no logic change)
+// ═══════════════════════════════════════════════════
+var mobilePlaylistOpen = false;
+
+function toggleMobilePlaylist() {
+  mobilePlaylistOpen = !mobilePlaylistOpen;
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('mobile-sheet-overlay');
+  var toggleBtn = document.getElementById('mobile-playlist-toggle');
+  var label = document.getElementById('mob-toggle-label');
+
+  if (mobilePlaylistOpen) {
+    sidebar.classList.add('mobile-open');
+    overlay.classList.add('show');
+    toggleBtn.classList.add('open');
+    label.textContent = 'Tutup';
+  } else {
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('show');
+    toggleBtn.classList.remove('open');
+    label.textContent = 'Playlist';
+  }
+}
+
+function closeMobilePlaylist() {
+  if (mobilePlaylistOpen) toggleMobilePlaylist();
+}
+
+// Auto-close playlist on mobile when a track is selected
+var _origPlayTrack;
+window.addEventListener('DOMContentLoaded', function() {
+  // Wrap playTrack to auto-close playlist on mobile after selection
+  var origRenderTracks = renderTracks;
+  // We'll intercept track clicks via event delegation instead
+  document.getElementById('track-list').addEventListener('click', function() {
+    // Small delay so track loads first, then close
+    if (window.innerWidth <= 640 && mobilePlaylistOpen) {
+      setTimeout(closeMobilePlaylist, 200);
+    }
+  });
+});
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+var API_KEY = '';
+var tracks = [];
+var curIdx = -1;
+var isPlaying = false;
+var isShuffle = false;
+var isRepeat = false;
+var isMuted = false;
+var adBlockEnabled = true;
+var volLevel = 80;
+
+var progTimer = null;
+var simCur = 0;
+var simDur = 0;
+var simStart = 0;
+var simOffset = 0;
+
+var adCheckTimer = null;
+var adCountdownTimer = null;
+var adCountVal = 5;
+var isAdShowing = false;
+
+var ytPlayer = null;
+var ytAPIReady = false;
+var ytAPILoading = false;
+
+var CORS_PROXIES = [
+  'https://corsproxy.io/?url=',
+  'https://api.allorigins.win/get?url=',
+  'https://cors.sh/?',
+];
+var corsProxyIdx = 0;
+
+// ═══════════════════════════════════════════════════
+//  YOUTUBE IFRAME
+// ═══════════════════════════════════════════════════
+function buildIframeSrc(videoId, autoplay) {
+  var origin = window.location.origin || 'http://localhost';
+  var auto = autoplay ? 1 : 0;
+  return 'https://www.youtube-nocookie.com/embed/' + videoId
+    + '?autoplay=' + auto
+    + '&enablejsapi=1'
+    + '&controls=0'
+    + '&modestbranding=1'
+    + '&rel=0'
+    + '&iv_load_policy=3'
+    + '&playsinline=1'
+    + '&cc_load_policy=0'
+    + '&origin=' + encodeURIComponent(origin)
+    + '&fs=0'
+    + '&hl=id'
+    + '&color=white';
+}
+
+function ytCmd(func, args) {
+  var iframe = document.getElementById('yt-iframe');
+  if (!iframe || !iframe.contentWindow) return;
+  try {
+    iframe.contentWindow.postMessage(JSON.stringify({
+      event: 'command',
+      func: func,
+      args: args || []
+    }), '*');
+  } catch(e) {}
+}
+
+window.addEventListener('message', function(e) {
+  if (!e.origin.includes('youtube')) return;
+  try {
+    var data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+    if (data.event === 'onReady') {
+      ytAPIReady = true;
+      ytCmd('setVolume', [isMuted ? 0 : volLevel]);
+      hideLdr();
+    }
+    if (data.event === 'onStateChange') {
+      handleStateChange(data.info);
+    }
+    if (data.event === 'infoDelivery' && data.info) {
+      if (data.info.currentTime !== undefined && data.info.duration !== undefined) {
+        simCur = data.info.currentTime;
+        simDur = data.info.duration;
+        updateProgressUI();
+      }
+      if (adBlockEnabled && data.info.videoData) {
+        var playingId = data.info.videoData.video_id;
+        if (curIdx >= 0 && tracks[curIdx] && playingId && playingId !== tracks[curIdx].id) {
+          if (!isAdShowing) triggerAdOverlay();
+        } else {
+          if (isAdShowing) hideAdOverlay();
+        }
+      }
+    }
+  } catch(e2) {}
+});
+
+function handleStateChange(state) {
+  if (state === 1) {
+    setPlayState(true);
+    hideLdr();
+    startProgTimer();
+    if (isAdShowing) hideAdOverlay();
+  } else if (state === 2) {
+    setPlayState(false);
+    stopProgTimer();
+  } else if (state === 0) {
+    setPlayState(false);
+    stopProgTimer();
+    if (isRepeat) reloadCurrentTrack();
+    else nextTrack();
+  } else if (state === 3) {
+    showLdr();
+  } else if (state === -1 || state === 5) {
+    hideLdr();
+  }
+}
+
+var infoRequestTimer = null;
+function startInfoRequests() {
+  stopInfoRequests();
+  infoRequestTimer = setInterval(function() {
+    ytCmd('getVideoData', []);
+    var iframe = document.getElementById('yt-iframe');
+    if (iframe && iframe.contentWindow) {
+      try {
+        iframe.contentWindow.postMessage(JSON.stringify({
+          event: 'listening', id: 1, channel: 'widget'
+        }), '*');
+      } catch(e) {}
+    }
+  }, 1500);
+}
+function stopInfoRequests() {
+  if (infoRequestTimer) { clearInterval(infoRequestTimer); infoRequestTimer = null; }
+}
+
+// ═══════════════════════════════════════════════════
+//  PROGRESS
+// ═══════════════════════════════════════════════════
+var progLastUpdate = 0;
+
+function startProgTimer() {
+  stopProgTimer();
+  simStart = Date.now();
+  progTimer = setInterval(function() {
+    if (!isPlaying) return;
+    simCur += 0.9;
+    if (simDur > 0 && simCur > simDur) simCur = simDur;
+    updateProgressUI();
+    progLastUpdate++;
+    if (progLastUpdate % 5 === 0) {
+      var iframe = document.getElementById('yt-iframe');
+      if (iframe && iframe.contentWindow) {
+        try {
+          iframe.contentWindow.postMessage(JSON.stringify({
+            event: 'command', func: 'getCurrentTime', args: []
+          }), '*');
+        } catch(e) {}
+      }
+    }
+  }, 900);
+}
+
+function stopProgTimer() {
+  if (progTimer) { clearInterval(progTimer); progTimer = null; }
+}
+
+function updateProgressUI() {
+  if (simDur > 0) {
+    var pct = Math.min(100, (simCur / simDur) * 100);
+    document.getElementById('prog-fill').style.width = pct + '%';
+    document.getElementById('t-cur').textContent = fmt(simCur);
+    document.getElementById('t-dur').textContent = fmt(simDur);
+  }
+}
+
+function fmt(s) {
+  s = Math.max(0, Math.floor(s));
+  return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
+}
+
+function seekTo(e) {
+  var rect = document.getElementById('prog-track').getBoundingClientRect();
+  var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  var pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+  var seekSec = pct * (simDur || 300);
+  simCur = seekSec;
+  ytCmd('seekTo', [seekSec, true]);
+  updateProgressUI();
+}
+
+// Touch support for progress bar
+document.addEventListener('DOMContentLoaded', function() {
+  var pt = document.getElementById('prog-track');
+  if (pt) {
+    pt.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      seekTo(e);
+    }, { passive: false });
+  }
+});
+
+// ═══════════════════════════════════════════════════
+//  AD BLOCKER
+// ═══════════════════════════════════════════════════
+function triggerAdOverlay() {
+  if (!adBlockEnabled) return;
+  isAdShowing = true;
+  document.getElementById('ad-overlay').classList.add('show');
+  adCountVal = 5;
+  document.getElementById('ad-countdown').textContent = adCountVal;
+  clearInterval(adCountdownTimer);
+  adCountdownTimer = setInterval(function() {
+    adCountVal--;
+    document.getElementById('ad-countdown').textContent = adCountVal;
+    if (adCountVal <= 0) {
+      clearInterval(adCountdownTimer);
+      skipAdNow();
+    }
+  }, 1000);
+}
+
+function skipAdNow() {
+  clearInterval(adCountdownTimer);
+  ytCmd('playVideo', []);
+  ytCmd('seekTo', [9999, true]);
+  setTimeout(function() {
+    if (isAdShowing && curIdx >= 0) {
+      reloadCurrentTrack();
+    }
+  }, 800);
+}
+
+function hideAdOverlay() {
+  isAdShowing = false;
+  clearInterval(adCountdownTimer);
+  document.getElementById('ad-overlay').classList.remove('show');
+}
+
+function toggleAdBlock() {
+  adBlockEnabled = !adBlockEnabled;
+  var badge = document.getElementById('adb-badge');
+  var lbl = document.getElementById('adb-label');
+  var pill = document.getElementById('pill-adblock');
+  if (adBlockEnabled) {
+    badge.classList.remove('off');
+    lbl.textContent = 'AD-FREE ON';
+    pill.classList.remove('off');
+    pill.textContent = 'AdBlock ON';
+    toast('AdBlock aktif');
+  } else {
+    badge.classList.add('off');
+    lbl.textContent = 'AD-FREE OFF';
+    pill.classList.add('off');
+    pill.textContent = 'AdBlock OFF';
+    if (isAdShowing) hideAdOverlay();
+    toast('AdBlock dimatikan');
+  }
+}
+
+var adWatchTimer = null;
+function startAdWatch(videoId) {
+  stopAdWatch();
+  if (!adBlockEnabled) return;
+  var checks = 0;
+  adWatchTimer = setInterval(function() {
+    checks++;
+    if (checks === 2 && adBlockEnabled && !isPlaying) {
+      ytCmd('cancelPlayback', []);
+      setTimeout(function() {
+        if (curIdx >= 0 && !isPlaying) {
+          reloadCurrentTrack();
+        }
+      }, 500);
+    }
+    if (checks > 6) stopAdWatch();
+  }, 2000);
+}
+function stopAdWatch() {
+  if (adWatchTimer) { clearInterval(adWatchTimer); adWatchTimer = null; }
+}
+
+// ═══════════════════════════════════════════════════
+//  PLAYBACK
+// ═══════════════════════════════════════════════════
+var currentVideoId = '';
+
+function playTrack(idx) {
+  if (idx < 0 || idx >= tracks.length) return;
+  curIdx = idx;
+  var t = tracks[idx];
+  currentVideoId = t.id;
+
+  simCur = 0; simDur = 0;
+  ytAPIReady = false;
+  isPlaying = false;
+  stopProgTimer();
+  hideAdOverlay();
+
+  document.getElementById('idle-view').style.display = 'none';
+  document.getElementById('player-view').style.display = 'block';
+  document.getElementById('idle-disc').classList.add('spin');
+  showLdr();
+
+  var iframe = document.getElementById('yt-iframe');
+  iframe.src = buildIframeSrc(t.id, true);
+
+  document.getElementById('np-title').textContent = t.title;
+  document.getElementById('np-ch').textContent = t.ch;
+  document.getElementById('prog-fill').style.width = '0%';
+  document.getElementById('t-cur').textContent = '0:00';
+  document.getElementById('t-dur').textContent = '0:00';
+
+  renderTracks();
+  scrollToTrack(idx);
+  startInfoRequests();
+  startAdWatch(t.id);
+
+  setTimeout(function() {
+    if (curIdx === idx) hideLdr();
+  }, 6000);
+
+  setTimeout(function() {
+    if (curIdx === idx && !isPlaying) {
+      setPlayState(true);
+      if (simDur === 0) simDur = 240;
+      startProgTimer();
+    }
+  }, 4000);
+}
+
+function reloadCurrentTrack() {
+  if (curIdx < 0) return;
+  var t = tracks[curIdx];
+  simCur = 0;
+  var iframe = document.getElementById('yt-iframe');
+  iframe.src = buildIframeSrc(t.id, true);
+  showLdr();
+  hideAdOverlay();
+}
+
+function togglePlay() {
+  if (curIdx < 0) {
+    if (tracks.length > 0) playTrack(0);
+    return;
+  }
+  if (isPlaying) {
+    ytCmd('pauseVideo', []);
+    setPlayState(false);
+    stopProgTimer();
+  } else {
+    ytCmd('playVideo', []);
+    setPlayState(true);
+    startProgTimer();
+  }
+}
+
+function prevTrack() {
+  if (!tracks.length) return;
+  var idx = isShuffle ? randIdx() : (curIdx - 1 + tracks.length) % tracks.length;
+  playTrack(idx);
+}
+
+function nextTrack() {
+  if (!tracks.length) return;
+  var idx = isShuffle ? randIdx() : (curIdx + 1) % tracks.length;
+  playTrack(idx);
+}
+
+function randIdx() {
+  var n;
+  for (var i = 0; i < 10; i++) {
+    n = Math.floor(Math.random() * tracks.length);
+    if (n !== curIdx || tracks.length === 1) break;
+  }
+  return n;
+}
+
+function setPlayState(state) {
+  isPlaying = state;
+  document.getElementById('ico-play').style.display = state ? 'none' : 'block';
+  document.getElementById('ico-pause').style.display = state ? 'block' : 'none';
+  var disc = document.getElementById('idle-disc');
+  if (state) disc.classList.add('spin'); else disc.classList.remove('spin');
+}
+
+function toggleShuffle() {
+  isShuffle = !isShuffle;
+  document.getElementById('btn-shuf').classList.toggle('lit', isShuffle);
+  toast(isShuffle ? 'Acak: ON' : 'Acak: OFF');
+}
+
+function toggleRepeat() {
+  isRepeat = !isRepeat;
+  document.getElementById('btn-rep').classList.toggle('lit', isRepeat);
+  toast(isRepeat ? 'Ulangi: ON' : 'Ulangi: OFF');
+}
+
+// ═══════════════════════════════════════════════════
+//  VOLUME
+// ═══════════════════════════════════════════════════
+function onVolSlider(v) {
+  volLevel = Number(v);
+  if (!isMuted) {
+    ytCmd('setVolume', [volLevel]);
+  }
+}
+
+function toggleMute() {
+  isMuted = !isMuted;
+  if (isMuted) {
+    ytCmd('mute', []);
+  } else {
+    ytCmd('unMute', []);
+    ytCmd('setVolume', [volLevel]);
+  }
+  document.getElementById('ico-vol').style.display = isMuted ? 'none' : 'block';
+  document.getElementById('ico-mute').style.display = isMuted ? 'block' : 'none';
+}
+
+// ═══════════════════════════════════════════════════
+//  SEARCH
+// ═══════════════════════════════════════════════════
+function doSearch() {
+  var q = document.getElementById('search-input').value.trim();
+  if (!q) { toast('Masukkan nama lagu atau artis!'); return; }
+  var btn = document.getElementById('btn-search');
+  btn.disabled = true; btn.textContent = '...';
+  showSearchingState();
+
+  if (!API_KEY) {
+    setTimeout(function() {
+      btn.disabled = false; btn.textContent = 'Cari';
+      showDemoPlaylist(q);
+    }, 600);
+    return;
+  }
+
+  corsProxyIdx = 0;
+  trySearchWithProxy(q, btn);
+}
+
+function trySearchWithProxy(q, btn) {
+  var ytUrl = 'https://www.googleapis.com/youtube/v3/search'
+    + '?part=snippet&type=video&videoCategoryId=10&maxResults=20'
+    + '&q=' + encodeURIComponent(q + ' music')
+    + '&key=' + API_KEY;
+
+  var fetchUrl;
+  if (corsProxyIdx === 0) {
+    fetchUrl = ytUrl;
+  } else if (corsProxyIdx === 1) {
+    fetchUrl = CORS_PROXIES[0] + encodeURIComponent(ytUrl);
+  } else if (corsProxyIdx === 2) {
+    fetchUrl = CORS_PROXIES[1] + encodeURIComponent(ytUrl);
+  } else {
+    btn.disabled = false; btn.textContent = 'Cari';
+    toast('API tidak dapat dijangkau. Mode demo aktif.');
+    showDemoPlaylist(q);
+    setModeText('Demo mode — jaringan memblokir API');
+    return;
+  }
+
+  fetch(fetchUrl, { signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(raw) {
+      var data = raw.contents ? JSON.parse(raw.contents) : raw;
+      if (data.error) throw new Error(data.error.message || 'API Error');
+      if (!data.items || !data.items.length) { toast('Tidak ada hasil.'); renderEmpty('Tidak ada hasil'); btn.disabled = false; btn.textContent = 'Cari'; return; }
+      tracks = data.items.map(function(it) {
+        return {
+          id: it.id.videoId,
+          title: it.snippet.title,
+          ch: it.snippet.channelTitle,
+          thumb: (it.snippet.thumbnails.default || {}).url || ''
+        };
+      });
+      renderTracks();
+      btn.disabled = false; btn.textContent = 'Cari';
+      var src = corsProxyIdx === 0 ? 'YouTube API langsung' : ('via proxy #' + corsProxyIdx);
+      setModeText('YouTube API (' + src + ')');
+      toast('Ditemukan ' + tracks.length + ' lagu');
+    })
+    .catch(function(err) {
+      corsProxyIdx++;
+      trySearchWithProxy(q, btn);
+    });
+}
+
+function setModeText(text) {
+  document.getElementById('mode-text').textContent = text;
+}
+
+function showDemoPlaylist(q) {
+  tracks = [
+    { id: 'dQw4w9WgXcQ', title: 'Rick Astley - Never Gonna Give You Up', ch: 'Rick Astley', thumb: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/default.jpg' },
+    { id: 'kXYiU_JCYtU', title: 'Linkin Park - Numb', ch: 'Linkin Park', thumb: 'https://i.ytimg.com/vi/kXYiU_JCYtU/default.jpg' },
+    { id: 'fJ9rUzIMcZQ', title: 'Bohemian Rhapsody', ch: 'Queen Official', thumb: 'https://i.ytimg.com/vi/fJ9rUzIMcZQ/default.jpg' },
+    { id: '1w7OgIMMRc4', title: 'Sweet Child O Mine', ch: "Guns N Roses", thumb: 'https://i.ytimg.com/vi/1w7OgIMMRc4/default.jpg' },
+    { id: 'CdqoNKCCt7A', title: 'Someone Like You', ch: 'Adele', thumb: 'https://i.ytimg.com/vi/CdqoNKCCt7A/default.jpg' },
+    { id: 'JGwWNGJdvx8', title: 'Shape of You', ch: 'Ed Sheeran', thumb: 'https://i.ytimg.com/vi/JGwWNGJdvx8/default.jpg' },
+    { id: 'OPf0YbXqDm0', title: 'Mark Ronson - Uptown Funk ft Bruno Mars', ch: 'Mark Ronson', thumb: 'https://i.ytimg.com/vi/OPf0YbXqDm0/default.jpg' },
+    { id: 'hLQl3WQQoQ0', title: 'Adele - Someone Like You (Official)', ch: 'Adele', thumb: 'https://i.ytimg.com/vi/hLQl3WQQoQ0/default.jpg' },
+    { id: 'YQHsXMglC9A', title: 'Adele - Hello', ch: 'Adele', thumb: 'https://i.ytimg.com/vi/YQHsXMglC9A/default.jpg' },
+    { id: '7wtfhZwyrcc', title: 'Post Malone - Circles', ch: 'Post Malone', thumb: 'https://i.ytimg.com/vi/7wtfhZwyrcc/default.jpg' }
+  ];
+  renderTracks();
+  setModeText('Mode demo — masukkan Code Key');
+  toast('Mode demo aktif — ' + tracks.length + ' lagu tersedia');
+}
+
+function showSearchingState() {
+  document.getElementById('track-list').innerHTML =
+    '<div class="empty-wrap">'
+    + '<div class="empty-icon-wrap"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>'
+    + '<div class="empty-title">Mencari...</div>'
+    + '<div class="spinner-sm"></div>'
+    + '</div>';
+}
+
+function renderEmpty(msg) {
+  document.getElementById('track-list').innerHTML = '<div class="empty-wrap"><div class="empty-title">' + esc(msg) + '</div></div>';
+  document.getElementById('track-badge').textContent = '0 lagu';
+}
+
+function renderTracks() {
+  document.getElementById('track-badge').textContent = tracks.length + ' lagu';
+  var html = tracks.map(function(t, i) {
+    return '<div class="track-item' + (i === curIdx ? ' active' : '') + '" id="ti-' + i + '" onclick="playTrack(' + i + ')">'
+      + '<img class="track-thumb" src="' + esc(t.thumb) + '" alt="" onerror="this.style.background=\'#2a2a3a\'" loading="lazy"/>'
+      + '<div class="track-info"><div class="track-title">' + esc(t.title) + '</div><div class="track-ch">' + esc(t.ch) + '</div></div>'
+      + '<div class="track-idx">' + (i + 1) + '</div>'
+      + '<div class="wave-bars"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div>'
+      + '</div>';
+  }).join('');
+  document.getElementById('track-list').innerHTML = html;
+}
+
+function scrollToTrack(i) {
+  var el = document.getElementById('ti-' + i);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ═══════════════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════════════
+function showLdr() { document.getElementById('vid-loading').classList.add('show'); }
+function hideLdr() { document.getElementById('vid-loading').classList.remove('show'); }
+
+var toastTmr = null;
+function toast(msg, type) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.borderLeftColor = (type === 'err') ? 'var(--red)' : 'var(--accent)';
+  el.classList.add('show');
+  if (toastTmr) clearTimeout(toastTmr);
+  toastTmr = setTimeout(function() { el.classList.remove('show'); }, 3200);
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════════════
+//  API KEY MODAL
+// ═══════════════════════════════════════════════════
+var firstOpen = true;
+function openModal(first) {
+  firstOpen = !!first;
+  document.getElementById('btn-modal-cancel').style.display = first ? 'none' : 'block';
+  document.getElementById('api-key-input').value = API_KEY || '';
+  document.getElementById('modal-backdrop').classList.add('show');
+  setTimeout(function() { document.getElementById('api-key-input').focus(); }, 200);
+}
+
+function closeModal() {
+  document.getElementById('modal-backdrop').classList.remove('show');
+}
+
+function saveApiKey() {
+  var val = document.getElementById('api-key-input').value.trim();
+  API_KEY = val;
+  updateApiStatus();
+  closeModal();
+  corsProxyIdx = 0;
+  if (val) {
+    toast('Code Key tersimpan! Silakan cari musik.');
+    setModeText('Qoovy Key aktif');
+  } else {
+    toast('Mode demo aktif.');
+    setModeText('Mode demo — masukkan Code Key untuk pencarian nyata');
+  }
+}
+
+function updateApiStatus() {
+  var dot = document.getElementById('status-dot');
+  var lbl = document.getElementById('api-btn-label');
+  if (API_KEY) {
+    dot.classList.add('active');
+    lbl.textContent = 'Key: ***' + API_KEY.slice(-4);
+  } else {
+    dot.classList.remove('active');
+    lbl.textContent = 'SET API KEY';
+  }
+}
+
+function toggleKeyVis() {
+  var inp = document.getElementById('api-key-input');
+  var isPass = inp.type === 'password';
+  inp.type = isPass ? 'text' : 'password';
+  document.getElementById('eye-open').style.display = isPass ? 'none' : 'block';
+  document.getElementById('eye-closed').style.display = isPass ? 'block' : 'none';
+}
+
+document.getElementById('modal-backdrop').addEventListener('click', function(e) {
+  if (e.target === this && !firstOpen) closeModal();
+});
+document.getElementById('api-key-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') saveApiKey();
+});
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+window.addEventListener('load', function() {
+  showDemoPlaylist('demo');
+  setTimeout(function() { openModal(true); }, 500);
+});
+</script>
+</body>
+</html>
