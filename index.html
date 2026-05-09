@@ -583,7 +583,14 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   .np-label { font-size: 8px; margin-bottom: 4px; }
   .status-bar { margin-top: 5px; gap: 5px; }
   .status-pill { font-size: 9px; padding: 2px 7px; }
-  .controls-zone { border-radius: 15px; margin: 0 10px 35px 10px; padding: 10px 14px 14px; }
+  .controls-zone { position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 15px;
+    padding: 10px 14px 14px;
+    width: 100vw;
+    z-index: 1000; }
   .progress-row { gap: 8px; margin-bottom: 10px; }
   .time { font-size: 10px; min-width: 30px; }
   .ctrl-row { gap: 0; }
