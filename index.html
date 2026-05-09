@@ -535,7 +535,7 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
 /* MOBILE */
 .mobile-playlist-toggle { display: none; }
 .mobile-sheet-overlay {
-  display: none; position: fixed; inset: 0; z-index: 45;
+  display: none; position: fixed; inset: 0; z-index: 0;
   background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
 }
 .mobile-sheet-overlay.show { display: block; }
@@ -575,7 +575,7 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
     background: var(--muted2); border-radius: 2px; margin: 10px auto 4px; flex-shrink: 0;
   }
   .main-panel { flex: 1; width: 100%; }
-  .video-area { padding: 12px 12px 8px; align-items: flex-start; padding-top: 14px; }
+  .video-area { padding: 12px 12px 8px; padding-top: 14px; }
   .player-view { max-width: 100%; }
   .now-playing-info { margin-top: 10px; }
   .np-title { font-size: 15px; max-width: 100%; }
@@ -583,7 +583,7 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   .np-label { font-size: 8px; margin-bottom: 4px; }
   .status-bar { margin-top: 5px; gap: 5px; }
   .status-pill { font-size: 9px; padding: 2px 7px; }
-  .controls-zone { padding: 10px 14px 14px; }
+  .controls-zone { border-radius: 15px; margin: 0 10px 35px 10px; padding: 10px 14px 14px; }
   .progress-row { gap: 8px; margin-bottom: 10px; }
   .time { font-size: 10px; min-width: 30px; }
   .ctrl-row { gap: 0; }
@@ -760,7 +760,7 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
           <div class="disc-outer"></div>
           <div class="disc-inner"><div class="disc-hole"></div></div>
         </div>
-        <div class="idle-heading">Siap Streaming</div>
+        <div class="idle-heading">Qoovy Streaming</div>
         <div class="idle-desc">Cari lagu di sidebar, pilih untuk mulai memutar.</div>
         <div class="kbd-hint">
           <span class="kbd">Space</span> play/pause &nbsp;
@@ -1769,7 +1769,7 @@ function trySearchWithProxy(q, btn) {
       });
       renderTracks();
       btn.disabled = false; btn.textContent = 'Cari';
-      setModeText('YouTube API (' + (corsProxyIdx === 0 ? 'langsung' : 'via proxy') + ')');
+      setModeText('Qoovy (' + (corsProxyIdx === 0 ? 'Aktif' : 'via proxy') + ')');
       toast('Ditemukan ' + tracks.length + ' lagu');
       if (isShuffle) buildShuffleQueue(curIdx);
     })
