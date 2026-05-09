@@ -634,6 +634,7 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   .np-title { font-size: 13px; }
 }
 </style>
+<script src="mediaSessionApiHandler.js"></script>
 </head>
 <body>
 
@@ -1451,7 +1452,9 @@ function updateProgressUI() {
     document.getElementById('t-cur').textContent = fmt(simCur);
     document.getElementById('t-dur').textContent = fmt(simDur);
   }
+  updateMediaSessionPositionState();
 }
+
 function fmt(s) {
   s = Math.max(0, Math.floor(s));
   return Math.floor(s/60) + ':' + ('0' + (s%60)).slice(-2);
@@ -1546,6 +1549,10 @@ function playTrack(idx) {
 
   document.getElementById('np-title').textContent = t.title;
   document.getElementById('np-ch').textContent = t.ch;
+
+  updateMediaSession(t);
+  updateMediaSessionPlaybackState(false);
+
   document.getElementById('prog-fill').style.width = '0%';
   document.getElementById('t-cur').textContent = '0:00';
   document.getElementById('t-dur').textContent = '0:00';
@@ -1649,6 +1656,10 @@ function setPlayState(state) {
   document.getElementById('ico-pause').style.display = state ? 'block' : 'none';
   var disc = document.getElementById('idle-disc');
   if (state) disc.classList.add('spin'); else disc.classList.remove('spin');
+
+  updateMediaSessionPlaybackState(state);
+  updateMediaSessionPositionState();
+
 }
 
 // ═══════════════════════════════════════════
@@ -1924,6 +1935,7 @@ document.addEventListener('DOMContentLoaded', function() {
 //  INIT
 // ═══════════════════════════════════════════
 window.addEventListener('load', function() {
+  initMediaSession();
   loadFromStorage();
   showDemoPlaylist('demo');
   renderHistoryList();
