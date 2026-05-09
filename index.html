@@ -11,7 +11,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Qoovy">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='115' fill='%23080810'/%3E%3Ccircle cx='256' cy='256' r='160' fill='none' stroke='url(%23g1)' stroke-width='8'/%3E%3Ccircle cx='256' cy='256' r='36' fill='%23a78bfa'/%3E%3Ccircle cx='256' cy='256' r='18' fill='%23080810'/%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23a78bfa'/%3E%3Cstop offset='100%25' stop-color='%23ec64a2'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E">
 
 <style>
 :root {
@@ -335,49 +334,63 @@ header {
   box-shadow:0 0 0 1px rgba(167,139,250,0.08), 0 8px 64px rgba(0,0,0,0.8), 0 0 60px rgba(99,68,255,0.12);
   aspect-ratio:16/9; background:#000;
 }
-/* ═══════════════════════════════════════
-   IFRAME WRAPPER: LAPISAN PEMBLOKIR IKLAN
-   Menutupi area klik iklan sepenuhnya
-════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════
+   IFRAME SHIELD — PERISAI FISIK ANTI-KLIK IKLAN
+   Selalu aktif, pointer-events dikontrol JS
+════════════════════════════════════════════ */
 .iframe-shield {
-  position:absolute; inset:0; z-index:5;
-  pointer-events:none; /* default — hanya aktif saat mode pemblokir */
+  position:absolute; inset:0; z-index:10;
+  pointer-events:none;
   border-radius:18px;
+  background:transparent;
 }
-.iframe-shield.blocking { pointer-events:all; cursor:default; }
+.iframe-shield.blocking {
+  pointer-events:all;
+  cursor:default;
+}
+
 #yt-iframe { width:100%; height:100%; border:none; display:block; }
 .video-shimmer { position:absolute; inset:0; pointer-events:none; border-radius:18px; box-shadow:inset 0 0 60px rgba(0,0,0,0.4); z-index:2; }
 
-/* ═══════════════════════════════════════
-   AD BLOCKER OVERLAY — UPGRADE TOTAL
-   Kini muncul INSTAN, bukan setelah deteksi
-════════════════════════════════════════ */
+/* ════════════════════════════════════════════
+   AD BLOCKER OVERLAY — MUNCUL INSTAN, TUTUP TOTAL
+════════════════════════════════════════════ */
 .ad-overlay {
-  display:none; position:absolute; inset:0; z-index:20;
-  background:rgba(8,8,16,0.97); backdrop-filter:blur(16px);
-  align-items:center; justify-content:center; flex-direction:column; gap:14px;
+  display:none; position:absolute; inset:0; z-index:30;
+  background:rgba(8,8,16,0.98); backdrop-filter:blur(20px);
+  align-items:center; justify-content:center; flex-direction:column; gap:12px;
   border-radius:18px; text-align:center;
+  animation:overlay-fade-in 0.15s ease;
 }
+@keyframes overlay-fade-in { from { opacity:0; } to { opacity:1; } }
 .ad-overlay.show { display:flex; }
 .ad-shield {
-  width:64px; height:64px; border-radius:50%;
+  width:70px; height:70px; border-radius:50%;
   background:rgba(74,222,128,0.12); border:2px solid rgba(74,222,128,0.4);
   display:flex; align-items:center; justify-content:center;
   animation:pulse-shield 1.4s ease-in-out infinite;
 }
-@keyframes pulse-shield { 0%,100% { box-shadow:0 0 0 0 rgba(74,222,128,0.4); } 50% { box-shadow:0 0 0 14px rgba(74,222,128,0); } }
-.ad-title { font-size:16px; font-weight:800; color:var(--green); letter-spacing:2px; text-transform:uppercase; }
-.ad-sub { font-size:12px; color:var(--muted); max-width:240px; line-height:1.6; }
-.ad-countdown { font-size:32px; font-weight:900; color:var(--text); font-family:'Courier New',monospace; }
+@keyframes pulse-shield { 0%,100% { box-shadow:0 0 0 0 rgba(74,222,128,0.4); } 50% { box-shadow:0 0 0 16px rgba(74,222,128,0); } }
+.ad-title { font-size:15px; font-weight:800; color:var(--green); letter-spacing:2px; text-transform:uppercase; }
+.ad-sub { font-size:11px; color:var(--muted); max-width:220px; line-height:1.6; }
+.ad-phase { font-size:10px; color:var(--accent3); letter-spacing:2px; text-transform:uppercase; font-weight:700; }
+.ad-countdown { font-size:28px; font-weight:900; color:var(--text); font-family:'Courier New',monospace; }
+.ad-progress-bar {
+  width:160px; height:3px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;
+}
+.ad-progress-fill {
+  height:100%; background:linear-gradient(90deg, var(--green), var(--accent3));
+  border-radius:3px; width:0%; transition:width 0.5s linear;
+}
 .btn-skip-now {
   background:linear-gradient(135deg, var(--green), #22c55e);
   border:none; border-radius:10px; color:#000;
-  font-size:12px; font-weight:800; letter-spacing:2px; text-transform:uppercase;
-  padding:10px 24px; cursor:pointer; transition:all 0.2s;
+  font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase;
+  padding:8px 20px; cursor:pointer; transition:all 0.2s;
 }
 .btn-skip-now:hover { transform:scale(1.05); }
 
-/* STATUS IKLAN TERBLOKIR — pojok kiri bawah video */
 .ad-block-status {
   position:absolute; bottom:10px; left:12px; z-index:15;
   background:rgba(74,222,128,0.12); border:1px solid rgba(74,222,128,0.25);
@@ -392,7 +405,7 @@ header {
 .ad-block-status-dot { width:5px; height:5px; border-radius:50%; background:var(--green); animation:blink-dot 1.2s ease-in-out infinite; }
 @keyframes blink-dot { 0%,100%{opacity:1;} 50%{opacity:0.2;} }
 
-.vid-loading { display:none; position:absolute; inset:0; background:rgba(8,8,16,0.7); align-items:center; justify-content:center; border-radius:18px; z-index:10; backdrop-filter:blur(4px); }
+.vid-loading { display:none; position:absolute; inset:0; background:rgba(8,8,16,0.7); align-items:center; justify-content:center; border-radius:18px; z-index:20; backdrop-filter:blur(4px); }
 .vid-loading.show { display:flex; }
 .spinner { width:44px; height:44px; border:3px solid rgba(167,139,250,0.2); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
@@ -672,7 +685,7 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
     <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
     <circle cx="12" cy="20" r="1" fill="currentColor"/>
   </svg>
-  <span class="offline-label">Tidak ada koneksi internet — mode offline aktif</span>
+  <span class="offline-label">Tidak ada koneksi internet</span>
 </div>
 
 <div class="install-banner" id="install-banner">
@@ -684,7 +697,7 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   </div>
   <div class="install-body">
     <div class="install-title">Pasang Qoovy</div>
-    <div class="install-sub">Tambahkan ke layar utama untuk akses cepat & pengalaman penuh</div>
+    <div class="install-sub">Tambahkan ke layar utama untuk akses cepat</div>
   </div>
   <div class="install-actions">
     <button class="btn-install" id="btn-install-pwa">Pasang</button>
@@ -695,10 +708,10 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
 <div class="update-banner" id="update-banner">
   <div class="update-body">
     <div class="update-title">Update Tersedia</div>
-    <div class="update-sub">Versi terbaru Qoovy sudah siap. Muat ulang untuk memperbarui.</div>
+    <div class="update-sub">Versi terbaru Qoovy sudah siap.</div>
     <button class="btn-update-reload" onclick="pwaReloadForUpdate()">Muat Ulang</button>
   </div>
-  <button class="btn-update-close" onclick="hideUpdateBanner()" aria-label="Tutup">
+  <button class="btn-update-close" onclick="hideUpdateBanner()">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
       <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
     </svg>
@@ -813,29 +826,35 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
 
       <div class="player-view" id="player-view">
         <div class="video-glass-wrap">
-          <!-- IFRAME SHIELD: menangkap semua klik saat iklan aktif -->
-          <div class="iframe-shield" id="iframe-shield"></div>
+          <!-- SHIELD FISIK — selalu di atas iframe, dikontrol JS -->
+          <div class="iframe-shield blocking" id="iframe-shield"></div>
           <iframe id="yt-iframe" allowfullscreen allow="autoplay; encrypted-media"></iframe>
           <div class="video-shimmer"></div>
           <div class="vid-loading" id="vid-loading"><div class="spinner"></div></div>
-          <div class="ad-overlay" id="ad-overlay">
+
+          <!-- OVERLAY ANTI-IKLAN UTAMA -->
+          <div class="ad-overlay show" id="ad-overlay">
             <div class="ad-shield">
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                 <polyline points="9 12 11 14 15 10"/>
               </svg>
             </div>
-            <div class="ad-title">Iklan Diblokir</div>
-            <div class="ad-sub">Qoovy mendeteksi iklan dan memblokirnya secara otomatis. Menunggu konten asli...</div>
-            <div class="ad-countdown" id="ad-countdown">5</div>
-            <button class="btn-skip-now" onclick="skipAdNow()">Lewati Sekarang</button>
+            <div class="ad-title">Shield Aktif</div>
+            <div class="ad-phase" id="ad-phase">MEMUAT KONTEN AMAN</div>
+            <div class="ad-sub" id="ad-sub">Qoovy memverifikasi konten sebelum ditampilkan</div>
+            <div class="ad-progress-bar"><div class="ad-progress-fill" id="ad-progress-fill"></div></div>
+            <div class="ad-countdown" id="ad-countdown" style="display:none">3</div>
+            <button class="btn-skip-now" id="btn-skip-now" onclick="skipAdNow()" style="display:none">Lewati Sekarang</button>
           </div>
-          <!-- STATUS BLOKIR AKTIF -->
+
+          <!-- STATUS SHIELD POJOK KIRI BAWAH -->
           <div class="ad-block-status" id="ad-block-status">
             <div class="ad-block-status-dot"></div>
             SHIELD AKTIF
           </div>
         </div>
+
         <div class="now-playing-info">
           <div class="np-label">Now Playing</div>
           <div class="np-title" id="np-title">--</div>
@@ -970,15 +989,15 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  STORAGE KEYS
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 var LS_SEARCH_HIST = 'qoovy_search_history';
 var LS_PLAY_HIST   = 'qoovy_play_history';
 
-// ═══════════════════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
+//  STATE GLOBAL
+// ════════════════════════════════════════════════════════════
 var API_KEY = '';
 var tracks = [];
 var curIdx = -1;
@@ -999,280 +1018,372 @@ var progTimer = null;
 var simCur = 0;
 var simDur = 0;
 
-var adCountdownTimer = null;
-var adCountVal = 5;
-var isAdShowing = false;
 var adsBlockedCount = 0;
-
-var ytAPIReady = false;
-var infoRequestTimer = null;
-var adScanTimer = null;
-
 var CORS_PROXIES = [
   'https://corsproxy.io/?url=',
   'https://api.allorigins.win/get?url=',
 ];
 var corsProxyIdx = 0;
-
 var mobilePlaylistOpen = false;
 var activeTab = 'playlist';
 
-// ═══════════════════════════════════════════════════════
-//  ██████╗  █████╗ ██████╗      ██████╗ ██╗      ██████╗  ██████╗██╗  ██╗███████╗██████╗
-//  ██╔══██╗██╔══██╗██╔══██╗    ██╔══██╗██║     ██╔═══██╗██╔════╝██║ ██╔╝██╔════╝██╔══██╗
-//  ██████╔╝███████║██║  ██║    ██████╔╝██║     ██║   ██║██║     █████╔╝ █████╗  ██████╔╝
-//  ██╔══██╗██╔══██║██║  ██║    ██╔══██╗██║     ██║   ██║██║     ██╔═██╗ ██╔══╝  ██╔══██╗
-//  ██████╔╝██║  ██║██████╔╝    ██████╔╝███████╗╚██████╔╝╚██████╗██║  ██╗███████╗██║  ██║
-//  ╚═════╝ ╚═╝  ╚═╝╚═════╝     ╚═════╝ ╚══════╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
+// ════════════════════════════════════════════════════════════
+//  ██████╗ ██╗      ██████╗  ██████╗██╗  ██╗███████╗██████╗
+//  ██╔══██╗██║     ██╔═══██╗██╔════╝██║ ██╔╝██╔════╝██╔══██╗
+//  ██████╔╝██║     ██║   ██║██║     █████╔╝ █████╗  ██████╔╝
+//  ██╔══██╗██║     ██║   ██║██║     ██╔═██╗ ██╔══╝  ██╔══██╗
+//  ██████╔╝███████╗╚██████╔╝╚██████╗██║  ██╗███████╗██║  ██║
+//  ╚═════╝ ╚══════╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
 //
-//  SISTEM ANTI-IKLAN BERLAPIS — 6 LAYER PERLINDUNGAN
-// ═══════════════════════════════════════════════════════
+//  SISTEM ANTI-IKLAN 9 LAPIS — VERSI MAKSIMUM
+// ════════════════════════════════════════════════════════════
 
 /*
-  LAYER 1: OVERLAY INSTAN saat load
-    → Iframe langsung ditutup overlay SEBELUM konten YT muncul
-    → Tidak ada iklan yang pernah terlihat pengguna
-  
-  LAYER 2: IFRAME SHIELD fisik
-    → Div transparan menutupi seluruh area video
-    → Saat iklan aktif: pointer-events:all — klik tidak bisa ke tombol iklan
-  
-  LAYER 3: POSTMESSAGE MONITOR aktif
-    → Deteksi state change YT secara real-time
-    → Jika video yang diputar ≠ videoId lagu saat ini → IKLAN → blokir
-  
-  LAYER 4: PROGRESSIVE SCAN TIMER
-    → Setiap 800ms: cek playerState dan videoData
-    → Jika state buffering terlalu lama (>3s) → kemungkinan iklan → blokir
-  
-  LAYER 5: URL-BASED RELOAD CERDAS
-    → Saat iklan terdeteksi: force reload iframe dengan parameter baru
-    → Menambahkan timestamp agar tidak cache iklan lama
-  
-  LAYER 6: AUTO-MUTE SELAMA OVERLAY
-    → Selama overlay aktif, audio dimute otomatis
-    → Pengguna tidak dengar iklan sama sekali
+  ARSITEKTUR BARU (vs versi lama):
+
+  MASALAH LAMA:
+    - Overlay dilepas berdasarkan timer saja (bisa salah timing)
+    - Setelah lagu selesai → iframe reload → iklan pre-roll muncul sebelum overlay aktif
+    - verifyPlaying() terlalu lambat (300ms delay)
+
+  SOLUSI BARU — 9 LAYER:
+
+  L1. OVERLAY PERMANEN SAAT LOAD
+      Iframe tidak pernah visible sebelum konten terverifikasi.
+      Overlay muncul SEBELUM src iframe diset.
+
+  L2. SHIELD FISIK ALWAYS-ON
+      pointer-events:all SELALU aktif saat load, baru dilepas setelah verifikasi OK.
+      Default HTML juga blocking=true (lihat di elemen).
+
+  L3. MUTE OTOMATIS SAAT LOAD
+      Iframe langsung dimute saat src diset. Baru unmute setelah verifikasi.
+      Pengguna tidak dengar audio iklan sama sekali.
+
+  L4. PARAMETER ANTI-IKLAN AGRESIF
+      - youtube-nocookie.com (domain privasi, lebih sedikit iklan)  
+      - autoplay=1 LANGSUNG pada konten yang benar (tidak beri waktu iklan)
+      - start=0 eksplisit
+      - timestamp unik setiap load (bypass cache iklan)
+
+  L5. VERIFIKASI ID VIDEO AKTIF
+      Setiap 400ms (lebih cepat dari sebelumnya 800ms), cek videoId yang diputar.
+      Jika videoId ≠ yang diharapkan → IKLAN → blokir + reload.
+
+  L6. DETEKSI STATE CHANGE REAL-TIME
+      Tangkap postMessage dari YouTube:
+      - state=3 (buffering terlalu lama) → kemungkinan iklan
+      - state=1 (playing) → verifikasi id segera (tanpa delay 300ms)
+
+  L7. RELOAD AGRESIF BERLAPIS
+      Jika iklan terdeteksi:
+      1. ytCmd cancelPlayback + seekTo(9999)
+      2. 200ms kemudian: reload iframe fresh (timestamp baru)
+      3. Jika gagal (masih iklan): reload lagi setelah 1500ms
+      4. Maksimum 3x reload sebelum skip ke lagu berikutnya
+
+  L8. COUNTDOWN LEBIH CEPAT (2 detik, bukan 5)
+      Jika iklan terdeteksi dan reload gagal, overlay tetap
+      dengan countdown 2 detik lalu force skip.
+
+  L9. GUARD PADA handleTrackEnd
+      Setelah lagu selesai (state=0), JANGAN langsung load lagu berikutnya.
+      Aktifkan shield + overlay dulu, BARU load. Ini mencegah iklan muncul
+      di celah antara track selesai dan track baru dimulai.
 */
 
-var AD_LAYER = {
-  // State tracking
-  currentVideoId: null,
-  loadTs: 0,
-  bufferStart: 0,
-  lastState: -1,
-  muteBeforeAd: false,
-  shieldActive: false,
+var ADBLOCK = {
+  // --- Internal state ---
+  expectedId: null,       // video id yang seharusnya diputar
+  loadSession: 0,         // naik setiap playTrack() baru — mencegah race condition
+  verified: false,        // apakah konten sudah terverifikasi?
+  reloadCount: 0,         // berapa kali sudah reload untuk iklan ini
+  MAX_RELOAD: 3,          // batas reload sebelum skip lagu
+  scanTimer: null,
+  countdownTimer: null,
+  progressTimer: null,
+  isBlocking: false,      // sedang menampilkan overlay iklan?
+  muteWas: false,         // state mute sebelum iklan
 
-  // LAYER 1 + 6: Overlay instan saat load track
-  activateInstant: function(videoId) {
-    this.currentVideoId = videoId;
-    this.loadTs = Date.now();
-    this.bufferStart = 0;
-    this.lastState = -1;
-    if (!adBlockEnabled) return;
-    // Tampilkan overlay segera — pengguna tidak pernah melihat iklan
-    this._showOverlay('Memuat konten aman...', false);
-    // Aktifkan shield fisik
+  // ── INIT: Panggil sebelum src iframe diset ──────────────
+  init: function(videoId) {
+    var session = ++this.loadSession;
+    this.expectedId = videoId;
+    this.verified = false;
+    this.reloadCount = 0;
+    this.isBlocking = false;
+    this._stopAll();
+
+    if (!adBlockEnabled) return session;
+
+    // L1: Overlay langsung ON
+    this._showOverlay('MEMUAT KONTEN AMAN', 'Qoovy memverifikasi konten sebelum ditampilkan', false);
+    this._setProgress(0);
+
+    // L2: Shield ON
     this._setShield(true);
+
+    // L3: Mute dulu
+    this.muteWas = isMuted;
+    this._forceMute(true);
+
+    return session;
   },
 
-  // LAYER 2: Shield fisik
-  _setShield: function(on) {
-    var shield = document.getElementById('iframe-shield');
-    if (!shield) return;
-    this.shieldActive = on;
-    if (on) { shield.classList.add('blocking'); }
-    else { shield.classList.remove('blocking'); }
+  // ── Mulai scan setelah iframe src sudah diset ───────────
+  startScan: function(session) {
+    if (!adBlockEnabled) return;
+    var self = this;
+    var tick = 0;
+
+    // Progress bar animasi (psikologis, beri rasa loading)
+    var prog = 0;
+    this.progressTimer = setInterval(function() {
+      prog = Math.min(90, prog + 8);
+      self._setProgress(prog);
+    }, 300);
+
+    // L5 + L6: Scan setiap 400ms
+    this.scanTimer = setInterval(function() {
+      if (self.loadSession !== session) { self._stopAll(); return; }
+      tick++;
+      ytCmd('getVideoData', []);
+
+      // Safety: jika sudah terlalu lama loading tapi belum verified
+      // kemungkinan besar ini iklan yang tidak terdeteksi → reload
+      if (tick === 15 && !self.verified && !self.isBlocking) {
+        // 6 detik berlalu, belum verified → reload
+        self._triggerReload(session, 'Timeout verifikasi');
+      }
+      // Batas scan: 20 tick (8 detik) — setelah itu stop scan
+      if (tick >= 20) self._stopScan();
+    }, 400);
   },
 
-  // LAYER 3 + 4: Terima state dari YT
-  onStateChange: function(state) {
-    if (!adBlockEnabled) { this._clearAll(); return; }
-    this.lastState = state;
-
-    if (state === 3) {
-      // Buffering
-      if (!this.bufferStart) this.bufferStart = Date.now();
-    } else if (state === 1) {
-      // Playing — cek apakah ini konten asli atau iklan
-      this.bufferStart = 0;
-      // Berikan sedikit waktu untuk info video masuk
-      var self = this;
-      setTimeout(function() { self.verifyPlaying(); }, 300);
-    } else if (state === 2 || state === 0) {
-      this.bufferStart = 0;
-    }
-  },
-
-  // Verifikasi: apakah yang diputar adalah lagu yang benar?
-  verifyPlaying: function() {
-    if (!adBlockEnabled || !this.currentVideoId) return;
-    // Minta info video dari iframe
-    ytCmd('getVideoData', []);
-  },
-
-  // LAYER 3: Terima data video, verifikasi id
-  onVideoData: function(videoData) {
-    if (!adBlockEnabled || !this.currentVideoId) return;
+  // ── Terima data video dari YT ────────────────────────────
+  onVideoData: function(session, videoData) {
+    if (!adBlockEnabled || this.loadSession !== session) return;
     if (!videoData || !videoData.video_id) return;
 
     var playingId = videoData.video_id;
-    var expectedId = this.currentVideoId;
+    var expected = this.expectedId;
 
-    if (playingId && playingId !== expectedId) {
-      // ID berbeda = IKLAN TERDETEKSI
-      if (!isAdShowing) {
-        this._blockAd('Iklan terdeteksi (ID: ' + playingId.substring(0,8) + '...)');
+    if (!expected) return;
+
+    if (playingId === expected) {
+      // ✅ Konten benar — release overlay
+      if (!this.verified) {
+        this.verified = true;
+        this._release(session);
       }
-    } else if (playingId === expectedId) {
-      // ID sama = konten asli, hapus overlay
-      if (isAdShowing) this._clearAll();
-      else this._releaseOverlay();
+    } else if (playingId && playingId !== expected) {
+      // ❌ ID berbeda → IKLAN TERDETEKSI
+      if (!this.isBlocking) {
+        this._blockAd(session, 'Video ID: ' + playingId.substring(0,8) + '...');
+      }
     }
   },
 
-  // Hapus overlay setelah konten asli terverifikasi
-  _releaseOverlay: function() {
-    if (isAdShowing) return;
-    var shield = document.getElementById('iframe-shield');
-    if (shield) shield.classList.remove('blocking');
-    this.shieldActive = false;
-    // Tampilkan status shield sebentar
-    var statusEl = document.getElementById('ad-block-status');
-    if (statusEl) {
-      statusEl.classList.add('show');
-      setTimeout(function() { statusEl.classList.remove('show'); }, 2000);
-    }
-  },
+  // ── Release overlay setelah konten terverifikasi ─────────
+  _release: function(session) {
+    if (this.loadSession !== session) return;
+    this._stopAll();
+    this.isBlocking = false;
 
-  // EKSEKUSI PEMBLOKIRAN IKLAN
-  _blockAd: function(reason) {
-    if (!adBlockEnabled) return;
-    isAdShowing = true;
-    adsBlockedCount++;
+    // Progress 100%
+    this._setProgress(100);
 
-    // LAYER 6: Auto-mute saat iklan
-    this.muteBeforeAd = isMuted;
-    if (!isMuted) ytCmd('mute', []);
-
-    // LAYER 2: Aktifkan shield penuh
-    this._setShield(true);
-
-    // Tampilkan overlay
-    this._showOverlay('Memblokir: ' + (reason || 'iklan terdeteksi'), true);
-    updateAdCount();
-
-    // LAYER 5: Langsung inisiasi skip
-    adCountVal = 3; // Lebih cepat dari versi lama
-    document.getElementById('ad-countdown').textContent = adCountVal;
-    clearInterval(adCountdownTimer);
-    var self = this;
-    adCountdownTimer = setInterval(function() {
-      adCountVal--;
-      var cd = document.getElementById('ad-countdown');
-      if (cd) cd.textContent = Math.max(0, adCountVal);
-      if (adCountVal <= 0) {
-        clearInterval(adCountdownTimer);
-        self.forceSkip();
-      }
-    }, 1000);
-  },
-
-  // LAYER 5: Force skip agresif
-  forceSkip: function() {
-    clearInterval(adCountdownTimer);
-    // Langkah 1: Coba skip via YT API
-    ytCmd('cancelPlayback', []);
-    ytCmd('seekTo', [9999, true]);
-    // Langkah 2: Reload iframe dengan URL fresh (bypass cache iklan)
-    var self = this;
-    setTimeout(function() {
-      if (isAdShowing && self.currentVideoId && curIdx >= 0) {
-        self._reloadFresh();
-      }
-    }, 600);
-  },
-
-  // Reload iframe dengan timestamp baru (anti-cache iklan)
-  _reloadFresh: function() {
-    if (curIdx < 0) return;
-    var iframe = document.getElementById('yt-iframe');
-    if (!iframe) return;
-    var t = Date.now();
-    var origin = window.location.origin || 'http://localhost';
-    iframe.src = 'https://www.youtube-nocookie.com/embed/' + this.currentVideoId
-      + '?autoplay=1&enablejsapi=1&controls=0&modestbranding=1'
-      + '&rel=0&iv_load_policy=3&playsinline=1&cc_load_policy=0'
-      + '&disablekb=1&fs=0&hl=id&color=white'
-      + '&origin=' + encodeURIComponent(origin)
-      + '&_t=' + t;  // timestamp mencegah cache iklan
-    showLdr();
-  },
-
-  // Bersihkan semua state iklan
-  _clearAll: function() {
-    isAdShowing = false;
-    clearInterval(adCountdownTimer);
-    document.getElementById('ad-overlay').classList.remove('show');
-    this._setShield(false);
-    // Kembalikan mute ke kondisi semula
-    if (!this.muteBeforeAd && !isMuted) {
-      ytCmd('unMute', []);
+    // L3: Unmute jika sebelumnya tidak mute
+    this._forceMute(this.muteWas);
+    if (!this.muteWas) {
       ytCmd('setVolume', [volLevel]);
     }
-    hideLdr();
+
+    // Hapus overlay dengan sedikit delay supaya progress bar terlihat 100%
+    var self = this;
+    setTimeout(function() {
+      if (self.loadSession !== session) return;
+      document.getElementById('ad-overlay').classList.remove('show');
+      self._setShield(false);
+      // Tampilkan badge shield sebentar
+      var badge = document.getElementById('ad-block-status');
+      if (badge) {
+        badge.classList.add('show');
+        setTimeout(function() { badge.classList.remove('show'); }, 2500);
+      }
+    }, 300);
   },
 
-  _showOverlay: function(subMsg, withCountdown) {
+  // ── Blokir iklan yang terdeteksi ─────────────────────────
+  _blockAd: function(session, reason) {
+    if (this.loadSession !== session || !adBlockEnabled) return;
+    this.isBlocking = true;
+    adsBlockedCount++;
+    updateAdCount();
+
+    // L3: Pastikan mute
+    this._forceMute(true);
+    // L2: Shield on
+    this._setShield(true);
+
+    // L8: Tampilkan overlay countdown
+    this._showOverlay('IKLAN DIBLOKIR', 'Qoovy mendeteksi: ' + reason + '. Memuat ulang konten...', true);
+
+    // L7: Reload berlapis
+    this._triggerReload(session, reason);
+  },
+
+  // ── Reload iframe (berlapis, hingga MAX_RELOAD kali) ─────
+  _triggerReload: function(session, reason) {
+    if (this.loadSession !== session) return;
+    this.reloadCount++;
+
+    if (this.reloadCount > this.MAX_RELOAD) {
+      // Terlalu banyak reload → skip ke lagu berikutnya
+      toast('Iklan tidak dapat diblokir, lanjut ke lagu berikutnya', 'warn');
+      this._stopAll();
+      setTimeout(function() { handleTrackEnd(); }, 500);
+      return;
+    }
+
+    // L7 step 1: Cancel via YT API
+    ytCmd('stopVideo', []);
+    ytCmd('cancelPlayback', []);
+
+    var self = this;
+    var delay = this.reloadCount === 1 ? 200 : 500;
+
+    setTimeout(function() {
+      if (self.loadSession !== session) return;
+
+      // L7 step 2: Reload iframe dengan URL fresh
+      var iframe = document.getElementById('yt-iframe');
+      if (!iframe || !self.expectedId) return;
+
+      var origin = window.location.origin || 'http://localhost';
+      var ts = Date.now() + Math.random(); // timestamp unik
+      // L4: Parameter anti-iklan maksimum
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + self.expectedId
+        + '?autoplay=1'
+        + '&enablejsapi=1'
+        + '&controls=0'
+        + '&modestbranding=1'
+        + '&rel=0'
+        + '&iv_load_policy=3'
+        + '&playsinline=1'
+        + '&cc_load_policy=0'
+        + '&disablekb=1'
+        + '&fs=0'
+        + '&hl=id'
+        + '&color=white'
+        + '&start=0'
+        + '&origin=' + encodeURIComponent(origin)
+        + '&_r=' + self.reloadCount   // nomor reload
+        + '&_t=' + Math.floor(ts);    // timestamp unik
+
+      // Reset verified, siap scan lagi
+      self.verified = false;
+      self.isBlocking = false;
+
+      // Restart scan untuk sesi ini
+      self._stopScan();
+      self.startScan(session);
+    }, delay);
+  },
+
+  // ── Force skip (tombol Lewati Sekarang) ──────────────────
+  forceSkip: function() {
+    var session = this.loadSession;
+    this._stopAll();
+    // Hard reload final
+    this._triggerReload(session, 'manual skip');
+  },
+
+  // ── Shield fisik ─────────────────────────────────────────
+  _setShield: function(on) {
+    var shield = document.getElementById('iframe-shield');
+    if (!shield) return;
+    if (on) shield.classList.add('blocking');
+    else shield.classList.remove('blocking');
+  },
+
+  // ── Mute paksa via YT API ────────────────────────────────
+  _forceMute: function(mute) {
+    if (mute) { ytCmd('mute', []); ytCmd('setVolume', [0]); }
+    else if (!isMuted) { ytCmd('unMute', []); ytCmd('setVolume', [volLevel]); }
+  },
+
+  // ── Overlay UI ───────────────────────────────────────────
+  _showOverlay: function(phase, sub, withCountdown) {
     var overlay = document.getElementById('ad-overlay');
     if (!overlay) return;
-    var sub = overlay.querySelector('.ad-sub');
-    if (sub) sub.textContent = subMsg || 'Memblokir iklan...';
-    var cd = overlay.querySelector('.ad-countdown');
-    if (cd) cd.style.display = withCountdown ? 'block' : 'none';
-    var skipBtn = overlay.querySelector('.btn-skip-now');
+    var phaseEl = document.getElementById('ad-phase');
+    var subEl = document.getElementById('ad-sub');
+    var cdEl = document.getElementById('ad-countdown');
+    var skipBtn = document.getElementById('btn-skip-now');
+    if (phaseEl) phaseEl.textContent = phase;
+    if (subEl) subEl.textContent = sub;
+    if (cdEl) cdEl.style.display = withCountdown ? 'block' : 'none';
     if (skipBtn) skipBtn.style.display = withCountdown ? 'block' : 'none';
     overlay.classList.add('show');
-  },
 
-  // LAYER 4: Scan berkala — deteksi iklan yang lolos
-  startScan: function(videoId) {
-    this.stopScan();
-    if (!adBlockEnabled) return;
-    var self = this;
-    var checkCount = 0;
-    adScanTimer = setInterval(function() {
-      checkCount++;
-      if (!adBlockEnabled || curIdx < 0) { self.stopScan(); return; }
-
-      // Request data terbaru dari iframe
-      ytCmd('getVideoData', []);
-      var iframe = document.getElementById('yt-iframe');
-      if (iframe && iframe.contentWindow) {
-        try {
-          iframe.contentWindow.postMessage(JSON.stringify({
-            event: 'listening', id: 1, channel: 'widget'
-          }), '*');
-        } catch(e) {}
-      }
-
-      // LAYER 4: Deteksi buffering berlebih (indikasi iklan pre-roll)
-      if (self.bufferStart && (Date.now() - self.bufferStart) > 3500) {
-        if (!isAdShowing && isPlaying) {
-          self._blockAd('Loading berlebih terdeteksi');
-          self.bufferStart = 0;
+    if (withCountdown) {
+      // L8: Countdown 2 detik
+      var self = this;
+      var session = this.loadSession;
+      var val = 2;
+      if (cdEl) cdEl.textContent = val;
+      clearInterval(this.countdownTimer);
+      this.countdownTimer = setInterval(function() {
+        val--;
+        if (cdEl) cdEl.textContent = Math.max(0, val);
+        if (val <= 0) {
+          clearInterval(self.countdownTimer);
+          // Jika countdown habis dan masih blocking, coba reload lagi
+          if (self.loadSession === session && self.isBlocking) {
+            self._triggerReload(session, 'countdown timeout');
+          }
         }
-      }
-
-      // Stop scan setelah konten berjalan stabil
-      if (checkCount > 30 && !isAdShowing) self.stopScan();
-    }, 800);
+      }, 1000);
+    }
   },
 
-  stopScan: function() {
-    if (adScanTimer) { clearInterval(adScanTimer); adScanTimer = null; }
+  _setProgress: function(pct) {
+    var fill = document.getElementById('ad-progress-fill');
+    if (fill) fill.style.width = Math.min(100, pct) + '%';
+  },
+
+  // ── Stop semua timer ─────────────────────────────────────
+  _stopAll: function() {
+    this._stopScan();
+    if (this.countdownTimer) { clearInterval(this.countdownTimer); this.countdownTimer = null; }
+    if (this.progressTimer) { clearInterval(this.progressTimer); this.progressTimer = null; }
+  },
+  _stopScan: function() {
+    if (this.scanTimer) { clearInterval(this.scanTimer); this.scanTimer = null; }
+  },
+
+  // ── Dipanggil saat adblock dimatikan ─────────────────────
+  disable: function() {
+    this._stopAll();
+    document.getElementById('ad-overlay').classList.remove('show');
+    this._setShield(false);
+    this._forceMute(isMuted);
+    if (!isMuted) ytCmd('setVolume', [volLevel]);
+  },
+
+  // ── Dipanggil saat state change dari YT ──────────────────
+  onStateChange: function(session, state) {
+    if (!adBlockEnabled || this.loadSession !== session) return;
+    if (state === 1) {
+      // Playing — verifikasi segera (L6: tanpa delay)
+      ytCmd('getVideoData', []);
+    }
   }
 };
+
+// ── Shortcut global skip ──
+function skipAdNow() { ADBLOCK.forceSkip(); }
 
 function updateAdCount() {
   var el = document.getElementById('pill-adblock-count');
@@ -1285,230 +1396,306 @@ function updateAdCount() {
   }
 }
 
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  TOGGLE AD BLOCK
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 function toggleAdBlock() {
   adBlockEnabled = !adBlockEnabled;
   var badge = document.getElementById('adb-badge');
   var lbl = document.getElementById('adb-label');
   var pill = document.getElementById('pill-adblock');
-  var statusEl = document.getElementById('ad-block-status');
   if (adBlockEnabled) {
     badge.classList.remove('off'); lbl.textContent = 'AD-FREE ON';
     pill.classList.remove('off'); pill.textContent = 'Bebas Iklan';
-    if (statusEl) statusEl.classList.add('show');
-    toast('AdBlock aktif — 6 lapis perlindungan ON');
-    if (curIdx >= 0) AD_LAYER.startScan(AD_LAYER.currentVideoId);
+    toast('AdBlock aktif — 9 lapis perlindungan ON');
+    if (curIdx >= 0) {
+      // Re-aktifkan shield
+      ADBLOCK._setShield(true);
+    }
   } else {
     badge.classList.add('off'); lbl.textContent = 'AD-FREE OFF';
     pill.classList.add('off'); pill.textContent = 'AdBlock OFF';
-    if (statusEl) statusEl.classList.remove('show');
-    AD_LAYER.stopScan();
-    if (isAdShowing) AD_LAYER._clearAll();
+    ADBLOCK.disable();
     toast('AdBlock dimatikan');
   }
 }
 
-function skipAdNow() {
-  AD_LAYER.forceSkip();
+// ════════════════════════════════════════════════════════════
+//  YOUTUBE IFRAME API
+// ════════════════════════════════════════════════════════════
+function buildIframeSrc(videoId, session) {
+  var origin = window.location.origin || 'http://localhost';
+  var ts = Date.now();
+  // L4: URL dengan parameter anti-iklan maksimum
+  return 'https://www.youtube-nocookie.com/embed/' + videoId
+    + '?autoplay=1'
+    + '&enablejsapi=1'
+    + '&controls=0'
+    + '&modestbranding=1'
+    + '&rel=0'
+    + '&iv_load_policy=3'
+    + '&playsinline=1'
+    + '&cc_load_policy=0'
+    + '&disablekb=1'
+    + '&fs=0'
+    + '&hl=id'
+    + '&color=white'
+    + '&start=0'
+    + '&origin=' + encodeURIComponent(origin)
+    + '&_s=' + (session || 0)
+    + '&_t=' + ts;
 }
 
-// ═══════════════════════════════════════════
-//  LOAD FROM LOCALSTORAGE
-// ═══════════════════════════════════════════
-function loadFromStorage() {
-  try { var sh = localStorage.getItem(LS_SEARCH_HIST); if (sh) searchHistory = JSON.parse(sh); } catch(e) { searchHistory = []; }
-  try { var ph = localStorage.getItem(LS_PLAY_HIST); if (ph) playHistory = JSON.parse(ph); } catch(e) { playHistory = []; }
-  updateHistoryBadge();
-}
-function saveSearchHistory() { try { localStorage.setItem(LS_SEARCH_HIST, JSON.stringify(searchHistory)); } catch(e) {} }
-function savePlayHistory() { try { localStorage.setItem(LS_PLAY_HIST, JSON.stringify(playHistory)); } catch(e) {} }
-
-// ═══════════════════════════════════════════
-//  SIDEBAR TABS
-// ═══════════════════════════════════════════
-function switchTab(tab) {
-  activeTab = tab;
-  ['playlist','queue','history'].forEach(function(t) {
-    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
-    document.getElementById('panel-' + t).classList.toggle('active', t === tab);
-  });
+function ytCmd(func, args) {
+  var iframe = document.getElementById('yt-iframe');
+  if (!iframe || !iframe.contentWindow) return;
+  try {
+    iframe.contentWindow.postMessage(JSON.stringify({
+      event: 'command', func: func, args: args || []
+    }), '*');
+  } catch(e) {}
 }
 
-// ═══════════════════════════════════════════
-//  MOBILE PLAYLIST
-// ═══════════════════════════════════════════
-function toggleMobilePlaylist() {
-  mobilePlaylistOpen = !mobilePlaylistOpen;
-  var sidebar = document.getElementById('sidebar');
-  var overlay = document.getElementById('mobile-sheet-overlay');
-  var toggleBtn = document.getElementById('mobile-playlist-toggle');
-  var label = document.getElementById('mob-toggle-label');
-  if (mobilePlaylistOpen) {
-    sidebar.classList.add('mobile-open'); overlay.classList.add('show');
-    toggleBtn.classList.add('open'); label.textContent = 'Tutup';
-  } else {
-    sidebar.classList.remove('mobile-open'); overlay.classList.remove('show');
-    toggleBtn.classList.remove('open'); label.textContent = 'Playlist';
-  }
-}
-function closeMobilePlaylist() { if (mobilePlaylistOpen) toggleMobilePlaylist(); }
+// ── Tangkap postMessage dari YouTube ──
+window.addEventListener('message', function(e) {
+  if (!e.origin || !e.origin.includes('youtube')) return;
+  try {
+    var data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+    var session = ADBLOCK.loadSession;
 
-// ═══════════════════════════════════════════
-//  SEARCH HISTORY
-// ═══════════════════════════════════════════
-function addSearchHistory(q) {
-  searchHistory = searchHistory.filter(function(s) { return s !== q; });
-  searchHistory.unshift(q);
-  if (searchHistory.length > 15) searchHistory = searchHistory.slice(0, 15);
-  saveSearchHistory();
-}
-function deleteSearchHistory(q) {
-  searchHistory = searchHistory.filter(function(s) { return s !== q; });
-  saveSearchHistory(); showSearchDropdown();
-}
-function clearSearchHistory() { searchHistory = []; saveSearchHistory(); hideSearchDropdown(); }
-function onSearchInput() { showSearchDropdown(); }
-function onSearchKeydown(e) {
-  if (e.key === 'Enter') { hideSearchDropdown(); doSearch(); }
-  else if (e.key === 'Escape') { hideSearchDropdown(); }
-}
-function showSearchDropdown() {
-  var input = document.getElementById('search-input');
-  var val = input.value.trim().toLowerCase();
-  var dropdown = document.getElementById('search-history-dropdown');
-  var filtered = val ? searchHistory.filter(function(s) { return s.toLowerCase().includes(val); }) : searchHistory;
-  if (!filtered.length) { hideSearchDropdown(); return; }
-  var html = filtered.map(function(s) {
-    return '<div class="sh-item">'
-      + '<div class="sh-item-text" onclick="selectSearchHistory(\'' + esc(s) + '\')">'
-      + '<svg class="sh-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
-      + esc(s) + '</div>'
-      + '<button class="sh-del" onclick="event.stopPropagation();deleteSearchHistory(\'' + esc(s) + '\')" title="Hapus">x</button>'
-      + '</div>';
-  }).join('');
-  html += '<div class="sh-clear-row" onclick="clearSearchHistory()">Hapus Semua Riwayat</div>';
-  dropdown.innerHTML = html; dropdown.classList.add('show');
-}
-function hideSearchDropdown() { document.getElementById('search-history-dropdown').classList.remove('show'); }
-function selectSearchHistory(q) {
-  document.getElementById('search-input').value = q;
-  hideSearchDropdown(); doSearch();
-}
-document.addEventListener('click', function(e) {
-  var section = document.querySelector('.search-section');
-  if (section && !section.contains(e.target)) hideSearchDropdown();
+    if (data.event === 'onReady') {
+      // L3: Mute segera saat ready (sebelum konten play)
+      ytCmd('mute', []);
+      ytCmd('setVolume', [0]);
+      // Minta data video pertama kali
+      setTimeout(function() { ytCmd('getVideoData', []); }, 100);
+    }
+
+    if (data.event === 'onStateChange') {
+      handleStateChange(data.info);
+      ADBLOCK.onStateChange(session, data.info);
+    }
+
+    if (data.event === 'infoDelivery' && data.info) {
+      if (data.info.currentTime !== undefined && data.info.duration !== undefined) {
+        simCur = data.info.currentTime;
+        simDur = data.info.duration;
+        updateProgressUI();
+      }
+      // L5: Verifikasi videoData
+      if (data.info.videoData) {
+        ADBLOCK.onVideoData(session, data.info.videoData);
+      }
+    }
+  } catch(e2) {}
 });
 
-// ═══════════════════════════════════════════
-//  PLAY HISTORY
-// ═══════════════════════════════════════════
-function addPlayHistory(track) {
-  var entry = { id: track.id, title: track.title, ch: track.ch, thumb: track.thumb, ts: Date.now() };
-  playHistory = playHistory.filter(function(h) { return h.id !== track.id; });
-  playHistory.unshift(entry);
-  if (playHistory.length > 50) playHistory = playHistory.slice(0, 50);
-  savePlayHistory(); renderHistoryList(); updateHistoryBadge();
+function handleStateChange(state) {
+  if (state === 1) {
+    // Playing
+    setPlayState(true);
+    hideLdr();
+    startProgTimer();
+    // Request video data untuk verifikasi
+    ytCmd('getVideoData', []);
+  } else if (state === 2) {
+    setPlayState(false);
+    stopProgTimer();
+  } else if (state === 0) {
+    // Track selesai
+    setPlayState(false);
+    stopProgTimer();
+    // L9: Guard — aktifkan shield dulu sebelum load track berikutnya
+    if (adBlockEnabled) {
+      ADBLOCK._setShield(true);
+      document.getElementById('ad-overlay').classList.remove('show');
+    }
+    handleTrackEnd();
+  } else if (state === 3) {
+    showLdr();
+  } else if (state === -1 || state === 5) {
+    hideLdr();
+  }
 }
-function clearPlayHistory() {
-  playHistory = []; savePlayHistory(); renderHistoryList(); updateHistoryBadge();
-  toast('Riwayat dihapus');
-}
-function updateHistoryBadge() {
-  var el = document.getElementById('badge-history');
-  if (el) el.textContent = playHistory.length;
-}
-function renderHistoryList() {
-  var list = document.getElementById('history-list');
-  if (!playHistory.length) {
-    list.innerHTML = '<div class="empty-wrap">'
-      + '<div class="empty-icon-wrap"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>'
-      + '<div class="empty-title">Belum ada riwayat</div>'
-      + '<div class="empty-sub">Lagu yang diputar akan muncul di sini</div>'
-      + '</div>';
+
+function handleTrackEnd() {
+  if (repeatMode === 2) { reloadCurrentTrack(); return; }
+  if (musicQueue.length > 0) {
+    var nxt = musicQueue.shift();
+    renderQueueList(); updateQueueBadge();
+    var pill = document.getElementById('pill-queue');
+    if (pill) {
+      if (musicQueue.length > 0) { pill.textContent = 'Queue: ' + musicQueue.length; pill.classList.add('show'); }
+      else { pill.classList.remove('show'); }
+    }
+    var fi = tracks.findIndex(function(t) { return t.id === nxt.id; });
+    if (fi !== -1) { playTrack(fi); }
+    else {
+      var ins = (curIdx >= 0 ? curIdx + 1 : tracks.length);
+      tracks.splice(ins, 0, nxt); renderTracks(); playTrack(ins);
+    }
     return;
   }
-  var html = playHistory.map(function(h, i) {
-    return '<div class="hist-item" onclick="playFromHistory(' + i + ')">'
-      + '<img class="track-thumb" src="' + esc(h.thumb) + '" alt="" onerror="this.style.background=\'#2a2a3a\'" loading="lazy"/>'
-      + '<div class="track-info"><div class="track-title">' + esc(h.title) + '</div><div class="track-ch">' + esc(h.ch) + '</div></div>'
-      + '<span class="hist-time">' + fmtRelTime(h.ts) + '</span>'
-      + '</div>';
-  }).join('');
-  list.innerHTML = html;
+  nextTrack();
 }
-function playFromHistory(i) {
-  var h = playHistory[i];
-  if (!h) return;
-  var exists = tracks.findIndex(function(t) { return t.id === h.id; });
-  if (exists >= 0) { playTrack(exists); }
-  else {
-    tracks.unshift({ id: h.id, title: h.title, ch: h.ch, thumb: h.thumb });
-    renderTracks(); playTrack(0);
+
+// ════════════════════════════════════════════════════════════
+//  PROGRESS BAR
+// ════════════════════════════════════════════════════════════
+var progTick = 0;
+function startProgTimer() {
+  stopProgTimer();
+  progTimer = setInterval(function() {
+    if (!isPlaying) return;
+    simCur += 0.9;
+    if (simDur > 0 && simCur >= simDur - 0.5) {
+      simCur = simDur; updateProgressUI(); stopProgTimer(); setPlayState(false);
+      handleTrackEnd(); return;
+    }
+    updateProgressUI();
+    progTick++;
+    // Setiap 4 detik, minta update akurat dari iframe
+    if (progTick % 4 === 0) {
+      var iframe = document.getElementById('yt-iframe');
+      if (iframe && iframe.contentWindow) {
+        try {
+          iframe.contentWindow.postMessage(JSON.stringify({
+            event: 'command', func: 'getCurrentTime', args: []
+          }), '*');
+        } catch(e) {}
+      }
+    }
+  }, 900);
+}
+function stopProgTimer() { if (progTimer) { clearInterval(progTimer); progTimer = null; } }
+function updateProgressUI() {
+  if (simDur > 0) {
+    var pct = Math.min(100, (simCur / simDur) * 100);
+    document.getElementById('prog-fill').style.width = pct + '%';
+    document.getElementById('t-cur').textContent = fmt(simCur);
+    document.getElementById('t-dur').textContent = fmt(simDur);
   }
+}
+function fmt(s) {
+  s = Math.max(0, Math.floor(s));
+  return Math.floor(s/60) + ':' + ('0'+(s%60)).slice(-2);
+}
+function seekTo(e) {
+  var rect = document.getElementById('prog-track').getBoundingClientRect();
+  var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  var pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+  simCur = pct * (simDur || 300);
+  ytCmd('seekTo', [simCur, true]);
+  updateProgressUI();
+}
+
+// ════════════════════════════════════════════════════════════
+//  PLAYBACK
+// ════════════════════════════════════════════════════════════
+function playTrack(idx) {
+  if (idx < 0 || idx >= tracks.length) return;
+  curIdx = idx;
+  var t = tracks[idx];
+  simCur = 0; simDur = 0; isPlaying = false;
+  stopProgTimer();
+
+  // Tampilkan player view
+  document.getElementById('idle-view').style.display = 'none';
+  document.getElementById('player-view').style.display = 'block';
+  document.getElementById('idle-disc').classList.add('spin');
+  showLdr();
+
+  // L1 + L2 + L3: Init ADBLOCK SEBELUM src diset
+  var session = ADBLOCK.init(t.id);
+
+  // Set iframe src (dengan timestamp unik — L4)
+  document.getElementById('yt-iframe').src = buildIframeSrc(t.id, session);
+
+  // Update info UI
+  document.getElementById('np-title').textContent = t.title;
+  document.getElementById('np-ch').textContent = t.ch;
+  document.getElementById('prog-fill').style.width = '0%';
+  document.getElementById('t-cur').textContent = '0:00';
+  document.getElementById('t-dur').textContent = '0:00';
+
+  addPlayHistory(t);
+  renderTracks();
+  scrollToTrack(idx);
+
+  // Mulai scan setelah sedikit delay (beri waktu iframe load)
+  setTimeout(function() {
+    if (ADBLOCK.loadSession === session) {
+      ADBLOCK.startScan(session);
+    }
+  }, 800);
+
+  // Safety: hapus loading setelah 10 detik
+  setTimeout(function() { hideLdr(); }, 10000);
+
   if (window.innerWidth <= 640) setTimeout(closeMobilePlaylist, 200);
 }
-function fmtRelTime(ts) {
-  var diff = Math.floor((Date.now() - ts) / 1000);
-  if (diff < 60) return 'baru saja';
-  if (diff < 3600) return Math.floor(diff/60) + 'm lalu';
-  if (diff < 86400) return Math.floor(diff/3600) + 'j lalu';
-  return Math.floor(diff/86400) + 'h lalu';
+
+function reloadCurrentTrack() {
+  if (curIdx < 0) return;
+  simCur = 0;
+  var t = tracks[curIdx];
+  var session = ADBLOCK.init(t.id);
+  document.getElementById('yt-iframe').src = buildIframeSrc(t.id, session);
+  showLdr();
+  setTimeout(function() {
+    if (ADBLOCK.loadSession === session) ADBLOCK.startScan(session);
+  }, 800);
 }
 
-// ═══════════════════════════════════════════
-//  MUSIC QUEUE
-// ═══════════════════════════════════════════
-function addToQueue(track, showToast) {
-  musicQueue.push(track); renderQueueList(); updateQueueBadge();
-  if (showToast !== false) toast('"' + track.title.substring(0,30) + '..." ditambah ke antrean');
-  var pill = document.getElementById('pill-queue');
-  if (pill) { pill.textContent = 'Queue: ' + musicQueue.length; pill.classList.add('show'); }
+function togglePlay() {
+  if (curIdx < 0) { if (tracks.length > 0) playTrack(0); return; }
+  if (isPlaying) { ytCmd('pauseVideo', []); setPlayState(false); stopProgTimer(); }
+  else { ytCmd('playVideo', []); setPlayState(true); startProgTimer(); }
 }
-function removeFromQueue(i) {
-  musicQueue.splice(i, 1); renderQueueList(); updateQueueBadge();
-  var pill = document.getElementById('pill-queue');
-  if (pill) {
-    if (musicQueue.length > 0) { pill.textContent = 'Queue: ' + musicQueue.length; pill.classList.add('show'); }
-    else { pill.classList.remove('show'); }
-  }
+
+function prevTrack() {
+  if (!tracks.length) return;
+  playTrack(isShuffle ? getPrevShuffleIdx() : (curIdx - 1 + tracks.length) % tracks.length);
 }
-function clearQueue() {
-  musicQueue = []; renderQueueList(); updateQueueBadge();
-  var pill = document.getElementById('pill-queue');
-  if (pill) pill.classList.remove('show');
-  toast('Antrean dikosongkan');
-}
-function updateQueueBadge() {
-  var el = document.getElementById('badge-queue');
-  if (el) el.textContent = musicQueue.length;
-}
-function renderQueueList() {
-  var list = document.getElementById('queue-list');
-  if (!musicQueue.length) {
-    list.innerHTML = '<div class="empty-wrap">'
-      + '<div class="empty-icon-wrap"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg></div>'
-      + '<div class="empty-title">Antrean kosong</div>'
-      + '<div class="empty-sub">Tekan + pada lagu untuk menambah ke antrean</div>'
-      + '</div>';
+
+function nextTrack() {
+  if (!tracks.length) return;
+  if (musicQueue.length > 0) {
+    var nxt = musicQueue.shift();
+    renderQueueList(); updateQueueBadge();
+    var pill = document.getElementById('pill-queue');
+    if (pill) {
+      if (musicQueue.length > 0) { pill.textContent = 'Queue: ' + musicQueue.length; pill.classList.add('show'); }
+      else { pill.classList.remove('show'); }
+    }
+    var fi = tracks.findIndex(function(t) { return t.id === nxt.id; });
+    if (fi !== -1) { playTrack(fi); }
+    else {
+      var ins = (curIdx >= 0 ? curIdx + 1 : tracks.length);
+      tracks.splice(ins, 0, nxt); renderTracks(); playTrack(ins);
+    }
     return;
   }
-  var html = musicQueue.map(function(t, i) {
-    return '<div class="queue-item">'
-      + '<span class="queue-order">' + (i+1) + '</span>'
-      + '<img class="track-thumb" src="' + esc(t.thumb) + '" alt="" onerror="this.style.background=\'#2a2a3a\'" loading="lazy"/>'
-      + '<div class="track-info"><div class="track-title">' + esc(t.title) + '</div><div class="track-ch">' + esc(t.ch) + '</div></div>'
-      + '<button class="btn-queue-remove" onclick="removeFromQueue(' + i + ')" title="Hapus dari antrean">'
-      + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
-      + '</button></div>';
-  }).join('');
-  list.innerHTML = html;
+  var ni;
+  if (isShuffle) { ni = getNextShuffleIdx(); }
+  else {
+    if (repeatMode === 1) { ni = (curIdx + 1) % tracks.length; }
+    else { ni = curIdx + 1; if (ni >= tracks.length) { toast('Playlist selesai'); setPlayState(false); stopProgTimer(); return; } }
+  }
+  playTrack(ni);
 }
 
-// ═══════════════════════════════════════════
-//  SHUFFLE
-// ═══════════════════════════════════════════
+function setPlayState(state) {
+  isPlaying = state;
+  document.getElementById('ico-play').style.display = state ? 'none' : 'block';
+  document.getElementById('ico-pause').style.display = state ? 'block' : 'none';
+  var disc = document.getElementById('idle-disc');
+  if (state) disc.classList.add('spin'); else disc.classList.remove('spin');
+}
+
+// ════════════════════════════════════════════════════════════
+//  SHUFFLE & REPEAT
+// ════════════════════════════════════════════════════════════
 function buildShuffleQueue(currentIdx) {
   var indices = [];
   for (var i = 0; i < tracks.length; i++) { if (i !== currentIdx) indices.push(i); }
@@ -1529,248 +1716,6 @@ function getPrevShuffleIdx() {
   if (shufflePos > 0) shufflePos--;
   return shuffleQueue[shufflePos] !== undefined ? shuffleQueue[shufflePos] : 0;
 }
-
-// ═══════════════════════════════════════════
-//  YOUTUBE IFRAME
-// ═══════════════════════════════════════════
-function buildIframeSrc(videoId, autoplay) {
-  var origin = window.location.origin || 'http://localhost';
-  var auto = autoplay ? 1 : 0;
-  var t = Date.now();
-  return 'https://www.youtube-nocookie.com/embed/' + videoId
-    + '?autoplay=' + auto + '&enablejsapi=1&controls=0&modestbranding=1'
-    + '&rel=0&iv_load_policy=3&playsinline=1&cc_load_policy=0'
-    + '&disablekb=1&fs=0&hl=id&color=white'
-    + '&origin=' + encodeURIComponent(origin)
-    + '&_t=' + t;  // timestamp anti-cache iklan
-}
-
-function ytCmd(func, args) {
-  var iframe = document.getElementById('yt-iframe');
-  if (!iframe || !iframe.contentWindow) return;
-  try { iframe.contentWindow.postMessage(JSON.stringify({ event:'command', func:func, args:args||[] }), '*'); } catch(e) {}
-}
-
-window.addEventListener('message', function(e) {
-  if (!e.origin.includes('youtube')) return;
-  try {
-    var data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
-
-    if (data.event === 'onReady') {
-      ytAPIReady = true;
-      ytCmd('setVolume', [isMuted ? 0 : volLevel]);
-      // Setelah ready, verifikasi segera
-      setTimeout(function() { ytCmd('getVideoData', []); }, 500);
-    }
-
-    if (data.event === 'onStateChange') {
-      handleStateChange(data.info);
-      AD_LAYER.onStateChange(data.info);
-    }
-
-    if (data.event === 'infoDelivery' && data.info) {
-      // Terima data current time
-      if (data.info.currentTime !== undefined && data.info.duration !== undefined) {
-        simCur = data.info.currentTime;
-        simDur = data.info.duration;
-        updateProgressUI();
-      }
-      // LAYER 3: Verifikasi video ID
-      if (data.info.videoData) {
-        AD_LAYER.onVideoData(data.info.videoData);
-      }
-    }
-  } catch(e2) {}
-});
-
-function handleStateChange(state) {
-  if (state === 1) {
-    setPlayState(true); hideLdr(); startProgTimer();
-    // Jika sedang menampilkan overlay awal (bukan iklan), periksa dulu
-    if (!isAdShowing) AD_LAYER._releaseOverlay();
-  }
-  else if (state === 2) { setPlayState(false); stopProgTimer(); }
-  else if (state === 0) { setPlayState(false); stopProgTimer(); if (!isAdShowing) handleTrackEnd(); }
-  else if (state === 3) { showLdr(); }
-  else if (state === -1 || state === 5) { hideLdr(); }
-}
-
-function handleTrackEnd() {
-  if (repeatMode === 2) { reloadCurrentTrack(); return; }
-  if (musicQueue.length > 0) {
-    var nextTrackFromQueue = musicQueue.shift();
-    renderQueueList(); updateQueueBadge();
-    var pill = document.getElementById('pill-queue');
-    if (pill) {
-      if (musicQueue.length > 0) { pill.textContent = 'Queue: ' + musicQueue.length; pill.classList.add('show'); }
-      else { pill.classList.remove('show'); }
-    }
-    var foundIdx = tracks.findIndex(function(t) { return t.id === nextTrackFromQueue.id; });
-    if (foundIdx !== -1) { playTrack(foundIdx); }
-    else {
-      var insertAt = (curIdx >= 0 ? curIdx + 1 : tracks.length);
-      tracks.splice(insertAt, 0, nextTrackFromQueue); renderTracks(); playTrack(insertAt);
-    }
-    toast('▶ Memutar dari antrean'); return;
-  }
-  nextTrack();
-}
-
-// ═══════════════════════════════════════════
-//  PROGRESS
-// ═══════════════════════════════════════════
-var progLastUpdate = 0;
-function startProgTimer() {
-  stopProgTimer();
-  progTimer = setInterval(function() {
-    if (!isPlaying) return;
-    simCur += 0.9;
-    if (simDur > 0 && simCur >= simDur - 0.5) {
-      simCur = simDur; updateProgressUI(); stopProgTimer(); setPlayState(false);
-      if (!isAdShowing) handleTrackEnd(); return;
-    }
-    updateProgressUI();
-    progLastUpdate++;
-    if (progLastUpdate % 5 === 0) {
-      var iframe = document.getElementById('yt-iframe');
-      if (iframe && iframe.contentWindow) {
-        try { iframe.contentWindow.postMessage(JSON.stringify({ event:'command', func:'getCurrentTime', args:[] }), '*'); } catch(e) {}
-      }
-    }
-  }, 900);
-}
-function stopProgTimer() { if (progTimer) { clearInterval(progTimer); progTimer = null; } }
-function updateProgressUI() {
-  if (simDur > 0) {
-    var pct = Math.min(100, (simCur / simDur) * 100);
-    document.getElementById('prog-fill').style.width = pct + '%';
-    document.getElementById('t-cur').textContent = fmt(simCur);
-    document.getElementById('t-dur').textContent = fmt(simDur);
-  }
-}
-function fmt(s) {
-  s = Math.max(0, Math.floor(s));
-  return Math.floor(s/60) + ':' + ('0' + (s%60)).slice(-2);
-}
-function seekTo(e) {
-  var rect = document.getElementById('prog-track').getBoundingClientRect();
-  var clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  var pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-  simCur = pct * (simDur || 300);
-  ytCmd('seekTo', [simCur, true]);
-  updateProgressUI();
-}
-
-// ═══════════════════════════════════════════
-//  PLAYBACK
-// ═══════════════════════════════════════════
-function playTrack(idx) {
-  if (idx < 0 || idx >= tracks.length) return;
-  curIdx = idx;
-  var t = tracks[idx];
-  simCur = 0; simDur = 0; ytAPIReady = false; isPlaying = false;
-  stopProgTimer();
-
-  // Hentikan scan lama
-  AD_LAYER.stopScan();
-
-  // LAYER 1: Aktifkan overlay instan SEBELUM iframe load
-  AD_LAYER.activateInstant(t.id);
-
-  document.getElementById('idle-view').style.display = 'none';
-  document.getElementById('player-view').style.display = 'block';
-  document.getElementById('idle-disc').classList.add('spin');
-  showLdr();
-
-  // Set iframe src (dengan timestamp anti-cache)
-  document.getElementById('yt-iframe').src = buildIframeSrc(t.id, true);
-
-  document.getElementById('np-title').textContent = t.title;
-  document.getElementById('np-ch').textContent = t.ch;
-  document.getElementById('prog-fill').style.width = '0%';
-  document.getElementById('t-cur').textContent = '0:00';
-  document.getElementById('t-dur').textContent = '0:00';
-
-  addPlayHistory(t); renderTracks(); scrollToTrack(idx);
-
-  // Mulai scan setelah 2 detik (beri waktu iframe untuk load)
-  setTimeout(function() {
-    if (curIdx === idx) {
-      AD_LAYER.startScan(t.id);
-      // Minta data video pertama kali
-      ytCmd('getVideoData', []);
-    }
-  }, 2000);
-
-  // Safety timeout: hapus loading setelah 8 detik
-  setTimeout(function() { if (curIdx === idx) { hideLdr(); } }, 8000);
-
-  // Safety timeout: jika setelah 5 detik masih ada overlay tapi bukan iklan → hapus
-  setTimeout(function() {
-    if (curIdx === idx && !isAdShowing) {
-      AD_LAYER._releaseOverlay();
-    }
-  }, 5000);
-}
-
-function reloadCurrentTrack() {
-  if (curIdx < 0) return;
-  simCur = 0;
-  AD_LAYER._clearAll();
-  AD_LAYER.activateInstant(tracks[curIdx].id);
-  document.getElementById('yt-iframe').src = buildIframeSrc(tracks[curIdx].id, true);
-  showLdr();
-}
-
-function togglePlay() {
-  if (curIdx < 0) { if (tracks.length > 0) playTrack(0); return; }
-  if (isPlaying) { ytCmd('pauseVideo', []); setPlayState(false); stopProgTimer(); }
-  else { ytCmd('playVideo', []); setPlayState(true); startProgTimer(); }
-}
-
-function prevTrack() {
-  if (!tracks.length) return;
-  playTrack(isShuffle ? getPrevShuffleIdx() : (curIdx - 1 + tracks.length) % tracks.length);
-}
-
-function nextTrack() {
-  if (!tracks.length) return;
-  if (musicQueue.length > 0) {
-    var nextFromQ = musicQueue.shift();
-    renderQueueList(); updateQueueBadge();
-    var pill = document.getElementById('pill-queue');
-    if (pill) {
-      if (musicQueue.length > 0) { pill.textContent = 'Queue: ' + musicQueue.length; pill.classList.add('show'); }
-      else { pill.classList.remove('show'); }
-    }
-    var fIdx = tracks.findIndex(function(t) { return t.id === nextFromQ.id; });
-    if (fIdx !== -1) { playTrack(fIdx); }
-    else {
-      var ins = (curIdx >= 0 ? curIdx + 1 : tracks.length);
-      tracks.splice(ins, 0, nextFromQ); renderTracks(); playTrack(ins);
-    }
-    return;
-  }
-  var idx;
-  if (isShuffle) { idx = getNextShuffleIdx(); }
-  else {
-    if (repeatMode === 1) { idx = (curIdx + 1) % tracks.length; }
-    else { idx = curIdx + 1; if (idx >= tracks.length) { toast('Playlist selesai'); setPlayState(false); stopProgTimer(); return; } }
-  }
-  playTrack(idx);
-}
-
-function setPlayState(state) {
-  isPlaying = state;
-  document.getElementById('ico-play').style.display = state ? 'none' : 'block';
-  document.getElementById('ico-pause').style.display = state ? 'block' : 'none';
-  var disc = document.getElementById('idle-disc');
-  if (state) disc.classList.add('spin'); else disc.classList.remove('spin');
-}
-
-// ═══════════════════════════════════════════
-//  SHUFFLE & REPEAT
-// ═══════════════════════════════════════════
 function toggleShuffle() {
   isShuffle = !isShuffle;
   document.getElementById('btn-shuf').classList.toggle('lit', isShuffle);
@@ -1781,25 +1726,26 @@ function toggleRepeat() {
   repeatMode = (repeatMode + 1) % 3;
   var btn = document.getElementById('btn-rep');
   btn.classList.remove('lit', 'repeat-one', 'lit-yellow');
-  if (repeatMode === 0) { toast('Ulangi: OFF'); }
+  if (repeatMode === 0) toast('Ulangi: OFF');
   else if (repeatMode === 1) { btn.classList.add('lit'); toast('Ulangi: Semua'); }
   else if (repeatMode === 2) { btn.classList.add('lit', 'repeat-one'); toast('Ulangi: Satu lagu'); }
 }
 
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  VOLUME
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 function onVolSlider(v) { volLevel = Number(v); if (!isMuted) ytCmd('setVolume', [volLevel]); }
 function toggleMute() {
   isMuted = !isMuted;
-  if (isMuted) ytCmd('mute', []); else { ytCmd('unMute', []); ytCmd('setVolume', [volLevel]); }
+  if (isMuted) ytCmd('mute', []);
+  else { ytCmd('unMute', []); ytCmd('setVolume', [volLevel]); }
   document.getElementById('ico-vol').style.display = isMuted ? 'none' : 'block';
   document.getElementById('ico-mute').style.display = isMuted ? 'block' : 'none';
 }
 
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  KEYBOARD SHORTCUTS
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 document.addEventListener('keydown', function(e) {
   var tag = document.activeElement ? document.activeElement.tagName : '';
   if (tag === 'INPUT' || tag === 'TEXTAREA') return;
@@ -1816,9 +1762,9 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  SEARCH
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 function doSearch() {
   var q = document.getElementById('search-input').value.trim();
   if (!q) { toast('Masukkan nama lagu atau artis!'); return; }
@@ -1844,7 +1790,7 @@ function trySearchWithProxy(q, btn) {
     : null;
   if (!fetchUrl) {
     btn.disabled = false; btn.textContent = 'Cari';
-    toast('API tidak dapat dijangkau. Mode demo aktif.');
+    toast('API tidak dapat dijangkau. Mode demo aktif.', 'warn');
     showDemoPlaylist(q); setModeText('Demo mode — jaringan memblokir API'); return;
   }
   fetch(fetchUrl)
@@ -1900,8 +1846,7 @@ function renderTracks() {
     return '<div class="track-item' + (i === curIdx ? ' active' : '') + '" id="ti-' + i + '" onclick="playTrack(' + i + ')">'
       + '<img class="track-thumb" src="' + esc(t.thumb) + '" alt="" onerror="this.style.background=\'#2a2a3a\'" loading="lazy"/>'
       + '<div class="track-info"><div class="track-title">' + esc(t.title) + '</div><div class="track-ch">' + esc(t.ch) + '</div></div>'
-      + '<div class="track-right">'
-      + '<div class="track-actions">'
+      + '<div class="track-right"><div class="track-actions">'
       + '<button class="btn-queue-add" onclick="event.stopPropagation();addToQueue(tracks[' + i + '])" title="Tambah ke antrean">'
       + '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'
       + '</button></div>'
@@ -1916,9 +1861,193 @@ function scrollToTrack(i) {
   if (el) el.scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
 
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
+//  SEARCH HISTORY
+// ════════════════════════════════════════════════════════════
+function loadFromStorage() {
+  try { var sh = localStorage.getItem(LS_SEARCH_HIST); if (sh) searchHistory = JSON.parse(sh); } catch(e) { searchHistory = []; }
+  try { var ph = localStorage.getItem(LS_PLAY_HIST); if (ph) playHistory = JSON.parse(ph); } catch(e) { playHistory = []; }
+  updateHistoryBadge();
+}
+function saveSearchHistory() { try { localStorage.setItem(LS_SEARCH_HIST, JSON.stringify(searchHistory)); } catch(e) {} }
+function savePlayHistory() { try { localStorage.setItem(LS_PLAY_HIST, JSON.stringify(playHistory)); } catch(e) {} }
+function addSearchHistory(q) {
+  searchHistory = searchHistory.filter(function(s) { return s !== q; });
+  searchHistory.unshift(q);
+  if (searchHistory.length > 15) searchHistory = searchHistory.slice(0, 15);
+  saveSearchHistory();
+}
+function deleteSearchHistory(q) {
+  searchHistory = searchHistory.filter(function(s) { return s !== q; });
+  saveSearchHistory(); showSearchDropdown();
+}
+function clearSearchHistory() { searchHistory = []; saveSearchHistory(); hideSearchDropdown(); }
+function onSearchInput() { showSearchDropdown(); }
+function onSearchKeydown(e) {
+  if (e.key === 'Enter') { hideSearchDropdown(); doSearch(); }
+  else if (e.key === 'Escape') { hideSearchDropdown(); }
+}
+function showSearchDropdown() {
+  var input = document.getElementById('search-input');
+  var val = input.value.trim().toLowerCase();
+  var dropdown = document.getElementById('search-history-dropdown');
+  var filtered = val ? searchHistory.filter(function(s) { return s.toLowerCase().includes(val); }) : searchHistory;
+  if (!filtered.length) { hideSearchDropdown(); return; }
+  var html = filtered.map(function(s) {
+    return '<div class="sh-item">'
+      + '<div class="sh-item-text" onclick="selectSearchHistory(\'' + esc(s) + '\')">'
+      + '<svg class="sh-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
+      + esc(s) + '</div>'
+      + '<button class="sh-del" onclick="event.stopPropagation();deleteSearchHistory(\'' + esc(s) + '\')" title="Hapus">x</button>'
+      + '</div>';
+  }).join('');
+  html += '<div class="sh-clear-row" onclick="clearSearchHistory()">Hapus Semua Riwayat</div>';
+  dropdown.innerHTML = html; dropdown.classList.add('show');
+}
+function hideSearchDropdown() { document.getElementById('search-history-dropdown').classList.remove('show'); }
+function selectSearchHistory(q) {
+  document.getElementById('search-input').value = q;
+  hideSearchDropdown(); doSearch();
+}
+document.addEventListener('click', function(e) {
+  var section = document.querySelector('.search-section');
+  if (section && !section.contains(e.target)) hideSearchDropdown();
+});
+
+// ════════════════════════════════════════════════════════════
+//  PLAY HISTORY
+// ════════════════════════════════════════════════════════════
+function addPlayHistory(track) {
+  var entry = { id: track.id, title: track.title, ch: track.ch, thumb: track.thumb, ts: Date.now() };
+  playHistory = playHistory.filter(function(h) { return h.id !== track.id; });
+  playHistory.unshift(entry);
+  if (playHistory.length > 50) playHistory = playHistory.slice(0, 50);
+  savePlayHistory(); renderHistoryList(); updateHistoryBadge();
+}
+function clearPlayHistory() {
+  playHistory = []; savePlayHistory(); renderHistoryList(); updateHistoryBadge();
+  toast('Riwayat dihapus');
+}
+function updateHistoryBadge() {
+  var el = document.getElementById('badge-history');
+  if (el) el.textContent = playHistory.length;
+}
+function renderHistoryList() {
+  var list = document.getElementById('history-list');
+  if (!playHistory.length) {
+    list.innerHTML = '<div class="empty-wrap">'
+      + '<div class="empty-icon-wrap"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>'
+      + '<div class="empty-title">Belum ada riwayat</div>'
+      + '<div class="empty-sub">Lagu yang diputar akan muncul di sini</div>'
+      + '</div>';
+    return;
+  }
+  var html = playHistory.map(function(h, i) {
+    return '<div class="hist-item" onclick="playFromHistory(' + i + ')">'
+      + '<img class="track-thumb" src="' + esc(h.thumb) + '" alt="" onerror="this.style.background=\'#2a2a3a\'" loading="lazy"/>'
+      + '<div class="track-info"><div class="track-title">' + esc(h.title) + '</div><div class="track-ch">' + esc(h.ch) + '</div></div>'
+      + '<span class="hist-time">' + fmtRelTime(h.ts) + '</span>'
+      + '</div>';
+  }).join('');
+  list.innerHTML = html;
+}
+function playFromHistory(i) {
+  var h = playHistory[i];
+  if (!h) return;
+  var exists = tracks.findIndex(function(t) { return t.id === h.id; });
+  if (exists >= 0) { playTrack(exists); }
+  else {
+    tracks.unshift({ id: h.id, title: h.title, ch: h.ch, thumb: h.thumb });
+    renderTracks(); playTrack(0);
+  }
+  if (window.innerWidth <= 640) setTimeout(closeMobilePlaylist, 200);
+}
+function fmtRelTime(ts) {
+  var diff = Math.floor((Date.now() - ts) / 1000);
+  if (diff < 60) return 'baru saja';
+  if (diff < 3600) return Math.floor(diff/60) + 'm lalu';
+  if (diff < 86400) return Math.floor(diff/3600) + 'j lalu';
+  return Math.floor(diff/86400) + 'h lalu';
+}
+
+// ════════════════════════════════════════════════════════════
+//  QUEUE
+// ════════════════════════════════════════════════════════════
+function addToQueue(track, showToast) {
+  musicQueue.push(track); renderQueueList(); updateQueueBadge();
+  if (showToast !== false) toast('"' + track.title.substring(0,30) + '..." ditambah ke antrean');
+  var pill = document.getElementById('pill-queue');
+  if (pill) { pill.textContent = 'Queue: ' + musicQueue.length; pill.classList.add('show'); }
+}
+function removeFromQueue(i) {
+  musicQueue.splice(i, 1); renderQueueList(); updateQueueBadge();
+  var pill = document.getElementById('pill-queue');
+  if (pill) {
+    if (musicQueue.length > 0) { pill.textContent = 'Queue: ' + musicQueue.length; pill.classList.add('show'); }
+    else { pill.classList.remove('show'); }
+  }
+}
+function clearQueue() {
+  musicQueue = []; renderQueueList(); updateQueueBadge();
+  var pill = document.getElementById('pill-queue');
+  if (pill) pill.classList.remove('show');
+  toast('Antrean dikosongkan');
+}
+function updateQueueBadge() {
+  var el = document.getElementById('badge-queue');
+  if (el) el.textContent = musicQueue.length;
+}
+function renderQueueList() {
+  var list = document.getElementById('queue-list');
+  if (!musicQueue.length) {
+    list.innerHTML = '<div class="empty-wrap">'
+      + '<div class="empty-icon-wrap"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg></div>'
+      + '<div class="empty-title">Antrean kosong</div>'
+      + '<div class="empty-sub">Tekan + pada lagu untuk menambah ke antrean</div>'
+      + '</div>';
+    return;
+  }
+  var html = musicQueue.map(function(t, i) {
+    return '<div class="queue-item">'
+      + '<span class="queue-order">' + (i+1) + '</span>'
+      + '<img class="track-thumb" src="' + esc(t.thumb) + '" alt="" onerror="this.style.background=\'#2a2a3a\'" loading="lazy"/>'
+      + '<div class="track-info"><div class="track-title">' + esc(t.title) + '</div><div class="track-ch">' + esc(t.ch) + '</div></div>'
+      + '<button class="btn-queue-remove" onclick="removeFromQueue(' + i + ')">'
+      + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+      + '</button></div>';
+  }).join('');
+  list.innerHTML = html;
+}
+
+// ════════════════════════════════════════════════════════════
+//  SIDEBAR TABS & MOBILE
+// ════════════════════════════════════════════════════════════
+function switchTab(tab) {
+  activeTab = tab;
+  ['playlist','queue','history'].forEach(function(t) {
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('panel-' + t).classList.toggle('active', t === tab);
+  });
+}
+function toggleMobilePlaylist() {
+  mobilePlaylistOpen = !mobilePlaylistOpen;
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('mobile-sheet-overlay');
+  var toggleBtn = document.getElementById('mobile-playlist-toggle');
+  var label = document.getElementById('mob-toggle-label');
+  if (mobilePlaylistOpen) {
+    sidebar.classList.add('mobile-open'); overlay.classList.add('show');
+    toggleBtn.classList.add('open'); label.textContent = 'Tutup';
+  } else {
+    sidebar.classList.remove('mobile-open'); overlay.classList.remove('show');
+    toggleBtn.classList.remove('open'); label.textContent = 'Playlist';
+  }
+}
+function closeMobilePlaylist() { if (mobilePlaylistOpen) toggleMobilePlaylist(); }
+
+// ════════════════════════════════════════════════════════════
 //  UI HELPERS
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 function showLdr() { document.getElementById('vid-loading').classList.add('show'); }
 function hideLdr() { document.getElementById('vid-loading').classList.remove('show'); }
 var toastTmr = null;
@@ -1934,9 +2063,9 @@ function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  API KEY MODAL
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 var firstOpen = true;
 function openModal(first) {
   firstOpen = !!first;
@@ -1972,9 +2101,9 @@ document.getElementById('api-key-input').addEventListener('keydown', function(e)
   if (e.key === 'Enter') saveApiKey();
 });
 
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  TOUCH: progress bar
-// ═══════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', function() {
   var pt = document.getElementById('prog-track');
   if (pt) {
@@ -1986,9 +2115,9 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-// ═══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  PWA — MANIFEST
-// ═══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 (function injectManifest() {
   var manifest = {
     name: 'Qoovy Music Streaming', short_name: 'Qoovy',
@@ -2008,15 +2137,17 @@ document.addEventListener('DOMContentLoaded', function() {
   } catch(e) {}
 })();
 
-// ═══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  PWA — SERVICE WORKER
-// ═══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 (function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
   var swCode = `
-var CACHE_NAME = 'qoovy-v2';
+var CACHE_NAME = 'qoovy-v3';
 self.addEventListener('install', function(e) {
-  e.waitUntil(caches.open(CACHE_NAME).then(function(c) { return c.addAll([self.location.href]); }).then(function() { return self.skipWaiting(); }));
+  e.waitUntil(caches.open(CACHE_NAME).then(function(c) {
+    return c.addAll([self.location.href]);
+  }).then(function() { return self.skipWaiting(); }));
 });
 self.addEventListener('activate', function(e) {
   e.waitUntil(caches.keys().then(function(keys) {
@@ -2041,7 +2172,9 @@ self.addEventListener('fetch', function(e) {
     });
   }));
 });
-self.addEventListener('message', function(e) { if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting(); });
+self.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
+});
 `;
   try {
     var blob = new Blob([swCode], { type: 'application/javascript' });
@@ -2055,25 +2188,27 @@ self.addEventListener('message', function(e) { if (e.data && e.data.type === 'SK
           });
         });
       }).catch(function(err) { console.log('[Qoovy PWA] SW skip:', err.message); });
-    navigator.serviceWorker.addEventListener('controllerchange', function() { if (pwaReloading) window.location.reload(); });
+    navigator.serviceWorker.addEventListener('controllerchange', function() {
+      if (pwaReloading) window.location.reload();
+    });
   } catch(e) { console.log('[Qoovy PWA] SW Blob not supported'); }
 })();
 
-// ═══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  PWA — ONLINE/OFFLINE
-// ═══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 var offlineBar = document.getElementById('offline-bar');
 function updateOnlineStatus() {
-  if (navigator.onLine) { offlineBar.classList.remove('show'); }
+  if (navigator.onLine) offlineBar.classList.remove('show');
   else { offlineBar.classList.add('show'); toast('Koneksi terputus', 'warn'); }
 }
 window.addEventListener('online', function() { updateOnlineStatus(); toast('Koneksi kembali!'); });
 window.addEventListener('offline', updateOnlineStatus);
 if (!navigator.onLine) setTimeout(function() { offlineBar.classList.add('show'); }, 1200);
 
-// ═══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  PWA — INSTALL PROMPT
-// ═══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 var deferredInstallPrompt = null;
 var installBanner = document.getElementById('install-banner');
 var installBannerTimer = null;
@@ -2091,7 +2226,7 @@ document.getElementById('btn-install-pwa').addEventListener('click', function() 
   deferredInstallPrompt.prompt();
   deferredInstallPrompt.userChoice.then(function(r) {
     if (r.outcome === 'accepted') { toast('Qoovy berhasil dipasang!'); localStorage.setItem('qoovy_pwa_installed','1'); }
-    else { toast('Instalasi dibatalkan'); }
+    else toast('Instalasi dibatalkan');
     deferredInstallPrompt = null;
   });
 });
@@ -2099,11 +2234,13 @@ document.getElementById('btn-install-dismiss').addEventListener('click', functio
   hideInstallBanner(); localStorage.setItem('qoovy_pwa_dismissed', Date.now().toString());
   toast('Bisa dipasang nanti lewat menu browser');
 });
-window.addEventListener('appinstalled', function() { hideInstallBanner(); deferredInstallPrompt = null; toast('Qoovy terpasang!'); });
+window.addEventListener('appinstalled', function() {
+  hideInstallBanner(); deferredInstallPrompt = null; toast('Qoovy terpasang!');
+});
 
-// ═══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  PWA — UPDATE BANNER
-// ═══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 var pwaReloading = false;
 var updateBanner = document.getElementById('update-banner');
 var updateWorker = null;
@@ -2114,14 +2251,14 @@ function showUpdateBanner(worker) {
 function hideUpdateBanner() { if (updateBanner) updateBanner.classList.remove('show'); }
 function pwaReloadForUpdate() {
   hideUpdateBanner(); pwaReloading = true;
-  if (updateWorker) { updateWorker.postMessage({ type: 'SKIP_WAITING' }); }
-  else if (navigator.serviceWorker.controller) { navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' }); }
-  else { window.location.reload(); }
+  if (updateWorker) updateWorker.postMessage({ type: 'SKIP_WAITING' });
+  else if (navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+  else window.location.reload();
 }
 
-// ═══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 //  INIT
-// ═══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
 (function detectDisplayMode() {
   var isStandalone = window.navigator.standalone === true
     || window.matchMedia('(display-mode: standalone)').matches;
