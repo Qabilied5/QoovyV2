@@ -4,6 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Qoovy - Music Player</title>
+
+<!-- ═══════════════════════════════════════
+     PWA META TAGS
+════════════════════════════════════════ -->
+<meta name="application-name" content="Qoovy">
+<meta name="description" content="Qoovy Music Streaming — Putar musik favoritmu tanpa iklan">
+<meta name="theme-color" content="#080810">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Qoovy">
+<meta name="msapplication-TileColor" content="#080810">
+<meta name="msapplication-tap-highlight" content="no">
+
+<!-- Apple Touch Icons (inline SVG → data URI) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='115' fill='%23080810'/%3E%3Ccircle cx='256' cy='256' r='160' fill='none' stroke='url(%23g1)' stroke-width='8'/%3E%3Ccircle cx='256' cy='256' r='110' fill='none' stroke='url(%23g2)' stroke-width='6' opacity='.5'/%3E%3Ccircle cx='256' cy='256' r='36' fill='%23a78bfa'/%3E%3Ccircle cx='256' cy='256' r='18' fill='%23080810'/%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23a78bfa'/%3E%3Cstop offset='100%25' stop-color='%23ec64a2'/%3E%3C/linearGradient%3E%3ClinearGradient id='g2' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2338bdf8'/%3E%3Cstop offset='100%25' stop-color='%23a78bfa'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E">
+
 <style>
 :root {
   --bg: #080810;
@@ -246,7 +263,7 @@ header {
 .wave-bar:nth-child(3) { animation-delay:0.3s; }
 @keyframes wave-anim { 0%,100% { height:3px; opacity:0.5; } 50% { height:13px; opacity:1; } }
 
-/* TRACK ACTIONS (add to queue btn) */
+/* TRACK ACTIONS */
 .track-actions { opacity:0; transition:opacity 0.15s; display:flex; align-items:center; gap:2px; }
 .btn-queue-add {
   background:rgba(251,191,36,0.1); border:1px solid rgba(251,191,36,0.2);
@@ -255,7 +272,6 @@ header {
   cursor:pointer; transition:all 0.2s; flex-shrink:0;
 }
 .btn-queue-add:hover { background:rgba(251,191,36,0.2); transform:scale(1.1); }
-.btn-queue-add title { display:none; }
 
 /* QUEUE PANEL */
 .queue-head {
@@ -532,6 +548,105 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
 }
 .toast.show { transform:translateY(0) scale(1); opacity:1; }
 
+/* ═══════════════════════════════════════
+   PWA: OFFLINE INDICATOR
+════════════════════════════════════════ */
+.offline-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  background: rgba(248,113,113,0.12); border-bottom: 1px solid rgba(248,113,113,0.3);
+  backdrop-filter: blur(16px);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 7px 16px;
+  transform: translateY(-100%);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: var(--red);
+}
+.offline-bar.show { transform: translateY(0); }
+.offline-bar svg { flex-shrink: 0; }
+.offline-label { flex: 1; text-align: center; }
+.offline-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--red);
+  box-shadow: 0 0 8px var(--red); flex-shrink: 0;
+  animation: blink-dot 1.4s ease-in-out infinite;
+}
+@keyframes blink-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+/* ═══════════════════════════════════════
+   PWA: INSTALL PROMPT BANNER
+════════════════════════════════════════ */
+.install-banner {
+  position: fixed; bottom: 82px; left: 50%; transform: translateX(-50%) translateY(120px);
+  z-index: 998;
+  background: rgba(14,14,24,0.97); border: 1px solid rgba(167,139,250,0.25);
+  border-radius: 18px; padding: 16px 20px;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(167,139,250,0.08), 0 0 32px rgba(99,68,255,0.14);
+  backdrop-filter: blur(24px);
+  transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease;
+  opacity: 0; pointer-events: none;
+  min-width: 300px; max-width: 420px;
+}
+.install-banner.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: all; }
+
+.install-icon {
+  width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(236,100,162,0.15));
+  border: 1px solid rgba(167,139,250,0.25);
+  display: flex; align-items: center; justify-content: center;
+}
+.install-body { flex: 1; min-width: 0; }
+.install-title { font-size: 13px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 3px; }
+.install-sub { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.install-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+.btn-install {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: none; border-radius: 10px; color: white;
+  font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+  padding: 8px 14px; cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  font-family: inherit;
+}
+.btn-install:hover { transform: scale(1.05); box-shadow: 0 0 16px var(--glow-a); }
+.btn-install-dismiss {
+  background: none; border: none; color: var(--muted2);
+  font-size: 10px; font-weight: 600; letter-spacing: 0.5px; text-align: center;
+  cursor: pointer; padding: 2px; transition: color 0.2s; font-family: inherit;
+  text-transform: uppercase;
+}
+.btn-install-dismiss:hover { color: var(--muted); }
+
+/* ═══════════════════════════════════════
+   PWA: UPDATE AVAILABLE TOAST
+════════════════════════════════════════ */
+.update-banner {
+  position: fixed; top: 70px; right: 20px; z-index: 997;
+  background: rgba(14,14,24,0.97); border: 1px solid rgba(56,189,248,0.3);
+  border-left: 3px solid var(--accent3); border-radius: 14px;
+  padding: 12px 16px; max-width: 280px;
+  display: flex; align-items: flex-start; gap: 10px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  backdrop-filter: blur(16px);
+  transform: translateX(320px); opacity: 0;
+  transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: none;
+}
+.update-banner.show { transform: translateX(0); opacity: 1; pointer-events: all; }
+.update-body { flex: 1; }
+.update-title { font-size: 12px; font-weight: 700; color: var(--accent3); letter-spacing: 0.5px; margin-bottom: 4px; }
+.update-sub { font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 8px; }
+.btn-update-reload {
+  background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.25);
+  color: var(--accent3); font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; padding: 5px 12px; border-radius: 7px;
+  cursor: pointer; transition: all 0.2s; font-family: inherit;
+}
+.btn-update-reload:hover { background: rgba(56,189,248,0.2); }
+.btn-update-close {
+  background: none; border: none; color: var(--muted2);
+  cursor: pointer; padding: 2px; line-height: 1; flex-shrink: 0;
+  transition: color 0.2s;
+}
+.btn-update-close:hover { color: var(--text); }
+
 /* MOBILE */
 .mobile-playlist-toggle { display: none; }
 .mobile-sheet-overlay {
@@ -553,7 +668,6 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
 @media (max-width: 640px) {
   header { padding: 10px 14px; gap: 8px; }
   .logo-text { font-size: 16px; letter-spacing: 3px; }
-  /* .logo-sub { display: none; } */
   .header-right { gap: 6px; }
   .adb-badge { padding: 7px 9px; }
   #adb-label { display: none; }
@@ -584,13 +698,9 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   .status-bar { margin-top: 5px; gap: 5px; }
   .status-pill { font-size: 9px; padding: 2px 7px; }
   .controls-zone { position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 15px;
-    padding: 10px 14px 14px;
-    width: 100vw;
-    z-index: 100; }
+    bottom: 20px; left: 50%; transform: translateX(-50%);
+    border-radius: 15px; padding: 10px 14px 14px;
+    width: 100vw; z-index: 100; }
   .progress-row { gap: 8px; margin-bottom: 10px; }
   .time { font-size: 10px; min-width: 30px; }
   .ctrl-row { gap: 0; }
@@ -621,6 +731,9 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   .prog-track { height: 6px; border-radius: 6px; margin: 6px 0; }
   .prog-fill { border-radius: 6px; }
   .prog-fill::after { width: 14px; height: 14px; right: -7px; opacity: 1; }
+  /* PWA mobile adjustments */
+  .install-banner { bottom: 90px; min-width: calc(100vw - 28px); max-width: calc(100vw - 28px); }
+  .update-banner { right: 14px; max-width: calc(100vw - 28px); }
 }
 
 @media (max-width: 380px) {
@@ -642,6 +755,64 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
   <div class="grid-overlay"></div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PWA: OFFLINE INDICATOR BAR
+════════════════════════════════════════ -->
+<div class="offline-bar" id="offline-bar">
+  <div class="offline-dot"></div>
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+    <line x1="1" y1="1" x2="23" y2="23"/>
+    <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+    <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+    <path d="M10.71 5.05A16 16 0 0 1 22.56 9"/>
+    <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+    <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+    <circle cx="12" cy="20" r="1" fill="currentColor"/>
+  </svg>
+  <span class="offline-label">Tidak ada koneksi internet — mode offline aktif</span>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PWA: INSTALL PROMPT BANNER
+════════════════════════════════════════ -->
+<div class="install-banner" id="install-banner">
+  <div class="install-icon">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#ig)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <defs>
+        <linearGradient id="ig" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#a78bfa"/>
+          <stop offset="100%" stop-color="#ec64a2"/>
+        </linearGradient>
+      </defs>
+      <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+    </svg>
+  </div>
+  <div class="install-body">
+    <div class="install-title">Pasang Qoovy</div>
+    <div class="install-sub">Tambahkan ke layar utama untuk akses cepat & pengalaman penuh</div>
+  </div>
+  <div class="install-actions">
+    <button class="btn-install" id="btn-install-pwa">Pasang</button>
+    <button class="btn-install-dismiss" id="btn-install-dismiss">Nanti</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PWA: UPDATE AVAILABLE BANNER
+════════════════════════════════════════ -->
+<div class="update-banner" id="update-banner">
+  <div class="update-body">
+    <div class="update-title">Update Tersedia</div>
+    <div class="update-sub">Versi terbaru Qoovy sudah siap. Muat ulang untuk memperbarui.</div>
+    <button class="btn-update-reload" onclick="pwaReloadForUpdate()">Muat Ulang</button>
+  </div>
+  <button class="btn-update-close" onclick="hideUpdateBanner()" aria-label="Tutup">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
 </div>
 
 <div class="mobile-sheet-overlay" id="mobile-sheet-overlay" onclick="closeMobilePlaylist()"></div>
@@ -946,23 +1117,15 @@ var tracks = [];
 var curIdx = -1;
 var isPlaying = false;
 var isShuffle = false;
-// repeatMode: 0=off, 1=all, 2=one
 var repeatMode = 0;
 var isMuted = false;
 var adBlockEnabled = true;
 var volLevel = 80;
 
-// Shuffle queue (Fisher-Yates pre-generated order)
 var shuffleQueue = [];
 var shufflePos = 0;
-
-// Music queue
-var musicQueue = [];  // array of track objects
-
-// Search history
+var musicQueue = [];
 var searchHistory = [];
-
-// Play history
 var playHistory = [];
 
 var progTimer = null;
@@ -1067,17 +1230,11 @@ function clearSearchHistory() {
   hideSearchDropdown();
 }
 
-function onSearchInput() {
-  showSearchDropdown();
-}
+function onSearchInput() { showSearchDropdown(); }
 
 function onSearchKeydown(e) {
-  if (e.key === 'Enter') {
-    hideSearchDropdown();
-    doSearch();
-  } else if (e.key === 'Escape') {
-    hideSearchDropdown();
-  }
+  if (e.key === 'Enter') { hideSearchDropdown(); doSearch(); }
+  else if (e.key === 'Escape') { hideSearchDropdown(); }
 }
 
 function showSearchDropdown() {
@@ -1092,8 +1249,7 @@ function showSearchDropdown() {
     return '<div class="sh-item">'
       + '<div class="sh-item-text" onclick="selectSearchHistory(\'' + esc(s) + '\')">'
       + '<svg class="sh-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
-      + esc(s)
-      + '</div>'
+      + esc(s) + '</div>'
       + '<button class="sh-del" onclick="event.stopPropagation();deleteSearchHistory(\'' + esc(s) + '\')" title="Hapus">x</button>'
       + '</div>';
   }).join('');
@@ -1121,11 +1277,7 @@ document.addEventListener('click', function(e) {
 //  PLAY HISTORY
 // ═══════════════════════════════════════════
 function addPlayHistory(track) {
-  var entry = {
-    id: track.id, title: track.title, ch: track.ch, thumb: track.thumb,
-    ts: Date.now()
-  };
-  // Remove duplicate
+  var entry = { id: track.id, title: track.title, ch: track.ch, thumb: track.thumb, ts: Date.now() };
   playHistory = playHistory.filter(function(h) { return h.id !== track.id; });
   playHistory.unshift(entry);
   if (playHistory.length > 50) playHistory = playHistory.slice(0, 50);
@@ -1158,14 +1310,10 @@ function renderHistoryList() {
     return;
   }
   var html = playHistory.map(function(h, i) {
-    var timeStr = fmtRelTime(h.ts);
     return '<div class="hist-item" onclick="playFromHistory(' + i + ')">'
       + '<img class="track-thumb" src="' + esc(h.thumb) + '" alt="" onerror="this.style.background=\'#2a2a3a\'" loading="lazy"/>'
-      + '<div class="track-info">'
-      + '<div class="track-title">' + esc(h.title) + '</div>'
-      + '<div class="track-ch">' + esc(h.ch) + '</div>'
-      + '</div>'
-      + '<span class="hist-time">' + timeStr + '</span>'
+      + '<div class="track-info"><div class="track-title">' + esc(h.title) + '</div><div class="track-ch">' + esc(h.ch) + '</div></div>'
+      + '<span class="hist-time">' + fmtRelTime(h.ts) + '</span>'
       + '</div>';
   }).join('');
   list.innerHTML = html;
@@ -1174,7 +1322,6 @@ function renderHistoryList() {
 function playFromHistory(i) {
   var h = playHistory[i];
   if (!h) return;
-  // Add to tracks if not present
   var exists = tracks.findIndex(function(t) { return t.id === h.id; });
   if (exists >= 0) {
     playTrack(exists);
@@ -1245,14 +1392,10 @@ function renderQueueList() {
     return '<div class="queue-item">'
       + '<span class="queue-order">' + (i+1) + '</span>'
       + '<img class="track-thumb" src="' + esc(t.thumb) + '" alt="" onerror="this.style.background=\'#2a2a3a\'" loading="lazy"/>'
-      + '<div class="track-info">'
-      + '<div class="track-title">' + esc(t.title) + '</div>'
-      + '<div class="track-ch">' + esc(t.ch) + '</div>'
-      + '</div>'
+      + '<div class="track-info"><div class="track-title">' + esc(t.title) + '</div><div class="track-ch">' + esc(t.ch) + '</div></div>'
       + '<button class="btn-queue-remove" onclick="removeFromQueue(' + i + ')" title="Hapus dari antrean">'
       + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
-      + '</button>'
-      + '</div>';
+      + '</button></div>';
   }).join('');
   list.innerHTML = html;
 }
@@ -1262,15 +1405,11 @@ function renderQueueList() {
 // ═══════════════════════════════════════════
 function buildShuffleQueue(currentIdx) {
   var indices = [];
-  for (var i = 0; i < tracks.length; i++) {
-    if (i !== currentIdx) indices.push(i);
-  }
-  // Fisher-Yates shuffle
+  for (var i = 0; i < tracks.length; i++) { if (i !== currentIdx) indices.push(i); }
   for (var j = indices.length - 1; j > 0; j--) {
     var k = Math.floor(Math.random() * (j + 1));
     var tmp = indices[j]; indices[j] = indices[k]; indices[k] = tmp;
   }
-  // Put current at front
   if (currentIdx >= 0) indices.unshift(currentIdx);
   shuffleQueue = indices;
   shufflePos = 0;
@@ -1279,10 +1418,7 @@ function buildShuffleQueue(currentIdx) {
 function getNextShuffleIdx() {
   if (!shuffleQueue.length) buildShuffleQueue(curIdx);
   shufflePos++;
-  if (shufflePos >= shuffleQueue.length) {
-    buildShuffleQueue(-1);
-    shufflePos = 0;
-  }
+  if (shufflePos >= shuffleQueue.length) { buildShuffleQueue(-1); shufflePos = 0; }
   return shuffleQueue[shufflePos] !== undefined ? shuffleQueue[shufflePos] : 0;
 }
 
@@ -1307,26 +1443,18 @@ function buildIframeSrc(videoId, autoplay) {
 function ytCmd(func, args) {
   var iframe = document.getElementById('yt-iframe');
   if (!iframe || !iframe.contentWindow) return;
-  try {
-    iframe.contentWindow.postMessage(JSON.stringify({ event:'command', func:func, args:args||[] }), '*');
-  } catch(e) {}
+  try { iframe.contentWindow.postMessage(JSON.stringify({ event:'command', func:func, args:args||[] }), '*'); } catch(e) {}
 }
 
 window.addEventListener('message', function(e) {
   if (!e.origin.includes('youtube')) return;
   try {
     var data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
-    if (data.event === 'onReady') {
-      ytAPIReady = true;
-      ytCmd('setVolume', [isMuted ? 0 : volLevel]);
-      hideLdr();
-    }
+    if (data.event === 'onReady') { ytAPIReady = true; ytCmd('setVolume', [isMuted ? 0 : volLevel]); hideLdr(); }
     if (data.event === 'onStateChange') handleStateChange(data.info);
     if (data.event === 'infoDelivery' && data.info) {
       if (data.info.currentTime !== undefined && data.info.duration !== undefined) {
-        simCur = data.info.currentTime;
-        simDur = data.info.duration;
-        updateProgressUI();
+        simCur = data.info.currentTime; simDur = data.info.duration; updateProgressUI();
       }
       if (adBlockEnabled && data.info.videoData) {
         var playingId = data.info.videoData.video_id;
@@ -1339,62 +1467,33 @@ window.addEventListener('message', function(e) {
 });
 
 function handleStateChange(state) {
-  if (state === 1) {
-    setPlayState(true); hideLdr(); startProgTimer();
-    if (isAdShowing) hideAdOverlay();
-  } else if (state === 2) {
-    setPlayState(false); stopProgTimer();
-  } else if (state === 0) {
-    setPlayState(false); stopProgTimer();
-    handleTrackEnd();
-  } else if (state === 3) {
-    showLdr();
-  } else if (state === -1 || state === 5) {
-    hideLdr();
-  }
+  if (state === 1) { setPlayState(true); hideLdr(); startProgTimer(); if (isAdShowing) hideAdOverlay(); }
+  else if (state === 2) { setPlayState(false); stopProgTimer(); }
+  else if (state === 0) { setPlayState(false); stopProgTimer(); handleTrackEnd(); }
+  else if (state === 3) { showLdr(); }
+  else if (state === -1 || state === 5) { hideLdr(); }
 }
 
 function handleTrackEnd() {
-  // Mode 1: Repeat satu lagu
-  if (repeatMode === 2) {
-    reloadCurrentTrack();
-    return;
-  }
-
-  // Mode 2: Ada lagu di antrean → AUTO PLAY queue
+  if (repeatMode === 2) { reloadCurrentTrack(); return; }
   if (musicQueue.length > 0) {
     var nextTrackFromQueue = musicQueue.shift();
-    renderQueueList();
-    updateQueueBadge();
-
+    renderQueueList(); updateQueueBadge();
     var pill = document.getElementById('pill-queue');
     if (pill) {
-      if (musicQueue.length > 0) {
-        pill.textContent = 'Queue: ' + musicQueue.length;
-        pill.classList.add('show');
-      } else {
-        pill.classList.remove('show');
-      }
+      if (musicQueue.length > 0) { pill.textContent = 'Queue: ' + musicQueue.length; pill.classList.add('show'); }
+      else { pill.classList.remove('show'); }
     }
-
-    // Cari di playlist; kalau tidak ada, sisipkan di posisi setelah curIdx
     var foundIdx = tracks.findIndex(function(t) { return t.id === nextTrackFromQueue.id; });
-    if (foundIdx !== -1) {
-      playTrack(foundIdx);
-    } else {
+    if (foundIdx !== -1) { playTrack(foundIdx); }
+    else {
       var insertAt = (curIdx >= 0 ? curIdx + 1 : tracks.length);
-      tracks.splice(insertAt, 0, nextTrackFromQueue);
-      renderTracks();
-      playTrack(insertAt);
+      tracks.splice(insertAt, 0, nextTrackFromQueue); renderTracks(); playTrack(insertAt);
     }
-    toast('▶ Memutar dari antrean');
-    return;
+    toast('▶ Memutar dari antrean'); return;
   }
-
-  // Mode 3: Tidak ada queue → next biasa
   nextTrack();
 }
-
 
 function startInfoRequests() {
   stopInfoRequests();
@@ -1402,9 +1501,7 @@ function startInfoRequests() {
     ytCmd('getVideoData', []);
     var iframe = document.getElementById('yt-iframe');
     if (iframe && iframe.contentWindow) {
-      try {
-        iframe.contentWindow.postMessage(JSON.stringify({ event:'listening', id:1, channel:'widget' }), '*');
-      } catch(e) {}
+      try { iframe.contentWindow.postMessage(JSON.stringify({ event:'listening', id:1, channel:'widget' }), '*'); } catch(e) {}
     }
   }, 1500);
 }
@@ -1422,13 +1519,7 @@ function startProgTimer() {
     if (!isPlaying) return;
     simCur += 0.9;
     if (simDur > 0 && simCur >= simDur - 0.5) {
-      // Lagu selesai — pastikan auto-play ter-trigger
-      simCur = simDur;
-      updateProgressUI();
-      stopProgTimer();
-      setPlayState(false);
-      handleTrackEnd();
-      return;
+      simCur = simDur; updateProgressUI(); stopProgTimer(); setPlayState(false); handleTrackEnd(); return;
     }
     updateProgressUI();
     progLastUpdate++;
@@ -1460,9 +1551,8 @@ function seekTo(e) {
   var rect = document.getElementById('prog-track').getBoundingClientRect();
   var clientX = e.touches ? e.touches[0].clientX : e.clientX;
   var pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-  var seekSec = pct * (simDur || 300);
-  simCur = seekSec;
-  ytCmd('seekTo', [seekSec, true]);
+  simCur = pct * (simDur || 300);
+  ytCmd('seekTo', [simCur, true]);
   updateProgressUI();
 }
 
@@ -1498,18 +1588,15 @@ function toggleAdBlock() {
   var pill = document.getElementById('pill-adblock');
   if (adBlockEnabled) {
     badge.classList.remove('off'); lbl.textContent = 'AD-FREE ON';
-    pill.classList.remove('off'); pill.textContent = 'AdBlock ON';
-    toast('AdBlock aktif');
+    pill.classList.remove('off'); pill.textContent = 'AdBlock ON'; toast('AdBlock aktif');
   } else {
     badge.classList.add('off'); lbl.textContent = 'AD-FREE OFF';
     pill.classList.add('off'); pill.textContent = 'AdBlock OFF';
-    if (isAdShowing) hideAdOverlay();
-    toast('AdBlock dimatikan');
+    if (isAdShowing) hideAdOverlay(); toast('AdBlock dimatikan');
   }
 }
 function startAdWatch(videoId) {
-  stopAdWatch();
-  if (!adBlockEnabled) return;
+  stopAdWatch(); if (!adBlockEnabled) return;
   var checks = 0;
   adWatchTimer = setInterval(function() {
     checks++;
@@ -1531,117 +1618,70 @@ function playTrack(idx) {
   if (idx < 0 || idx >= tracks.length) return;
   curIdx = idx;
   var t = tracks[idx];
-
-  simCur = 0; simDur = 0;
-  ytAPIReady = false; isPlaying = false;
+  simCur = 0; simDur = 0; ytAPIReady = false; isPlaying = false;
   stopProgTimer(); hideAdOverlay();
-
   document.getElementById('idle-view').style.display = 'none';
   document.getElementById('player-view').style.display = 'block';
   document.getElementById('idle-disc').classList.add('spin');
   showLdr();
-
-  var iframe = document.getElementById('yt-iframe');
-  iframe.src = buildIframeSrc(t.id, true);
-
+  document.getElementById('yt-iframe').src = buildIframeSrc(t.id, true);
   document.getElementById('np-title').textContent = t.title;
   document.getElementById('np-ch').textContent = t.ch;
   document.getElementById('prog-fill').style.width = '0%';
   document.getElementById('t-cur').textContent = '0:00';
   document.getElementById('t-dur').textContent = '0:00';
-
-  addPlayHistory(t);
-  renderTracks();
-  scrollToTrack(idx);
-  startInfoRequests();
-  startAdWatch(t.id);
-
+  addPlayHistory(t); renderTracks(); scrollToTrack(idx);
+  startInfoRequests(); startAdWatch(t.id);
   setTimeout(function() { if (curIdx === idx) hideLdr(); }, 6000);
   setTimeout(function() {
-    if (curIdx === idx && !isPlaying) {
-      setPlayState(true);
-      if (simDur === 0) simDur = 240;
-      startProgTimer();
-    }
+    if (curIdx === idx && !isPlaying) { setPlayState(true); if (simDur === 0) simDur = 240; startProgTimer(); }
   }, 4000);
 }
 
 function reloadCurrentTrack() {
   if (curIdx < 0) return;
   simCur = 0;
-  var iframe = document.getElementById('yt-iframe');
-  iframe.src = buildIframeSrc(tracks[curIdx].id, true);
+  document.getElementById('yt-iframe').src = buildIframeSrc(tracks[curIdx].id, true);
   showLdr(); hideAdOverlay();
 }
 
 function togglePlay() {
   if (curIdx < 0) { if (tracks.length > 0) playTrack(0); return; }
-  if (isPlaying) {
-    ytCmd('pauseVideo', []); setPlayState(false); stopProgTimer();
-  } else {
-    ytCmd('playVideo', []); setPlayState(true); startProgTimer();
-  }
+  if (isPlaying) { ytCmd('pauseVideo', []); setPlayState(false); stopProgTimer(); }
+  else { ytCmd('playVideo', []); setPlayState(true); startProgTimer(); }
 }
 
 function prevTrack() {
   if (!tracks.length) return;
-  var idx;
-  if (isShuffle) {
-    idx = getPrevShuffleIdx();
-  } else {
-    idx = (curIdx - 1 + tracks.length) % tracks.length;
-  }
-  playTrack(idx);
+  playTrack(isShuffle ? getPrevShuffleIdx() : (curIdx - 1 + tracks.length) % tracks.length);
 }
 
 function nextTrack() {
   if (!tracks.length) return;
-
-  // Prioritas: queue dulu (manual next juga ikut antrean)
   if (musicQueue.length > 0) {
     var nextFromQ = musicQueue.shift();
-    renderQueueList();
-    updateQueueBadge();
+    renderQueueList(); updateQueueBadge();
     var pill = document.getElementById('pill-queue');
     if (pill) {
-      if (musicQueue.length > 0) {
-        pill.textContent = 'Queue: ' + musicQueue.length;
-        pill.classList.add('show');
-      } else {
-        pill.classList.remove('show');
-      }
+      if (musicQueue.length > 0) { pill.textContent = 'Queue: ' + musicQueue.length; pill.classList.add('show'); }
+      else { pill.classList.remove('show'); }
     }
     var fIdx = tracks.findIndex(function(t) { return t.id === nextFromQ.id; });
-    if (fIdx !== -1) {
-      playTrack(fIdx);
-    } else {
+    if (fIdx !== -1) { playTrack(fIdx); }
+    else {
       var ins = (curIdx >= 0 ? curIdx + 1 : tracks.length);
-      tracks.splice(ins, 0, nextFromQ);
-      renderTracks();
-      playTrack(ins);
+      tracks.splice(ins, 0, nextFromQ); renderTracks(); playTrack(ins);
     }
     return;
   }
-
   var idx;
-  if (isShuffle) {
-    idx = getNextShuffleIdx();
-  } else {
-    if (repeatMode === 1) {
-      idx = (curIdx + 1) % tracks.length;
-    } else {
-      idx = curIdx + 1;
-      if (idx >= tracks.length) {
-        toast('Playlist selesai');
-        setPlayState(false);
-        stopProgTimer();
-        return;
-      }
-    }
+  if (isShuffle) { idx = getNextShuffleIdx(); }
+  else {
+    if (repeatMode === 1) { idx = (curIdx + 1) % tracks.length; }
+    else { idx = curIdx + 1; if (idx >= tracks.length) { toast('Playlist selesai'); setPlayState(false); stopProgTimer(); return; } }
   }
   playTrack(idx);
 }
-
 
 function setPlayState(state) {
   isPlaying = state;
@@ -1652,50 +1692,31 @@ function setPlayState(state) {
 }
 
 // ═══════════════════════════════════════════
-//  SHUFFLE
+//  SHUFFLE & REPEAT
 // ═══════════════════════════════════════════
 function toggleShuffle() {
   isShuffle = !isShuffle;
   document.getElementById('btn-shuf').classList.toggle('lit', isShuffle);
-  if (isShuffle) {
-    buildShuffleQueue(curIdx);
-    toast('Acak: ON — urutan baru diacak');
-  } else {
-    shuffleQueue = []; shufflePos = 0;
-    toast('Acak: OFF');
-  }
+  if (isShuffle) { buildShuffleQueue(curIdx); toast('Acak: ON — urutan baru diacak'); }
+  else { shuffleQueue = []; shufflePos = 0; toast('Acak: OFF'); }
 }
 
-// ═══════════════════════════════════════════
-//  REPEAT (3 modes)
-// ═══════════════════════════════════════════
 function toggleRepeat() {
   repeatMode = (repeatMode + 1) % 3;
   var btn = document.getElementById('btn-rep');
-  var badge = document.getElementById('repeat-badge');
   btn.classList.remove('lit', 'repeat-one', 'lit-yellow');
-  if (repeatMode === 0) {
-    toast('Ulangi: OFF');
-  } else if (repeatMode === 1) {
-    btn.classList.add('lit');
-    toast('Ulangi: Semua');
-  } else if (repeatMode === 2) {
-    btn.classList.add('lit', 'repeat-one');
-    toast('Ulangi: Satu lagu');
-  }
+  if (repeatMode === 0) { toast('Ulangi: OFF'); }
+  else if (repeatMode === 1) { btn.classList.add('lit'); toast('Ulangi: Semua'); }
+  else if (repeatMode === 2) { btn.classList.add('lit', 'repeat-one'); toast('Ulangi: Satu lagu'); }
 }
 
 // ═══════════════════════════════════════════
 //  VOLUME
 // ═══════════════════════════════════════════
-function onVolSlider(v) {
-  volLevel = Number(v);
-  if (!isMuted) ytCmd('setVolume', [volLevel]);
-}
+function onVolSlider(v) { volLevel = Number(v); if (!isMuted) ytCmd('setVolume', [volLevel]); }
 function toggleMute() {
   isMuted = !isMuted;
-  if (isMuted) ytCmd('mute', []);
-  else { ytCmd('unMute', []); ytCmd('setVolume', [volLevel]); }
+  if (isMuted) ytCmd('mute', []); else { ytCmd('unMute', []); ytCmd('setVolume', [volLevel]); }
   document.getElementById('ico-vol').style.display = isMuted ? 'none' : 'block';
   document.getElementById('ico-mute').style.display = isMuted ? 'block' : 'none';
 }
@@ -1707,25 +1728,15 @@ document.addEventListener('keydown', function(e) {
   var tag = document.activeElement ? document.activeElement.tagName : '';
   if (tag === 'INPUT' || tag === 'TEXTAREA') return;
   switch(e.key) {
-    case ' ':
-    case 'Spacebar':
-      e.preventDefault(); togglePlay(); break;
-    case 'ArrowLeft':
-      e.preventDefault(); prevTrack(); break;
-    case 'ArrowRight':
-      e.preventDefault(); nextTrack(); break;
-    case 'm': case 'M':
-      toggleMute(); break;
-    case 's': case 'S':
-      toggleShuffle(); break;
-    case 'r': case 'R':
-      toggleRepeat(); break;
-    case 'q': case 'Q':
-      switchTab('queue'); break;
-    case 'h': case 'H':
-      switchTab('history'); break;
-    case 'p': case 'P':
-      switchTab('playlist'); break;
+    case ' ': case 'Spacebar': e.preventDefault(); togglePlay(); break;
+    case 'ArrowLeft': e.preventDefault(); prevTrack(); break;
+    case 'ArrowRight': e.preventDefault(); nextTrack(); break;
+    case 'm': case 'M': toggleMute(); break;
+    case 's': case 'S': toggleShuffle(); break;
+    case 'r': case 'R': toggleRepeat(); break;
+    case 'q': case 'Q': switchTab('queue'); break;
+    case 'h': case 'H': switchTab('history'); break;
+    case 'p': case 'P': switchTab('playlist'); break;
   }
 });
 
@@ -1740,12 +1751,8 @@ function doSearch() {
   var btn = document.getElementById('btn-search');
   btn.disabled = true; btn.textContent = '...';
   showSearchingState();
-
   if (!API_KEY) {
-    setTimeout(function() {
-      btn.disabled = false; btn.textContent = 'Cari';
-      showDemoPlaylist(q);
-    }, 600);
+    setTimeout(function() { btn.disabled = false; btn.textContent = 'Cari'; showDemoPlaylist(q); }, 600);
     return;
   }
   corsProxyIdx = 0;
@@ -1774,8 +1781,7 @@ function trySearchWithProxy(q, btn) {
       tracks = data.items.map(function(it) {
         return { id: it.id.videoId, title: it.snippet.title, ch: it.snippet.channelTitle, thumb: (it.snippet.thumbnails.default||{}).url||'' };
       });
-      renderTracks();
-      btn.disabled = false; btn.textContent = 'Cari';
+      renderTracks(); btn.disabled = false; btn.textContent = 'Cari';
       setModeText('Qoovy (' + (corsProxyIdx === 0 ? 'Aktif' : 'via proxy') + ')');
       toast('Ditemukan ' + tracks.length + ' lagu');
       if (isShuffle) buildShuffleQueue(curIdx);
@@ -1783,9 +1789,7 @@ function trySearchWithProxy(q, btn) {
     .catch(function() { corsProxyIdx++; trySearchWithProxy(q, btn); });
 }
 
-function setModeText(text) {
-  document.getElementById('mode-text').textContent = text;
-}
+function setModeText(text) { document.getElementById('mode-text').textContent = text; }
 
 function showDemoPlaylist(q) {
   tracks = [
@@ -1833,12 +1837,10 @@ function renderTracks() {
       + '<div class="track-actions">'
       + '<button class="btn-queue-add" onclick="event.stopPropagation();addToQueue(tracks[' + i + '])" title="Tambah ke antrean">'
       + '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'
-      + '</button>'
-      + '</div>'
+      + '</button></div>'
       + '<div class="track-idx">' + (i+1) + '</div>'
       + '<div class="wave-bars"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div>'
-      + '</div>'
-      + '</div>';
+      + '</div></div>';
   }).join('');
   document.getElementById('track-list').innerHTML = html;
 }
@@ -1920,9 +1922,315 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-// ═══════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+//  ██████╗ ██╗    ██╗ █████╗
+//  ██╔══██╗██║    ██║██╔══██╗
+//  ██████╔╝██║ █╗ ██║███████║
+//  ██╔═══╝ ██║███╗██║██╔══██║
+//  ██║     ╚███╔███╔╝██║  ██║
+//  ╚═╝      ╚══╝╚══╝ ╚═╝  ╚═╝
+//  Progressive Web App — Single File Edition
+// ═══════════════════════════════════════════════════════════
+
+// ── 1. MANIFEST via Blob URL ─────────────────────────────
+(function injectManifest() {
+  var manifest = {
+    name: 'Qoovy Music Streaming',
+    short_name: 'Qoovy',
+    description: 'Putar musik favoritmu tanpa iklan — by Qabil',
+    start_url: './',
+    display: 'standalone',
+    orientation: 'portrait-primary',
+    background_color: '#080810',
+    theme_color: '#080810',
+    lang: 'id',
+    categories: ['music', 'entertainment'],
+    icons: [
+      {
+        src: "/icons/icon-512.png",
+        sizes: '512x512',
+        type: 'image/svg+xml',
+        purpose: 'any maskable'
+      },
+      {
+        src: "/icons/icon-192.png",
+        sizes: '192x192',
+        type: 'image/svg+xml',
+        purpose: 'any maskable'
+      }
+    ],
+    shortcuts: [
+      {
+        name: 'Putar Demo',
+        short_name: 'Demo',
+        description: 'Langsung putar playlist demo',
+        url: './?autoplay=1',
+        icons: [{ src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' rx='20' fill='%23080810'/%3E%3Cpolygon points='32,24 72,48 32,72' fill='%23a78bfa'/%3E%3C/svg%3E", sizes: '96x96' }]
+      }
+    ],
+    screenshots: []
+  };
+
+  try {
+    var blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = url;
+    document.head.appendChild(link);
+  } catch(e) {
+    // Blob URL not supported — graceful degradation
+  }
+})();
+
+
+// ── 2. SERVICE WORKER via Blob URL ───────────────────────
+(function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+
+  var CACHE_NAME = 'qoovy-v1';
+
+  // The SW script as a string — will be turned into a Blob URL
+  var swCode = `
+var CACHE_NAME = '${CACHE_NAME}';
+
+// Files to pre-cache on install (minimal shell — only self)
+var PRECACHE_URLS = [
+  self.location.href   // cache the HTML file itself
+];
+
+// ── Install: pre-cache the app shell ──────────────────
+self.addEventListener('install', function(event) {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(function(cache) {
+      return cache.addAll(PRECACHE_URLS);
+    }).then(function() {
+      return self.skipWaiting();
+    })
+  );
+});
+
+// ── Activate: clean old caches ────────────────────────
+self.addEventListener('activate', function(event) {
+  event.waitUntil(
+    caches.keys().then(function(keys) {
+      return Promise.all(
+        keys.filter(function(k) { return k !== CACHE_NAME; })
+          .map(function(k) { return caches.delete(k); })
+      );
+    }).then(function() {
+      return self.clients.claim();
+    })
+  );
+});
+
+// ── Fetch: Network-first with cache fallback ──────────
+self.addEventListener('fetch', function(event) {
+  var url = event.request.url;
+
+  // Skip non-GET, chrome-extension, YouTube API & embeds
+  if (event.request.method !== 'GET') return;
+  if (url.startsWith('chrome-extension://')) return;
+  if (url.includes('youtube') || url.includes('googleapis') ||
+      url.includes('ytimg') || url.includes('corsproxy') ||
+      url.includes('allorigins')) return;
+
+  event.respondWith(
+    fetch(event.request)
+      .then(function(response) {
+        // Cache successful same-origin responses
+        if (response && response.status === 200 && response.type !== 'opaque') {
+          var toCache = response.clone();
+          caches.open(CACHE_NAME).then(function(cache) {
+            try { cache.put(event.request, toCache); } catch(e) {}
+          });
+        }
+        return response;
+      })
+      .catch(function() {
+        // Network failed — try cache
+        return caches.match(event.request).then(function(cached) {
+          if (cached) return cached;
+          // For navigation, return the cached HTML shell
+          if (event.request.mode === 'navigate') {
+            return caches.match(PRECACHE_URLS[0]);
+          }
+        });
+      })
+  );
+});
+
+// ── Message: trigger skipWaiting for updates ──────────
+self.addEventListener('message', function(event) {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+`;
+
+  try {
+    var blob = new Blob([swCode], { type: 'application/javascript' });
+    var swUrl = URL.createObjectURL(blob);
+
+    navigator.serviceWorker.register(swUrl, { scope: './' })
+      .then(function(reg) {
+        // Listen for updates
+        reg.addEventListener('updatefound', function() {
+          var newWorker = reg.installing;
+          if (!newWorker) return;
+          newWorker.addEventListener('statechange', function() {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // New version available — show update banner
+              showUpdateBanner(newWorker);
+            }
+          });
+        });
+      })
+      .catch(function(err) {
+        // SW registration failed — possibly file:// protocol; graceful fail
+        console.log('[Qoovy PWA] SW registration skipped:', err.message);
+      });
+
+    // Listen for SW controller change (after skipWaiting)
+    navigator.serviceWorker.addEventListener('controllerchange', function() {
+      if (pwaReloading) window.location.reload();
+    });
+
+  } catch(e) {
+    // Blob URL for SW failed (some browsers restrict this); graceful degradation
+    console.log('[Qoovy PWA] SW Blob URL not supported');
+  }
+})();
+
+
+// ── 3. OFFLINE / ONLINE INDICATOR ────────────────────────
+var offlineBar = document.getElementById('offline-bar');
+
+function updateOnlineStatus() {
+  if (navigator.onLine) {
+    offlineBar.classList.remove('show');
+  } else {
+    offlineBar.classList.add('show');
+    toast('Koneksi terputus — mode offline', 'warn');
+  }
+}
+
+window.addEventListener('online', function() {
+  updateOnlineStatus();
+  toast('Koneksi kembali!');
+});
+window.addEventListener('offline', updateOnlineStatus);
+
+// Run once on load
+if (!navigator.onLine) {
+  setTimeout(function() { offlineBar.classList.add('show'); }, 1200);
+}
+
+
+// ── 4. INSTALL PROMPT (beforeinstallprompt) ──────────────
+var deferredInstallPrompt = null;
+var installBanner = document.getElementById('install-banner');
+var installBannerTimer = null;
+
+// Capture the native install prompt event
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+
+  // Show our custom banner after a short delay (don't be intrusive)
+  if (!localStorage.getItem('qoovy_pwa_dismissed')) {
+    installBannerTimer = setTimeout(showInstallBanner, 8000);
+  }
+});
+
+function showInstallBanner() {
+  if (installBanner) installBanner.classList.add('show');
+}
+
+function hideInstallBanner() {
+  if (installBanner) installBanner.classList.remove('show');
+  if (installBannerTimer) clearTimeout(installBannerTimer);
+}
+
+// "Pasang" button click
+document.getElementById('btn-install-pwa').addEventListener('click', function() {
+  hideInstallBanner();
+  if (!deferredInstallPrompt) {
+    toast('Gunakan menu browser untuk memasang Qoovy', 'warn');
+    return;
+  }
+  deferredInstallPrompt.prompt();
+  deferredInstallPrompt.userChoice.then(function(result) {
+    if (result.outcome === 'accepted') {
+      toast('Qoovy berhasil dipasang! 🎵');
+      localStorage.setItem('qoovy_pwa_installed', '1');
+    } else {
+      toast('Instalasi dibatalkan');
+    }
+    deferredInstallPrompt = null;
+  });
+});
+
+// "Nanti" button click
+document.getElementById('btn-install-dismiss').addEventListener('click', function() {
+  hideInstallBanner();
+  localStorage.setItem('qoovy_pwa_dismissed', Date.now().toString());
+  toast('Kamu bisa pasang nanti lewat menu browser');
+});
+
+// App installed event
+window.addEventListener('appinstalled', function() {
+  hideInstallBanner();
+  deferredInstallPrompt = null;
+  toast('Qoovy sudah terpasang di perangkatmu! 🎵');
+});
+
+
+// ── 5. UPDATE BANNER ─────────────────────────────────────
+var pwaReloading = false;
+var updateBanner = document.getElementById('update-banner');
+var updateWorker = null;
+
+function showUpdateBanner(worker) {
+  updateWorker = worker;
+  if (updateBanner) {
+    setTimeout(function() { updateBanner.classList.add('show'); }, 1000);
+  }
+}
+
+function hideUpdateBanner() {
+  if (updateBanner) updateBanner.classList.remove('show');
+}
+
+function pwaReloadForUpdate() {
+  hideUpdateBanner();
+  pwaReloading = true;
+  if (updateWorker) {
+    updateWorker.postMessage({ type: 'SKIP_WAITING' });
+  } else if (navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+  } else {
+    window.location.reload();
+  }
+}
+
+
+// ── 6. DISPLAY MODE DETECTION ────────────────────────────
+(function detectDisplayMode() {
+  var isStandalone = window.navigator.standalone === true
+    || window.matchMedia('(display-mode: standalone)').matches
+    || window.matchMedia('(display-mode: fullscreen)').matches;
+
+  if (isStandalone) {
+    // Running as installed PWA
+    document.title = 'Qoovy';
+    // Optionally hide install prompts entirely
+    localStorage.setItem('qoovy_pwa_installed', '1');
+  }
+})();
+
+
+// ── 7. INIT ──────────────────────────────────────────────
 window.addEventListener('load', function() {
   loadFromStorage();
   showDemoPlaylist('demo');
