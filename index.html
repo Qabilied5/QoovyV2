@@ -4,10 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Qoovy - Music Player</title>
-
-<!-- ═══════════════════════════════════════
-     PWA META TAGS
-════════════════════════════════════════ -->
 <meta name="application-name" content="Qoovy">
 <meta name="description" content="Qoovy Music Streaming — Putar musik favoritmu tanpa iklan">
 <meta name="theme-color" content="#080810">
@@ -15,11 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Qoovy">
-<meta name="msapplication-TileColor" content="#080810">
-<meta name="msapplication-tap-highlight" content="no">
-
-<!-- Apple Touch Icons (inline SVG → data URI) -->
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='115' fill='%23080810'/%3E%3Ccircle cx='256' cy='256' r='160' fill='none' stroke='url(%23g1)' stroke-width='8'/%3E%3Ccircle cx='256' cy='256' r='110' fill='none' stroke='url(%23g2)' stroke-width='6' opacity='.5'/%3E%3Ccircle cx='256' cy='256' r='36' fill='%23a78bfa'/%3E%3Ccircle cx='256' cy='256' r='18' fill='%23080810'/%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23a78bfa'/%3E%3Cstop offset='100%25' stop-color='%23ec64a2'/%3E%3C/linearGradient%3E%3ClinearGradient id='g2' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2338bdf8'/%3E%3Cstop offset='100%25' stop-color='%23a78bfa'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='115' fill='%23080810'/%3E%3Ccircle cx='256' cy='256' r='160' fill='none' stroke='url(%23g1)' stroke-width='8'/%3E%3Ccircle cx='256' cy='256' r='36' fill='%23a78bfa'/%3E%3Ccircle cx='256' cy='256' r='18' fill='%23080810'/%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23a78bfa'/%3E%3Cstop offset='100%25' stop-color='%23ec64a2'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E">
 
 <style>
 :root {
@@ -52,8 +44,6 @@ body {
   display: flex; flex-direction: column; min-height: 100vh;
   position: relative;
 }
-
-/* BG */
 .bg-scene { position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
 .orb { position:absolute; border-radius:50%; filter:blur(80px); animation:drift 12s ease-in-out infinite; }
 .orb-1 { width:600px; height:600px; background:var(--orb1); top:-200px; left:-200px; animation-duration:14s; }
@@ -71,8 +61,6 @@ body {
     linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
   background-size:48px 48px;
 }
-
-/* HEADER */
 header {
   position:relative; z-index:10;
   display:flex; align-items:center; justify-content:space-between;
@@ -91,7 +79,6 @@ header {
 }
 .logo-sub { font-size:10px; letter-spacing:2px; color:var(--muted); font-weight:500; text-transform:uppercase; }
 .header-right { display:flex; align-items:center; gap:8px; }
-
 .adb-badge {
   display:flex; align-items:center; gap:6px;
   background:rgba(74,222,128,0.08);
@@ -105,7 +92,6 @@ header {
 .adb-badge:hover { background:rgba(74,222,128,0.14); }
 .adb-badge.off { background:rgba(248,113,113,0.08); border-color:rgba(248,113,113,0.2); color:var(--red); }
 .adb-dot { width:6px; height:6px; border-radius:50%; background:currentColor; box-shadow:0 0 6px currentColor; }
-
 .api-btn {
   display:flex; align-items:center; gap:7px;
   background:var(--glass); border:1px solid var(--glass-border);
@@ -116,11 +102,7 @@ header {
 .api-btn:hover { background:var(--glass-hover); border-color:var(--accent); box-shadow:0 0 14px var(--glow-a); }
 .status-dot { width:7px; height:7px; border-radius:50%; background:var(--muted2); transition:all 0.4s; flex-shrink:0; }
 .status-dot.active { background:var(--green); box-shadow:0 0 8px var(--green); }
-
-/* LAYOUT */
 .app { position:relative; z-index:5; flex:1; display:flex; overflow:hidden; min-height:0; }
-
-/* SIDEBAR */
 .sidebar {
   width:320px; min-width:320px;
   display:flex; flex-direction:column; overflow:hidden;
@@ -129,8 +111,6 @@ header {
   border-right:1px solid var(--glass-border);
   flex-shrink:0;
 }
-
-/* SEARCH SECTION */
 .search-section { padding:14px 14px 10px; border-bottom:1px solid var(--glass-border); position:relative; }
 .section-label {
   font-size:9px; letter-spacing:3px; color:var(--muted); text-transform:uppercase;
@@ -157,8 +137,6 @@ header {
 .btn-go:hover { transform:scale(1.04); box-shadow:0 0 20px var(--glow-a); }
 .btn-go:active { transform:scale(0.97); }
 .btn-go:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
-
-/* SEARCH HISTORY DROPDOWN */
 .search-history-dropdown {
   position:absolute; top:100%; left:14px; right:14px; z-index:200;
   background:rgba(14,14,24,0.98); border:1px solid var(--glass-border);
@@ -190,8 +168,6 @@ header {
   font-weight:600; border-top:1px solid var(--glass-border);
 }
 .sh-clear-row:hover { background:rgba(167,139,250,0.06); }
-
-/* SIDEBAR TABS */
 .sidebar-tabs {
   display:flex; border-bottom:1px solid var(--glass-border);
   flex-shrink:0;
@@ -218,25 +194,18 @@ header {
 }
 .tab-badge.queue-badge { background:rgba(251,191,36,0.15); color:var(--yellow); }
 .tab-badge.hist-badge { background:rgba(56,189,248,0.15); color:var(--accent3); }
-
-/* TAB PANELS */
 .tab-panel { display:none; flex:1; flex-direction:column; overflow:hidden; min-height:0; }
 .tab-panel.active { display:flex; }
-
-/* PLAYLIST HEAD */
 .playlist-head { padding:10px 14px 6px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
 .badge {
   font-size:10px; font-family:'Courier New',monospace;
   background:rgba(167,139,250,0.15); border:1px solid rgba(167,139,250,0.25);
   color:var(--accent); padding:2px 8px; border-radius:20px;
 }
-
-/* TRACK LIST */
 .track-list { flex:1; overflow-y:auto; padding:4px 8px 12px; }
 .track-list::-webkit-scrollbar { width:3px; }
 .track-list::-webkit-scrollbar-track { background:transparent; }
 .track-list::-webkit-scrollbar-thumb { background:var(--muted2); border-radius:3px; }
-
 .track-item {
   display:flex; align-items:center; gap:8px; padding:7px 8px;
   border-radius:12px; cursor:pointer; transition:all 0.2s;
@@ -262,8 +231,6 @@ header {
 .wave-bar:nth-child(2) { animation-delay:0.15s; }
 .wave-bar:nth-child(3) { animation-delay:0.3s; }
 @keyframes wave-anim { 0%,100% { height:3px; opacity:0.5; } 50% { height:13px; opacity:1; } }
-
-/* TRACK ACTIONS */
 .track-actions { opacity:0; transition:opacity 0.15s; display:flex; align-items:center; gap:2px; }
 .btn-queue-add {
   background:rgba(251,191,36,0.1); border:1px solid rgba(251,191,36,0.2);
@@ -272,8 +239,6 @@ header {
   cursor:pointer; transition:all 0.2s; flex-shrink:0;
 }
 .btn-queue-add:hover { background:rgba(251,191,36,0.2); transform:scale(1.1); }
-
-/* QUEUE PANEL */
 .queue-head {
   padding:10px 14px 6px;
   display:flex; align-items:center; justify-content:space-between;
@@ -287,7 +252,6 @@ header {
   transition:all 0.2s;
 }
 .btn-queue-clear:hover { background:rgba(248,113,113,0.15); }
-
 .queue-item {
   display:flex; align-items:center; gap:8px; padding:7px 8px;
   border-radius:10px; margin-bottom:3px; border:1px solid transparent;
@@ -307,8 +271,6 @@ header {
   opacity:0; flex-shrink:0;
 }
 .btn-queue-remove:hover { color:var(--red); background:rgba(248,113,113,0.1); }
-
-/* HISTORY PANEL */
 .history-head {
   padding:10px 14px 6px;
   display:flex; align-items:center; justify-content:space-between;
@@ -322,7 +284,6 @@ header {
   transition:all 0.2s;
 }
 .btn-hist-clear:hover { background:rgba(248,113,113,0.15); }
-
 .hist-item {
   display:flex; align-items:center; gap:8px; padding:7px 8px;
   border-radius:10px; margin-bottom:3px; border:1px solid transparent;
@@ -333,8 +294,6 @@ header {
   font-size:9px; font-family:'Courier New',monospace; color:var(--accent3);
   white-space:nowrap; flex-shrink:0;
 }
-
-/* SEARCH MODE INFO */
 .search-mode-info {
   padding:6px 14px;
   background:rgba(56,189,248,0.04);
@@ -343,8 +302,6 @@ header {
   display:flex; align-items:center; gap:6px; flex-shrink:0;
 }
 .mode-dot { width:5px; height:5px; border-radius:50%; background:var(--accent3); flex-shrink:0; }
-
-/* EMPTY/LOADING */
 .empty-wrap { text-align:center; padding:36px 20px; }
 .empty-icon-wrap {
   width:56px; height:56px; margin:0 auto 14px; border-radius:14px;
@@ -355,15 +312,11 @@ header {
 .empty-title { font-size:13px; font-weight:600; color:var(--muted); margin-bottom:6px; }
 .empty-sub { font-size:11px; color:var(--muted2); line-height:1.7; }
 .spinner-sm { width:28px; height:28px; border:2px solid var(--muted2); border-top-color:var(--accent); border-radius:50%; animation:spin 0.7s linear infinite; margin:14px auto 0; }
-
-/* MAIN */
 .main-panel { flex:1; display:flex; flex-direction:column; overflow:hidden; min-width:0; }
 .video-area {
   flex:1; display:flex; align-items:center; justify-content:center;
   padding:24px 24px 14px; overflow:hidden; position:relative;
 }
-
-/* IDLE */
 .idle-view { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; text-align:center; }
 .idle-disc { width:110px; height:110px; border-radius:50%; position:relative; animation:disc-spin 10s linear infinite paused; }
 .idle-disc.spin { animation-play-state:running; }
@@ -375,8 +328,6 @@ header {
 .idle-desc { font-size:13px; color:var(--muted2); max-width:280px; line-height:1.7; }
 .kbd-hint { font-size:10px; color:var(--muted2); letter-spacing:0.5px; margin-top:-6px; }
 .kbd { display:inline-block; background:rgba(255,255,255,0.06); border:1px solid var(--glass-border); border-radius:4px; padding:1px 6px; font-size:10px; font-family:'Courier New',monospace; }
-
-/* PLAYER */
 .player-view { display:none; width:100%; max-width:700px; }
 .video-glass-wrap {
   position:relative; border-radius:18px; overflow:hidden;
@@ -384,42 +335,67 @@ header {
   box-shadow:0 0 0 1px rgba(167,139,250,0.08), 0 8px 64px rgba(0,0,0,0.8), 0 0 60px rgba(99,68,255,0.12);
   aspect-ratio:16/9; background:#000;
 }
-#yt-iframe { width:100%; height:100%; border:none; display:block; pointer-events:none; }
-.video-shimmer { position:absolute; inset:0; pointer-events:none; border-radius:18px; box-shadow:inset 0 0 60px rgba(0,0,0,0.4); }
+/* ═══════════════════════════════════════
+   IFRAME WRAPPER: LAPISAN PEMBLOKIR IKLAN
+   Menutupi area klik iklan sepenuhnya
+════════════════════════════════════════ */
+.iframe-shield {
+  position:absolute; inset:0; z-index:5;
+  pointer-events:none; /* default — hanya aktif saat mode pemblokir */
+  border-radius:18px;
+}
+.iframe-shield.blocking { pointer-events:all; cursor:default; }
+#yt-iframe { width:100%; height:100%; border:none; display:block; }
+.video-shimmer { position:absolute; inset:0; pointer-events:none; border-radius:18px; box-shadow:inset 0 0 60px rgba(0,0,0,0.4); z-index:2; }
 
-/* AD BLOCKER OVERLAY */
+/* ═══════════════════════════════════════
+   AD BLOCKER OVERLAY — UPGRADE TOTAL
+   Kini muncul INSTAN, bukan setelah deteksi
+════════════════════════════════════════ */
 .ad-overlay {
   display:none; position:absolute; inset:0; z-index:20;
-  background:rgba(8,8,16,0.96); backdrop-filter:blur(12px);
+  background:rgba(8,8,16,0.97); backdrop-filter:blur(16px);
   align-items:center; justify-content:center; flex-direction:column; gap:14px;
   border-radius:18px; text-align:center;
 }
 .ad-overlay.show { display:flex; }
 .ad-shield {
-  width:60px; height:60px; border-radius:50%;
-  background:rgba(74,222,128,0.1); border:2px solid rgba(74,222,128,0.3);
+  width:64px; height:64px; border-radius:50%;
+  background:rgba(74,222,128,0.12); border:2px solid rgba(74,222,128,0.4);
   display:flex; align-items:center; justify-content:center;
-  animation:pulse-shield 1.5s ease-in-out infinite;
+  animation:pulse-shield 1.4s ease-in-out infinite;
 }
-@keyframes pulse-shield { 0%,100% { box-shadow:0 0 0 0 rgba(74,222,128,0.3); } 50% { box-shadow:0 0 0 12px rgba(74,222,128,0); } }
-.ad-title { font-size:15px; font-weight:800; color:var(--green); letter-spacing:2px; text-transform:uppercase; }
-.ad-sub { font-size:12px; color:var(--muted); }
-.ad-countdown { font-size:28px; font-weight:900; color:var(--text); font-family:'Courier New',monospace; }
+@keyframes pulse-shield { 0%,100% { box-shadow:0 0 0 0 rgba(74,222,128,0.4); } 50% { box-shadow:0 0 0 14px rgba(74,222,128,0); } }
+.ad-title { font-size:16px; font-weight:800; color:var(--green); letter-spacing:2px; text-transform:uppercase; }
+.ad-sub { font-size:12px; color:var(--muted); max-width:240px; line-height:1.6; }
+.ad-countdown { font-size:32px; font-weight:900; color:var(--text); font-family:'Courier New',monospace; }
 .btn-skip-now {
   background:linear-gradient(135deg, var(--green), #22c55e);
   border:none; border-radius:10px; color:#000;
   font-size:12px; font-weight:800; letter-spacing:2px; text-transform:uppercase;
-  padding:10px 20px; cursor:pointer; transition:all 0.2s;
+  padding:10px 24px; cursor:pointer; transition:all 0.2s;
 }
 .btn-skip-now:hover { transform:scale(1.05); }
 
-/* VIDEO LOADING */
+/* STATUS IKLAN TERBLOKIR — pojok kiri bawah video */
+.ad-block-status {
+  position:absolute; bottom:10px; left:12px; z-index:15;
+  background:rgba(74,222,128,0.12); border:1px solid rgba(74,222,128,0.25);
+  border-radius:8px; padding:4px 10px;
+  font-size:10px; font-weight:700; color:var(--green);
+  letter-spacing:1px; text-transform:uppercase;
+  display:flex; align-items:center; gap:5px;
+  opacity:0; transition:opacity 0.3s;
+  pointer-events:none;
+}
+.ad-block-status.show { opacity:1; }
+.ad-block-status-dot { width:5px; height:5px; border-radius:50%; background:var(--green); animation:blink-dot 1.2s ease-in-out infinite; }
+@keyframes blink-dot { 0%,100%{opacity:1;} 50%{opacity:0.2;} }
+
 .vid-loading { display:none; position:absolute; inset:0; background:rgba(8,8,16,0.7); align-items:center; justify-content:center; border-radius:18px; z-index:10; backdrop-filter:blur(4px); }
 .vid-loading.show { display:flex; }
 .spinner { width:44px; height:44px; border:3px solid rgba(167,139,250,0.2); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
-
-/* NOW PLAYING */
 .now-playing-info { margin-top:14px; text-align:center; padding:0 8px; }
 .np-label { font-size:9px; letter-spacing:4px; color:var(--accent); text-transform:uppercase; font-weight:600; margin-bottom:5px; opacity:0.8; }
 .np-title {
@@ -429,7 +405,7 @@ header {
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:640px; margin:0 auto 4px;
 }
 .np-ch { font-size:13px; color:var(--muted); font-weight:300; }
-.status-bar { display:flex; align-items:center; gap:8px; justify-content:center; margin-top:7px; }
+.status-bar { display:flex; align-items:center; gap:8px; justify-content:center; margin-top:7px; flex-wrap:wrap; }
 .status-pill {
   font-size:10px; letter-spacing:1px; text-transform:uppercase; font-weight:600;
   padding:3px 10px; border-radius:20px;
@@ -439,8 +415,8 @@ header {
 .pill-adblock.off { background:rgba(248,113,113,0.08); border-color:rgba(248,113,113,0.15); color:var(--red); }
 .pill-queue { background:rgba(251,191,36,0.08); border:1px solid rgba(251,191,36,0.15); color:var(--yellow); display:none; }
 .pill-queue.show { display:inline-flex; }
-
-/* CONTROLS */
+.pill-adblock-count { background:rgba(74,222,128,0.08); border:1px solid rgba(74,222,128,0.15); color:var(--green); display:none; }
+.pill-adblock-count.show { display:inline-flex; }
 .controls-zone {
   padding:12px 28px 20px;
   background:rgba(8,8,16,0.6); backdrop-filter:blur(24px);
@@ -456,7 +432,6 @@ header {
   transition:opacity 0.2s; box-shadow:0 0 8px rgba(255,255,255,0.5);
 }
 .prog-track:hover .prog-fill::after { opacity:1; }
-
 .ctrl-row { display:flex; align-items:center; justify-content:space-between; }
 .ctrl-group { display:flex; align-items:center; gap:8px; }
 .c-btn {
@@ -474,7 +449,6 @@ header {
   line-height:1;
 }
 .c-btn.repeat-one .repeat-badge { display:flex; }
-
 .play-btn {
   width:54px; height:54px; border-radius:50%;
   background:linear-gradient(135deg, var(--accent), var(--accent2));
@@ -485,13 +459,10 @@ header {
 }
 .play-btn:hover { transform:scale(1.08); box-shadow:0 0 36px var(--glow-a), 0 4px 24px rgba(0,0,0,0.5); }
 .play-btn:active { transform:scale(0.95); }
-
 .vol-group { display:flex; align-items:center; gap:8px; }
 input[type=range].vol-slider { -webkit-appearance:none; width:80px; height:4px; border-radius:4px; background:rgba(255,255,255,0.1); outline:none; cursor:pointer; }
 input[type=range].vol-slider::-webkit-slider-thumb { -webkit-appearance:none; width:12px; height:12px; border-radius:50%; background:var(--text); cursor:pointer; transition:all 0.2s; }
 input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--accent); box-shadow:0 0 8px var(--glow-a); }
-
-/* MODAL */
 .modal-backdrop { display:none; position:fixed; inset:0; z-index:100; background:rgba(8,8,16,0.85); backdrop-filter:blur(12px); align-items:center; justify-content:center; }
 .modal-backdrop.show { display:flex; }
 .modal {
@@ -517,8 +488,6 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
 .btn-cancel { background:var(--glass); border:1px solid var(--glass-border); border-radius:12px; color:var(--muted); font-size:14px; font-weight:600; padding:12px 20px; cursor:pointer; font-family:inherit; transition:all 0.2s; }
 .btn-cancel:hover { color:var(--text); background:var(--glass-hover); }
 .modal-note { margin-top:14px; font-size:11px; color:var(--muted2); line-height:1.6; text-align:center; }
-
-/* KEYBOARD SHORTCUT HINT */
 .kbd-shortcuts-bar {
   padding:5px 14px; background:rgba(167,139,250,0.03);
   border-bottom:1px solid var(--glass-border); flex-shrink:0;
@@ -533,8 +502,6 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   border-radius:4px; padding:1px 5px; color:var(--muted); letter-spacing:0.5px;
 }
 .kbd-desc { font-size:9px; color:var(--muted2); }
-
-/* TOAST */
 .toast {
   position:fixed; bottom:90px; right:20px; z-index:999;
   background:rgba(22,22,34,0.95); border:1px solid var(--glass-border);
@@ -547,10 +514,6 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   box-shadow:0 4px 24px rgba(0,0,0,0.4);
 }
 .toast.show { transform:translateY(0) scale(1); opacity:1; }
-
-/* ═══════════════════════════════════════
-   PWA: OFFLINE INDICATOR
-════════════════════════════════════════ */
 .offline-bar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
   background: rgba(248,113,113,0.12); border-bottom: 1px solid rgba(248,113,113,0.3);
@@ -562,18 +525,8 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: var(--red);
 }
 .offline-bar.show { transform: translateY(0); }
-.offline-bar svg { flex-shrink: 0; }
 .offline-label { flex: 1; text-align: center; }
-.offline-dot {
-  width: 7px; height: 7px; border-radius: 50%; background: var(--red);
-  box-shadow: 0 0 8px var(--red); flex-shrink: 0;
-  animation: blink-dot 1.4s ease-in-out infinite;
-}
-@keyframes blink-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
-
-/* ═══════════════════════════════════════
-   PWA: INSTALL PROMPT BANNER
-════════════════════════════════════════ */
+.offline-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); box-shadow: 0 0 8px var(--red); flex-shrink: 0; animation: blink-dot 1.4s ease-in-out infinite; }
 .install-banner {
   position: fixed; bottom: 82px; left: 50%; transform: translateX(-50%) translateY(120px);
   z-index: 998;
@@ -587,36 +540,15 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   min-width: 300px; max-width: 420px;
 }
 .install-banner.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: all; }
-
-.install-icon {
-  width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
-  background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(236,100,162,0.15));
-  border: 1px solid rgba(167,139,250,0.25);
-  display: flex; align-items: center; justify-content: center;
-}
+.install-icon { width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0; background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(236,100,162,0.15)); border: 1px solid rgba(167,139,250,0.25); display: flex; align-items: center; justify-content: center; }
 .install-body { flex: 1; min-width: 0; }
 .install-title { font-size: 13px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 3px; }
 .install-sub { font-size: 11px; color: var(--muted); line-height: 1.5; }
 .install-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
-.btn-install {
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border: none; border-radius: 10px; color: white;
-  font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
-  padding: 8px 14px; cursor: pointer; transition: all 0.2s; white-space: nowrap;
-  font-family: inherit;
-}
+.btn-install { background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 10px; color: white; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; padding: 8px 14px; cursor: pointer; transition: all 0.2s; white-space: nowrap; font-family: inherit; }
 .btn-install:hover { transform: scale(1.05); box-shadow: 0 0 16px var(--glow-a); }
-.btn-install-dismiss {
-  background: none; border: none; color: var(--muted2);
-  font-size: 10px; font-weight: 600; letter-spacing: 0.5px; text-align: center;
-  cursor: pointer; padding: 2px; transition: color 0.2s; font-family: inherit;
-  text-transform: uppercase;
-}
+.btn-install-dismiss { background: none; border: none; color: var(--muted2); font-size: 10px; font-weight: 600; letter-spacing: 0.5px; text-align: center; cursor: pointer; padding: 2px; transition: color 0.2s; font-family: inherit; text-transform: uppercase; }
 .btn-install-dismiss:hover { color: var(--muted); }
-
-/* ═══════════════════════════════════════
-   PWA: UPDATE AVAILABLE TOAST
-════════════════════════════════════════ */
 .update-banner {
   position: fixed; top: 70px; right: 20px; z-index: 997;
   background: rgba(14,14,24,0.97); border: 1px solid rgba(56,189,248,0.3);
@@ -633,26 +565,12 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
 .update-body { flex: 1; }
 .update-title { font-size: 12px; font-weight: 700; color: var(--accent3); letter-spacing: 0.5px; margin-bottom: 4px; }
 .update-sub { font-size: 11px; color: var(--muted); line-height: 1.5; margin-bottom: 8px; }
-.btn-update-reload {
-  background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.25);
-  color: var(--accent3); font-size: 10px; font-weight: 700; letter-spacing: 1px;
-  text-transform: uppercase; padding: 5px 12px; border-radius: 7px;
-  cursor: pointer; transition: all 0.2s; font-family: inherit;
-}
+.btn-update-reload { background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.25); color: var(--accent3); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 5px 12px; border-radius: 7px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
 .btn-update-reload:hover { background: rgba(56,189,248,0.2); }
-.btn-update-close {
-  background: none; border: none; color: var(--muted2);
-  cursor: pointer; padding: 2px; line-height: 1; flex-shrink: 0;
-  transition: color 0.2s;
-}
+.btn-update-close { background: none; border: none; color: var(--muted2); cursor: pointer; padding: 2px; line-height: 1; flex-shrink: 0; transition: color 0.2s; }
 .btn-update-close:hover { color: var(--text); }
-
-/* MOBILE */
 .mobile-playlist-toggle { display: none; }
-.mobile-sheet-overlay {
-  display: none; position: fixed; inset: 0; z-index: 0;
-  background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
-}
+.mobile-sheet-overlay { display: none; position: fixed; inset: 0; z-index: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
 .mobile-sheet-overlay.show { display: block; }
 
 @media (max-width: 900px) {
@@ -664,7 +582,6 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   .controls-zone { padding: 12px 16px 18px; }
   .np-title { font-size: 18px; }
 }
-
 @media (max-width: 640px) {
   header { padding: 10px 14px; gap: 8px; }
   .logo-text { font-size: 16px; letter-spacing: 3px; }
@@ -684,12 +601,9 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
     box-shadow: 0 -8px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(167,139,250,0.08);
   }
   .sidebar.mobile-open { transform: translateY(0); }
-  .sidebar::before {
-    content: ''; display: block; width: 36px; height: 4px;
-    background: var(--muted2); border-radius: 2px; margin: 10px auto 4px; flex-shrink: 0;
-  }
+  .sidebar::before { content: ''; display: block; width: 36px; height: 4px; background: var(--muted2); border-radius: 2px; margin: 10px auto 4px; flex-shrink: 0; }
   .main-panel { flex: 1; width: 100%; }
-  .video-area { bottom: 40px; padding: 12px 12px 8px; padding-top: 14px; }
+  .video-area { padding: 12px 12px 8px; }
   .player-view { max-width: 100%; }
   .now-playing-info { margin-top: 10px; }
   .np-title { font-size: 15px; max-width: 100%; }
@@ -697,10 +611,7 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   .np-label { font-size: 8px; margin-bottom: 4px; }
   .status-bar { margin-top: 5px; gap: 5px; }
   .status-pill { font-size: 9px; padding: 2px 7px; }
-  .controls-zone { position: fixed;
-    bottom: 20px; left: 50%; transform: translateX(-50%);
-    border-radius: 15px; padding: 10px 14px 14px;
-    width: 100vw; z-index: 100; }
+  .controls-zone { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); border-radius: 15px; padding: 10px 14px 14px; width: 100vw; z-index: 100; }
   .progress-row { gap: 8px; margin-bottom: 10px; }
   .time { font-size: 10px; min-width: 30px; }
   .ctrl-row { gap: 0; }
@@ -731,11 +642,9 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   .prog-track { height: 6px; border-radius: 6px; margin: 6px 0; }
   .prog-fill { border-radius: 6px; }
   .prog-fill::after { width: 14px; height: 14px; right: -7px; opacity: 1; }
-  /* PWA mobile adjustments */
   .install-banner { bottom: 90px; min-width: calc(100vw - 28px); max-width: calc(100vw - 28px); }
   .update-banner { right: 14px; max-width: calc(100vw - 28px); }
 }
-
 @media (max-width: 380px) {
   header { padding: 9px 10px; }
   .logo-text { font-size: 14px; letter-spacing: 2px; }
@@ -751,41 +660,25 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
 <body>
 
 <div class="bg-scene">
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
+  <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
   <div class="grid-overlay"></div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     PWA: OFFLINE INDICATOR BAR
-════════════════════════════════════════ -->
 <div class="offline-bar" id="offline-bar">
   <div class="offline-dot"></div>
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-    <line x1="1" y1="1" x2="23" y2="23"/>
-    <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
-    <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
-    <path d="M10.71 5.05A16 16 0 0 1 22.56 9"/>
-    <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
-    <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+    <line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+    <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.56 9"/>
+    <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
     <circle cx="12" cy="20" r="1" fill="currentColor"/>
   </svg>
   <span class="offline-label">Tidak ada koneksi internet — mode offline aktif</span>
 </div>
 
-<!-- ═══════════════════════════════════════
-     PWA: INSTALL PROMPT BANNER
-════════════════════════════════════════ -->
 <div class="install-banner" id="install-banner">
   <div class="install-icon">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#ig)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <defs>
-        <linearGradient id="ig" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#a78bfa"/>
-          <stop offset="100%" stop-color="#ec64a2"/>
-        </linearGradient>
-      </defs>
+      <defs><linearGradient id="ig" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#a78bfa"/><stop offset="100%" stop-color="#ec64a2"/></linearGradient></defs>
       <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
     </svg>
   </div>
@@ -799,9 +692,6 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     PWA: UPDATE AVAILABLE BANNER
-════════════════════════════════════════ -->
 <div class="update-banner" id="update-banner">
   <div class="update-body">
     <div class="update-title">Update Tersedia</div>
@@ -835,9 +725,7 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
 </header>
 
 <div class="app">
-  <!-- SIDEBAR -->
   <div class="sidebar" id="sidebar">
-    <!-- SEARCH -->
     <div class="search-section">
       <div class="section-label">Cari Musik</div>
       <div class="search-wrap">
@@ -851,13 +739,10 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
       </div>
       <div class="search-history-dropdown" id="search-history-dropdown"></div>
     </div>
-
     <div class="search-mode-info" id="search-mode-info">
       <span class="mode-dot"></span>
       <span id="mode-text">Mode demo — masukkan API Key untuk pencarian nyata</span>
     </div>
-
-    <!-- SIDEBAR TABS -->
     <div class="sidebar-tabs">
       <button class="tab-btn active" id="tab-playlist" onclick="switchTab('playlist')">
         Playlist <span class="tab-badge" id="badge-playlist">0</span>
@@ -869,8 +754,6 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
         History <span class="tab-badge hist-badge" id="badge-history">0</span>
       </button>
     </div>
-
-    <!-- PLAYLIST TAB -->
     <div class="tab-panel active" id="panel-playlist">
       <div class="playlist-head">
         <div class="section-label" style="margin:0">Playlist</div>
@@ -878,18 +761,12 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
       </div>
       <div class="track-list" id="track-list">
         <div class="empty-wrap">
-          <div class="empty-icon-wrap">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
-            </svg>
-          </div>
+          <div class="empty-icon-wrap"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
           <div class="empty-title">Belum ada lagu</div>
           <div class="empty-sub">Set Code Key lalu cari musik favoritmu</div>
         </div>
       </div>
     </div>
-
-    <!-- QUEUE TAB -->
     <div class="tab-panel" id="panel-queue">
       <div class="queue-head">
         <div class="queue-head-title">Antrean Lagu</div>
@@ -897,19 +774,12 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
       </div>
       <div class="track-list" id="queue-list">
         <div class="empty-wrap">
-          <div class="empty-icon-wrap">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
-              <line x1="8" y1="18" x2="21" y2="18"/>
-            </svg>
-          </div>
+          <div class="empty-icon-wrap"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg></div>
           <div class="empty-title">Antrean kosong</div>
-          <div class="empty-sub">Tekan tombol + pada lagu untuk menambahkan ke antrean</div>
+          <div class="empty-sub">Tekan + pada lagu untuk menambahkan ke antrean</div>
         </div>
       </div>
     </div>
-
-    <!-- HISTORY TAB -->
     <div class="tab-panel" id="panel-history">
       <div class="history-head">
         <div class="history-head-title">Riwayat Diputar</div>
@@ -917,11 +787,7 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
       </div>
       <div class="track-list" id="history-list">
         <div class="empty-wrap">
-          <div class="empty-icon-wrap">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-          </div>
+          <div class="empty-icon-wrap"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
           <div class="empty-title">Belum ada riwayat</div>
           <div class="empty-sub">Lagu yang diputar akan muncul di sini</div>
         </div>
@@ -929,10 +795,8 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
     </div>
   </div>
 
-  <!-- MAIN PANEL -->
   <div class="main-panel">
     <div class="video-area">
-      <!-- IDLE -->
       <div class="idle-view" id="idle-view">
         <div class="idle-disc" id="idle-disc">
           <div class="disc-outer"></div>
@@ -947,23 +811,29 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
         </div>
       </div>
 
-      <!-- PLAYER -->
       <div class="player-view" id="player-view">
         <div class="video-glass-wrap">
+          <!-- IFRAME SHIELD: menangkap semua klik saat iklan aktif -->
+          <div class="iframe-shield" id="iframe-shield"></div>
           <iframe id="yt-iframe" allowfullscreen allow="autoplay; encrypted-media"></iframe>
           <div class="video-shimmer"></div>
           <div class="vid-loading" id="vid-loading"><div class="spinner"></div></div>
           <div class="ad-overlay" id="ad-overlay">
             <div class="ad-shield">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                 <polyline points="9 12 11 14 15 10"/>
               </svg>
             </div>
             <div class="ad-title">Iklan Diblokir</div>
-            <div class="ad-sub">Melewati iklan secara otomatis...</div>
+            <div class="ad-sub">Qoovy mendeteksi iklan dan memblokirnya secara otomatis. Menunggu konten asli...</div>
             <div class="ad-countdown" id="ad-countdown">5</div>
             <button class="btn-skip-now" onclick="skipAdNow()">Lewati Sekarang</button>
+          </div>
+          <!-- STATUS BLOKIR AKTIF -->
+          <div class="ad-block-status" id="ad-block-status">
+            <div class="ad-block-status-dot"></div>
+            SHIELD AKTIF
           </div>
         </div>
         <div class="now-playing-info">
@@ -973,13 +843,13 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
           <div class="status-bar">
             <span class="status-pill pill-source">Musik Lengkap</span>
             <span class="status-pill pill-adblock" id="pill-adblock">Bebas Iklan</span>
+            <span class="status-pill pill-adblock-count" id="pill-adblock-count">0 iklan diblokir</span>
             <span class="status-pill pill-queue" id="pill-queue">Queue</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- KEYBOARD SHORTCUTS BAR -->
     <div class="kbd-shortcuts-bar">
       <div class="kbd-hint-item"><span class="kbd-key">Space</span><span class="kbd-desc">Play/Pause</span></div>
       <div class="kbd-hint-item"><span class="kbd-key">Left</span><span class="kbd-desc">Prev</span></div>
@@ -987,10 +857,9 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
       <div class="kbd-hint-item"><span class="kbd-key">M</span><span class="kbd-desc">Mute</span></div>
       <div class="kbd-hint-item"><span class="kbd-key">S</span><span class="kbd-desc">Shuffle</span></div>
       <div class="kbd-hint-item"><span class="kbd-key">R</span><span class="kbd-desc">Repeat</span></div>
-      <div class="kbd-hint-item"><span class="kbd-key">Q</span><span class="kbd-desc">Queue Tab</span></div>
+      <div class="kbd-hint-item"><span class="kbd-key">Q</span><span class="kbd-desc">Queue</span></div>
     </div>
 
-    <!-- CONTROLS -->
     <div class="controls-zone">
       <div class="progress-row">
         <span class="time" id="t-cur">0:00</span>
@@ -1054,7 +923,6 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   </div>
 </div>
 
-<!-- Mobile Toggle -->
 <button class="mobile-playlist-toggle" id="mobile-playlist-toggle" onclick="toggleMobilePlaylist()">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
@@ -1065,7 +933,6 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
   <span id="mob-toggle-label">Playlist</span>
 </button>
 
-<!-- MODAL -->
 <div class="modal-backdrop" id="modal-backdrop">
   <div class="modal">
     <div class="modal-icon">
@@ -1076,7 +943,7 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
     <div class="modal-title">Qoovy Membutuhkan Code Key</div>
     <div class="modal-desc">
       Masukkan Code Key, tidak ada dan tidak Tahu? tanya Qabil.
-      Aktifkan <strong>Code Key</strong> Untuk bisa menggunakan platform Qoovy.
+      Aktifkan <strong>Code Key</strong> untuk bisa menggunakan platform Qoovy.
       Tanpa Code Key, mode demo tetap bisa digunakan (Hanya 10 Lagu).
     </div>
     <div class="modal-input-wrap">
@@ -1103,15 +970,15 @@ input[type=range].vol-slider::-webkit-slider-thumb:hover { background:var(--acce
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 //  STORAGE KEYS
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 var LS_SEARCH_HIST = 'qoovy_search_history';
 var LS_PLAY_HIST   = 'qoovy_play_history';
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 //  STATE
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 var API_KEY = '';
 var tracks = [];
 var curIdx = -1;
@@ -1135,10 +1002,11 @@ var simDur = 0;
 var adCountdownTimer = null;
 var adCountVal = 5;
 var isAdShowing = false;
+var adsBlockedCount = 0;
 
 var ytAPIReady = false;
 var infoRequestTimer = null;
-var adWatchTimer = null;
+var adScanTimer = null;
 
 var CORS_PROXIES = [
   'https://corsproxy.io/?url=',
@@ -1149,28 +1017,313 @@ var corsProxyIdx = 0;
 var mobilePlaylistOpen = false;
 var activeTab = 'playlist';
 
+// ═══════════════════════════════════════════════════════
+//  ██████╗  █████╗ ██████╗      ██████╗ ██╗      ██████╗  ██████╗██╗  ██╗███████╗██████╗
+//  ██╔══██╗██╔══██╗██╔══██╗    ██╔══██╗██║     ██╔═══██╗██╔════╝██║ ██╔╝██╔════╝██╔══██╗
+//  ██████╔╝███████║██║  ██║    ██████╔╝██║     ██║   ██║██║     █████╔╝ █████╗  ██████╔╝
+//  ██╔══██╗██╔══██║██║  ██║    ██╔══██╗██║     ██║   ██║██║     ██╔═██╗ ██╔══╝  ██╔══██╗
+//  ██████╔╝██║  ██║██████╔╝    ██████╔╝███████╗╚██████╔╝╚██████╗██║  ██╗███████╗██║  ██║
+//  ╚═════╝ ╚═╝  ╚═╝╚═════╝     ╚═════╝ ╚══════╝ ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
+//
+//  SISTEM ANTI-IKLAN BERLAPIS — 6 LAYER PERLINDUNGAN
+// ═══════════════════════════════════════════════════════
+
+/*
+  LAYER 1: OVERLAY INSTAN saat load
+    → Iframe langsung ditutup overlay SEBELUM konten YT muncul
+    → Tidak ada iklan yang pernah terlihat pengguna
+  
+  LAYER 2: IFRAME SHIELD fisik
+    → Div transparan menutupi seluruh area video
+    → Saat iklan aktif: pointer-events:all — klik tidak bisa ke tombol iklan
+  
+  LAYER 3: POSTMESSAGE MONITOR aktif
+    → Deteksi state change YT secara real-time
+    → Jika video yang diputar ≠ videoId lagu saat ini → IKLAN → blokir
+  
+  LAYER 4: PROGRESSIVE SCAN TIMER
+    → Setiap 800ms: cek playerState dan videoData
+    → Jika state buffering terlalu lama (>3s) → kemungkinan iklan → blokir
+  
+  LAYER 5: URL-BASED RELOAD CERDAS
+    → Saat iklan terdeteksi: force reload iframe dengan parameter baru
+    → Menambahkan timestamp agar tidak cache iklan lama
+  
+  LAYER 6: AUTO-MUTE SELAMA OVERLAY
+    → Selama overlay aktif, audio dimute otomatis
+    → Pengguna tidak dengar iklan sama sekali
+*/
+
+var AD_LAYER = {
+  // State tracking
+  currentVideoId: null,
+  loadTs: 0,
+  bufferStart: 0,
+  lastState: -1,
+  muteBeforeAd: false,
+  shieldActive: false,
+
+  // LAYER 1 + 6: Overlay instan saat load track
+  activateInstant: function(videoId) {
+    this.currentVideoId = videoId;
+    this.loadTs = Date.now();
+    this.bufferStart = 0;
+    this.lastState = -1;
+    if (!adBlockEnabled) return;
+    // Tampilkan overlay segera — pengguna tidak pernah melihat iklan
+    this._showOverlay('Memuat konten aman...', false);
+    // Aktifkan shield fisik
+    this._setShield(true);
+  },
+
+  // LAYER 2: Shield fisik
+  _setShield: function(on) {
+    var shield = document.getElementById('iframe-shield');
+    if (!shield) return;
+    this.shieldActive = on;
+    if (on) { shield.classList.add('blocking'); }
+    else { shield.classList.remove('blocking'); }
+  },
+
+  // LAYER 3 + 4: Terima state dari YT
+  onStateChange: function(state) {
+    if (!adBlockEnabled) { this._clearAll(); return; }
+    this.lastState = state;
+
+    if (state === 3) {
+      // Buffering
+      if (!this.bufferStart) this.bufferStart = Date.now();
+    } else if (state === 1) {
+      // Playing — cek apakah ini konten asli atau iklan
+      this.bufferStart = 0;
+      // Berikan sedikit waktu untuk info video masuk
+      var self = this;
+      setTimeout(function() { self.verifyPlaying(); }, 300);
+    } else if (state === 2 || state === 0) {
+      this.bufferStart = 0;
+    }
+  },
+
+  // Verifikasi: apakah yang diputar adalah lagu yang benar?
+  verifyPlaying: function() {
+    if (!adBlockEnabled || !this.currentVideoId) return;
+    // Minta info video dari iframe
+    ytCmd('getVideoData', []);
+  },
+
+  // LAYER 3: Terima data video, verifikasi id
+  onVideoData: function(videoData) {
+    if (!adBlockEnabled || !this.currentVideoId) return;
+    if (!videoData || !videoData.video_id) return;
+
+    var playingId = videoData.video_id;
+    var expectedId = this.currentVideoId;
+
+    if (playingId && playingId !== expectedId) {
+      // ID berbeda = IKLAN TERDETEKSI
+      if (!isAdShowing) {
+        this._blockAd('Iklan terdeteksi (ID: ' + playingId.substring(0,8) + '...)');
+      }
+    } else if (playingId === expectedId) {
+      // ID sama = konten asli, hapus overlay
+      if (isAdShowing) this._clearAll();
+      else this._releaseOverlay();
+    }
+  },
+
+  // Hapus overlay setelah konten asli terverifikasi
+  _releaseOverlay: function() {
+    if (isAdShowing) return;
+    var shield = document.getElementById('iframe-shield');
+    if (shield) shield.classList.remove('blocking');
+    this.shieldActive = false;
+    // Tampilkan status shield sebentar
+    var statusEl = document.getElementById('ad-block-status');
+    if (statusEl) {
+      statusEl.classList.add('show');
+      setTimeout(function() { statusEl.classList.remove('show'); }, 2000);
+    }
+  },
+
+  // EKSEKUSI PEMBLOKIRAN IKLAN
+  _blockAd: function(reason) {
+    if (!adBlockEnabled) return;
+    isAdShowing = true;
+    adsBlockedCount++;
+
+    // LAYER 6: Auto-mute saat iklan
+    this.muteBeforeAd = isMuted;
+    if (!isMuted) ytCmd('mute', []);
+
+    // LAYER 2: Aktifkan shield penuh
+    this._setShield(true);
+
+    // Tampilkan overlay
+    this._showOverlay('Memblokir: ' + (reason || 'iklan terdeteksi'), true);
+    updateAdCount();
+
+    // LAYER 5: Langsung inisiasi skip
+    adCountVal = 3; // Lebih cepat dari versi lama
+    document.getElementById('ad-countdown').textContent = adCountVal;
+    clearInterval(adCountdownTimer);
+    var self = this;
+    adCountdownTimer = setInterval(function() {
+      adCountVal--;
+      var cd = document.getElementById('ad-countdown');
+      if (cd) cd.textContent = Math.max(0, adCountVal);
+      if (adCountVal <= 0) {
+        clearInterval(adCountdownTimer);
+        self.forceSkip();
+      }
+    }, 1000);
+  },
+
+  // LAYER 5: Force skip agresif
+  forceSkip: function() {
+    clearInterval(adCountdownTimer);
+    // Langkah 1: Coba skip via YT API
+    ytCmd('cancelPlayback', []);
+    ytCmd('seekTo', [9999, true]);
+    // Langkah 2: Reload iframe dengan URL fresh (bypass cache iklan)
+    var self = this;
+    setTimeout(function() {
+      if (isAdShowing && self.currentVideoId && curIdx >= 0) {
+        self._reloadFresh();
+      }
+    }, 600);
+  },
+
+  // Reload iframe dengan timestamp baru (anti-cache iklan)
+  _reloadFresh: function() {
+    if (curIdx < 0) return;
+    var iframe = document.getElementById('yt-iframe');
+    if (!iframe) return;
+    var t = Date.now();
+    var origin = window.location.origin || 'http://localhost';
+    iframe.src = 'https://www.youtube-nocookie.com/embed/' + this.currentVideoId
+      + '?autoplay=1&enablejsapi=1&controls=0&modestbranding=1'
+      + '&rel=0&iv_load_policy=3&playsinline=1&cc_load_policy=0'
+      + '&disablekb=1&fs=0&hl=id&color=white'
+      + '&origin=' + encodeURIComponent(origin)
+      + '&_t=' + t;  // timestamp mencegah cache iklan
+    showLdr();
+  },
+
+  // Bersihkan semua state iklan
+  _clearAll: function() {
+    isAdShowing = false;
+    clearInterval(adCountdownTimer);
+    document.getElementById('ad-overlay').classList.remove('show');
+    this._setShield(false);
+    // Kembalikan mute ke kondisi semula
+    if (!this.muteBeforeAd && !isMuted) {
+      ytCmd('unMute', []);
+      ytCmd('setVolume', [volLevel]);
+    }
+    hideLdr();
+  },
+
+  _showOverlay: function(subMsg, withCountdown) {
+    var overlay = document.getElementById('ad-overlay');
+    if (!overlay) return;
+    var sub = overlay.querySelector('.ad-sub');
+    if (sub) sub.textContent = subMsg || 'Memblokir iklan...';
+    var cd = overlay.querySelector('.ad-countdown');
+    if (cd) cd.style.display = withCountdown ? 'block' : 'none';
+    var skipBtn = overlay.querySelector('.btn-skip-now');
+    if (skipBtn) skipBtn.style.display = withCountdown ? 'block' : 'none';
+    overlay.classList.add('show');
+  },
+
+  // LAYER 4: Scan berkala — deteksi iklan yang lolos
+  startScan: function(videoId) {
+    this.stopScan();
+    if (!adBlockEnabled) return;
+    var self = this;
+    var checkCount = 0;
+    adScanTimer = setInterval(function() {
+      checkCount++;
+      if (!adBlockEnabled || curIdx < 0) { self.stopScan(); return; }
+
+      // Request data terbaru dari iframe
+      ytCmd('getVideoData', []);
+      var iframe = document.getElementById('yt-iframe');
+      if (iframe && iframe.contentWindow) {
+        try {
+          iframe.contentWindow.postMessage(JSON.stringify({
+            event: 'listening', id: 1, channel: 'widget'
+          }), '*');
+        } catch(e) {}
+      }
+
+      // LAYER 4: Deteksi buffering berlebih (indikasi iklan pre-roll)
+      if (self.bufferStart && (Date.now() - self.bufferStart) > 3500) {
+        if (!isAdShowing && isPlaying) {
+          self._blockAd('Loading berlebih terdeteksi');
+          self.bufferStart = 0;
+        }
+      }
+
+      // Stop scan setelah konten berjalan stabil
+      if (checkCount > 30 && !isAdShowing) self.stopScan();
+    }, 800);
+  },
+
+  stopScan: function() {
+    if (adScanTimer) { clearInterval(adScanTimer); adScanTimer = null; }
+  }
+};
+
+function updateAdCount() {
+  var el = document.getElementById('pill-adblock-count');
+  if (!el) return;
+  if (adsBlockedCount > 0) {
+    el.textContent = adsBlockedCount + ' iklan diblokir';
+    el.classList.add('show');
+  } else {
+    el.classList.remove('show');
+  }
+}
+
+// ═══════════════════════════════════════════
+//  TOGGLE AD BLOCK
+// ═══════════════════════════════════════════
+function toggleAdBlock() {
+  adBlockEnabled = !adBlockEnabled;
+  var badge = document.getElementById('adb-badge');
+  var lbl = document.getElementById('adb-label');
+  var pill = document.getElementById('pill-adblock');
+  var statusEl = document.getElementById('ad-block-status');
+  if (adBlockEnabled) {
+    badge.classList.remove('off'); lbl.textContent = 'AD-FREE ON';
+    pill.classList.remove('off'); pill.textContent = 'Bebas Iklan';
+    if (statusEl) statusEl.classList.add('show');
+    toast('AdBlock aktif — 6 lapis perlindungan ON');
+    if (curIdx >= 0) AD_LAYER.startScan(AD_LAYER.currentVideoId);
+  } else {
+    badge.classList.add('off'); lbl.textContent = 'AD-FREE OFF';
+    pill.classList.add('off'); pill.textContent = 'AdBlock OFF';
+    if (statusEl) statusEl.classList.remove('show');
+    AD_LAYER.stopScan();
+    if (isAdShowing) AD_LAYER._clearAll();
+    toast('AdBlock dimatikan');
+  }
+}
+
+function skipAdNow() {
+  AD_LAYER.forceSkip();
+}
+
 // ═══════════════════════════════════════════
 //  LOAD FROM LOCALSTORAGE
 // ═══════════════════════════════════════════
 function loadFromStorage() {
-  try {
-    var sh = localStorage.getItem(LS_SEARCH_HIST);
-    if (sh) searchHistory = JSON.parse(sh);
-  } catch(e) { searchHistory = []; }
-  try {
-    var ph = localStorage.getItem(LS_PLAY_HIST);
-    if (ph) playHistory = JSON.parse(ph);
-  } catch(e) { playHistory = []; }
+  try { var sh = localStorage.getItem(LS_SEARCH_HIST); if (sh) searchHistory = JSON.parse(sh); } catch(e) { searchHistory = []; }
+  try { var ph = localStorage.getItem(LS_PLAY_HIST); if (ph) playHistory = JSON.parse(ph); } catch(e) { playHistory = []; }
   updateHistoryBadge();
 }
-
-function saveSearchHistory() {
-  try { localStorage.setItem(LS_SEARCH_HIST, JSON.stringify(searchHistory)); } catch(e) {}
-}
-
-function savePlayHistory() {
-  try { localStorage.setItem(LS_PLAY_HIST, JSON.stringify(playHistory)); } catch(e) {}
-}
+function saveSearchHistory() { try { localStorage.setItem(LS_SEARCH_HIST, JSON.stringify(searchHistory)); } catch(e) {} }
+function savePlayHistory() { try { localStorage.setItem(LS_PLAY_HIST, JSON.stringify(playHistory)); } catch(e) {} }
 
 // ═══════════════════════════════════════════
 //  SIDEBAR TABS
@@ -1193,20 +1346,14 @@ function toggleMobilePlaylist() {
   var toggleBtn = document.getElementById('mobile-playlist-toggle');
   var label = document.getElementById('mob-toggle-label');
   if (mobilePlaylistOpen) {
-    sidebar.classList.add('mobile-open');
-    overlay.classList.add('show');
-    toggleBtn.classList.add('open');
-    label.textContent = 'Tutup';
+    sidebar.classList.add('mobile-open'); overlay.classList.add('show');
+    toggleBtn.classList.add('open'); label.textContent = 'Tutup';
   } else {
-    sidebar.classList.remove('mobile-open');
-    overlay.classList.remove('show');
-    toggleBtn.classList.remove('open');
-    label.textContent = 'Playlist';
+    sidebar.classList.remove('mobile-open'); overlay.classList.remove('show');
+    toggleBtn.classList.remove('open'); label.textContent = 'Playlist';
   }
 }
-function closeMobilePlaylist() {
-  if (mobilePlaylistOpen) toggleMobilePlaylist();
-}
+function closeMobilePlaylist() { if (mobilePlaylistOpen) toggleMobilePlaylist(); }
 
 // ═══════════════════════════════════════════
 //  SEARCH HISTORY
@@ -1217,33 +1364,21 @@ function addSearchHistory(q) {
   if (searchHistory.length > 15) searchHistory = searchHistory.slice(0, 15);
   saveSearchHistory();
 }
-
 function deleteSearchHistory(q) {
   searchHistory = searchHistory.filter(function(s) { return s !== q; });
-  saveSearchHistory();
-  showSearchDropdown();
+  saveSearchHistory(); showSearchDropdown();
 }
-
-function clearSearchHistory() {
-  searchHistory = [];
-  saveSearchHistory();
-  hideSearchDropdown();
-}
-
+function clearSearchHistory() { searchHistory = []; saveSearchHistory(); hideSearchDropdown(); }
 function onSearchInput() { showSearchDropdown(); }
-
 function onSearchKeydown(e) {
   if (e.key === 'Enter') { hideSearchDropdown(); doSearch(); }
   else if (e.key === 'Escape') { hideSearchDropdown(); }
 }
-
 function showSearchDropdown() {
   var input = document.getElementById('search-input');
   var val = input.value.trim().toLowerCase();
   var dropdown = document.getElementById('search-history-dropdown');
-  var filtered = val
-    ? searchHistory.filter(function(s) { return s.toLowerCase().includes(val); })
-    : searchHistory;
+  var filtered = val ? searchHistory.filter(function(s) { return s.toLowerCase().includes(val); }) : searchHistory;
   if (!filtered.length) { hideSearchDropdown(); return; }
   var html = filtered.map(function(s) {
     return '<div class="sh-item">'
@@ -1254,20 +1389,13 @@ function showSearchDropdown() {
       + '</div>';
   }).join('');
   html += '<div class="sh-clear-row" onclick="clearSearchHistory()">Hapus Semua Riwayat</div>';
-  dropdown.innerHTML = html;
-  dropdown.classList.add('show');
+  dropdown.innerHTML = html; dropdown.classList.add('show');
 }
-
-function hideSearchDropdown() {
-  document.getElementById('search-history-dropdown').classList.remove('show');
-}
-
+function hideSearchDropdown() { document.getElementById('search-history-dropdown').classList.remove('show'); }
 function selectSearchHistory(q) {
   document.getElementById('search-input').value = q;
-  hideSearchDropdown();
-  doSearch();
+  hideSearchDropdown(); doSearch();
 }
-
 document.addEventListener('click', function(e) {
   var section = document.querySelector('.search-section');
   if (section && !section.contains(e.target)) hideSearchDropdown();
@@ -1281,24 +1409,16 @@ function addPlayHistory(track) {
   playHistory = playHistory.filter(function(h) { return h.id !== track.id; });
   playHistory.unshift(entry);
   if (playHistory.length > 50) playHistory = playHistory.slice(0, 50);
-  savePlayHistory();
-  renderHistoryList();
-  updateHistoryBadge();
+  savePlayHistory(); renderHistoryList(); updateHistoryBadge();
 }
-
 function clearPlayHistory() {
-  playHistory = [];
-  savePlayHistory();
-  renderHistoryList();
-  updateHistoryBadge();
+  playHistory = []; savePlayHistory(); renderHistoryList(); updateHistoryBadge();
   toast('Riwayat dihapus');
 }
-
 function updateHistoryBadge() {
   var el = document.getElementById('badge-history');
   if (el) el.textContent = playHistory.length;
 }
-
 function renderHistoryList() {
   var list = document.getElementById('history-list');
   if (!playHistory.length) {
@@ -1318,21 +1438,17 @@ function renderHistoryList() {
   }).join('');
   list.innerHTML = html;
 }
-
 function playFromHistory(i) {
   var h = playHistory[i];
   if (!h) return;
   var exists = tracks.findIndex(function(t) { return t.id === h.id; });
-  if (exists >= 0) {
-    playTrack(exists);
-  } else {
+  if (exists >= 0) { playTrack(exists); }
+  else {
     tracks.unshift({ id: h.id, title: h.title, ch: h.ch, thumb: h.thumb });
-    renderTracks();
-    playTrack(0);
+    renderTracks(); playTrack(0);
   }
   if (window.innerWidth <= 640) setTimeout(closeMobilePlaylist, 200);
 }
-
 function fmtRelTime(ts) {
   var diff = Math.floor((Date.now() - ts) / 1000);
   if (diff < 60) return 'baru saja';
@@ -1345,39 +1461,29 @@ function fmtRelTime(ts) {
 //  MUSIC QUEUE
 // ═══════════════════════════════════════════
 function addToQueue(track, showToast) {
-  musicQueue.push(track);
-  renderQueueList();
-  updateQueueBadge();
-  if (showToast !== false) toast('"' + track.title.substring(0, 30) + '..." ditambah ke antrean');
+  musicQueue.push(track); renderQueueList(); updateQueueBadge();
+  if (showToast !== false) toast('"' + track.title.substring(0,30) + '..." ditambah ke antrean');
   var pill = document.getElementById('pill-queue');
   if (pill) { pill.textContent = 'Queue: ' + musicQueue.length; pill.classList.add('show'); }
 }
-
 function removeFromQueue(i) {
-  musicQueue.splice(i, 1);
-  renderQueueList();
-  updateQueueBadge();
+  musicQueue.splice(i, 1); renderQueueList(); updateQueueBadge();
   var pill = document.getElementById('pill-queue');
   if (pill) {
     if (musicQueue.length > 0) { pill.textContent = 'Queue: ' + musicQueue.length; pill.classList.add('show'); }
     else { pill.classList.remove('show'); }
   }
 }
-
 function clearQueue() {
-  musicQueue = [];
-  renderQueueList();
-  updateQueueBadge();
+  musicQueue = []; renderQueueList(); updateQueueBadge();
   var pill = document.getElementById('pill-queue');
   if (pill) pill.classList.remove('show');
   toast('Antrean dikosongkan');
 }
-
 function updateQueueBadge() {
   var el = document.getElementById('badge-queue');
   if (el) el.textContent = musicQueue.length;
 }
-
 function renderQueueList() {
   var list = document.getElementById('queue-list');
   if (!musicQueue.length) {
@@ -1401,7 +1507,7 @@ function renderQueueList() {
 }
 
 // ═══════════════════════════════════════════
-//  SHUFFLE (Fisher-Yates)
+//  SHUFFLE
 // ═══════════════════════════════════════════
 function buildShuffleQueue(currentIdx) {
   var indices = [];
@@ -1411,17 +1517,14 @@ function buildShuffleQueue(currentIdx) {
     var tmp = indices[j]; indices[j] = indices[k]; indices[k] = tmp;
   }
   if (currentIdx >= 0) indices.unshift(currentIdx);
-  shuffleQueue = indices;
-  shufflePos = 0;
+  shuffleQueue = indices; shufflePos = 0;
 }
-
 function getNextShuffleIdx() {
   if (!shuffleQueue.length) buildShuffleQueue(curIdx);
   shufflePos++;
   if (shufflePos >= shuffleQueue.length) { buildShuffleQueue(-1); shufflePos = 0; }
   return shuffleQueue[shufflePos] !== undefined ? shuffleQueue[shufflePos] : 0;
 }
-
 function getPrevShuffleIdx() {
   if (shufflePos > 0) shufflePos--;
   return shuffleQueue[shufflePos] !== undefined ? shuffleQueue[shufflePos] : 0;
@@ -1433,11 +1536,13 @@ function getPrevShuffleIdx() {
 function buildIframeSrc(videoId, autoplay) {
   var origin = window.location.origin || 'http://localhost';
   var auto = autoplay ? 1 : 0;
+  var t = Date.now();
   return 'https://www.youtube-nocookie.com/embed/' + videoId
     + '?autoplay=' + auto + '&enablejsapi=1&controls=0&modestbranding=1'
     + '&rel=0&iv_load_policy=3&playsinline=1&cc_load_policy=0'
+    + '&disablekb=1&fs=0&hl=id&color=white'
     + '&origin=' + encodeURIComponent(origin)
-    + '&fs=0&hl=id&color=white';
+    + '&_t=' + t;  // timestamp anti-cache iklan
 }
 
 function ytCmd(func, args) {
@@ -1450,26 +1555,42 @@ window.addEventListener('message', function(e) {
   if (!e.origin.includes('youtube')) return;
   try {
     var data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
-    if (data.event === 'onReady') { ytAPIReady = true; ytCmd('setVolume', [isMuted ? 0 : volLevel]); hideLdr(); }
-    if (data.event === 'onStateChange') handleStateChange(data.info);
+
+    if (data.event === 'onReady') {
+      ytAPIReady = true;
+      ytCmd('setVolume', [isMuted ? 0 : volLevel]);
+      // Setelah ready, verifikasi segera
+      setTimeout(function() { ytCmd('getVideoData', []); }, 500);
+    }
+
+    if (data.event === 'onStateChange') {
+      handleStateChange(data.info);
+      AD_LAYER.onStateChange(data.info);
+    }
+
     if (data.event === 'infoDelivery' && data.info) {
+      // Terima data current time
       if (data.info.currentTime !== undefined && data.info.duration !== undefined) {
-        simCur = data.info.currentTime; simDur = data.info.duration; updateProgressUI();
+        simCur = data.info.currentTime;
+        simDur = data.info.duration;
+        updateProgressUI();
       }
-      if (adBlockEnabled && data.info.videoData) {
-        var playingId = data.info.videoData.video_id;
-        if (curIdx >= 0 && tracks[curIdx] && playingId && playingId !== tracks[curIdx].id) {
-          if (!isAdShowing) triggerAdOverlay();
-        } else { if (isAdShowing) hideAdOverlay(); }
+      // LAYER 3: Verifikasi video ID
+      if (data.info.videoData) {
+        AD_LAYER.onVideoData(data.info.videoData);
       }
     }
   } catch(e2) {}
 });
 
 function handleStateChange(state) {
-  if (state === 1) { setPlayState(true); hideLdr(); startProgTimer(); if (isAdShowing) hideAdOverlay(); }
+  if (state === 1) {
+    setPlayState(true); hideLdr(); startProgTimer();
+    // Jika sedang menampilkan overlay awal (bukan iklan), periksa dulu
+    if (!isAdShowing) AD_LAYER._releaseOverlay();
+  }
   else if (state === 2) { setPlayState(false); stopProgTimer(); }
-  else if (state === 0) { setPlayState(false); stopProgTimer(); handleTrackEnd(); }
+  else if (state === 0) { setPlayState(false); stopProgTimer(); if (!isAdShowing) handleTrackEnd(); }
   else if (state === 3) { showLdr(); }
   else if (state === -1 || state === 5) { hideLdr(); }
 }
@@ -1495,20 +1616,6 @@ function handleTrackEnd() {
   nextTrack();
 }
 
-function startInfoRequests() {
-  stopInfoRequests();
-  infoRequestTimer = setInterval(function() {
-    ytCmd('getVideoData', []);
-    var iframe = document.getElementById('yt-iframe');
-    if (iframe && iframe.contentWindow) {
-      try { iframe.contentWindow.postMessage(JSON.stringify({ event:'listening', id:1, channel:'widget' }), '*'); } catch(e) {}
-    }
-  }, 1500);
-}
-function stopInfoRequests() {
-  if (infoRequestTimer) { clearInterval(infoRequestTimer); infoRequestTimer = null; }
-}
-
 // ═══════════════════════════════════════════
 //  PROGRESS
 // ═══════════════════════════════════════════
@@ -1519,7 +1626,8 @@ function startProgTimer() {
     if (!isPlaying) return;
     simCur += 0.9;
     if (simDur > 0 && simCur >= simDur - 0.5) {
-      simCur = simDur; updateProgressUI(); stopProgTimer(); setPlayState(false); handleTrackEnd(); return;
+      simCur = simDur; updateProgressUI(); stopProgTimer(); setPlayState(false);
+      if (!isAdShowing) handleTrackEnd(); return;
     }
     updateProgressUI();
     progLastUpdate++;
@@ -1531,10 +1639,7 @@ function startProgTimer() {
     }
   }, 900);
 }
-
-function stopProgTimer() {
-  if (progTimer) { clearInterval(progTimer); progTimer = null; }
-}
+function stopProgTimer() { if (progTimer) { clearInterval(progTimer); progTimer = null; } }
 function updateProgressUI() {
   if (simDur > 0) {
     var pct = Math.min(100, (simCur / simDur) * 100);
@@ -1557,61 +1662,6 @@ function seekTo(e) {
 }
 
 // ═══════════════════════════════════════════
-//  AD BLOCKER
-// ═══════════════════════════════════════════
-function triggerAdOverlay() {
-  if (!adBlockEnabled) return;
-  isAdShowing = true;
-  document.getElementById('ad-overlay').classList.add('show');
-  adCountVal = 5;
-  document.getElementById('ad-countdown').textContent = adCountVal;
-  clearInterval(adCountdownTimer);
-  adCountdownTimer = setInterval(function() {
-    adCountVal--;
-    document.getElementById('ad-countdown').textContent = adCountVal;
-    if (adCountVal <= 0) { clearInterval(adCountdownTimer); skipAdNow(); }
-  }, 1000);
-}
-function skipAdNow() {
-  clearInterval(adCountdownTimer);
-  ytCmd('playVideo', []); ytCmd('seekTo', [9999, true]);
-  setTimeout(function() { if (isAdShowing && curIdx >= 0) reloadCurrentTrack(); }, 800);
-}
-function hideAdOverlay() {
-  isAdShowing = false; clearInterval(adCountdownTimer);
-  document.getElementById('ad-overlay').classList.remove('show');
-}
-function toggleAdBlock() {
-  adBlockEnabled = !adBlockEnabled;
-  var badge = document.getElementById('adb-badge');
-  var lbl = document.getElementById('adb-label');
-  var pill = document.getElementById('pill-adblock');
-  if (adBlockEnabled) {
-    badge.classList.remove('off'); lbl.textContent = 'AD-FREE ON';
-    pill.classList.remove('off'); pill.textContent = 'AdBlock ON'; toast('AdBlock aktif');
-  } else {
-    badge.classList.add('off'); lbl.textContent = 'AD-FREE OFF';
-    pill.classList.add('off'); pill.textContent = 'AdBlock OFF';
-    if (isAdShowing) hideAdOverlay(); toast('AdBlock dimatikan');
-  }
-}
-function startAdWatch(videoId) {
-  stopAdWatch(); if (!adBlockEnabled) return;
-  var checks = 0;
-  adWatchTimer = setInterval(function() {
-    checks++;
-    if (checks === 2 && adBlockEnabled && !isPlaying) {
-      ytCmd('cancelPlayback', []);
-      setTimeout(function() { if (curIdx >= 0 && !isPlaying) reloadCurrentTrack(); }, 500);
-    }
-    if (checks > 6) stopAdWatch();
-  }, 2000);
-}
-function stopAdWatch() {
-  if (adWatchTimer) { clearInterval(adWatchTimer); adWatchTimer = null; }
-}
-
-// ═══════════════════════════════════════════
 //  PLAYBACK
 // ═══════════════════════════════════════════
 function playTrack(idx) {
@@ -1619,30 +1669,57 @@ function playTrack(idx) {
   curIdx = idx;
   var t = tracks[idx];
   simCur = 0; simDur = 0; ytAPIReady = false; isPlaying = false;
-  stopProgTimer(); hideAdOverlay();
+  stopProgTimer();
+
+  // Hentikan scan lama
+  AD_LAYER.stopScan();
+
+  // LAYER 1: Aktifkan overlay instan SEBELUM iframe load
+  AD_LAYER.activateInstant(t.id);
+
   document.getElementById('idle-view').style.display = 'none';
   document.getElementById('player-view').style.display = 'block';
   document.getElementById('idle-disc').classList.add('spin');
   showLdr();
+
+  // Set iframe src (dengan timestamp anti-cache)
   document.getElementById('yt-iframe').src = buildIframeSrc(t.id, true);
+
   document.getElementById('np-title').textContent = t.title;
   document.getElementById('np-ch').textContent = t.ch;
   document.getElementById('prog-fill').style.width = '0%';
   document.getElementById('t-cur').textContent = '0:00';
   document.getElementById('t-dur').textContent = '0:00';
+
   addPlayHistory(t); renderTracks(); scrollToTrack(idx);
-  startInfoRequests(); startAdWatch(t.id);
-  setTimeout(function() { if (curIdx === idx) hideLdr(); }, 6000);
+
+  // Mulai scan setelah 2 detik (beri waktu iframe untuk load)
   setTimeout(function() {
-    if (curIdx === idx && !isPlaying) { setPlayState(true); if (simDur === 0) simDur = 240; startProgTimer(); }
-  }, 4000);
+    if (curIdx === idx) {
+      AD_LAYER.startScan(t.id);
+      // Minta data video pertama kali
+      ytCmd('getVideoData', []);
+    }
+  }, 2000);
+
+  // Safety timeout: hapus loading setelah 8 detik
+  setTimeout(function() { if (curIdx === idx) { hideLdr(); } }, 8000);
+
+  // Safety timeout: jika setelah 5 detik masih ada overlay tapi bukan iklan → hapus
+  setTimeout(function() {
+    if (curIdx === idx && !isAdShowing) {
+      AD_LAYER._releaseOverlay();
+    }
+  }, 5000);
 }
 
 function reloadCurrentTrack() {
   if (curIdx < 0) return;
   simCur = 0;
+  AD_LAYER._clearAll();
+  AD_LAYER.activateInstant(tracks[curIdx].id);
   document.getElementById('yt-iframe').src = buildIframeSrc(tracks[curIdx].id, true);
-  showLdr(); hideAdOverlay();
+  showLdr();
 }
 
 function togglePlay() {
@@ -1697,10 +1774,9 @@ function setPlayState(state) {
 function toggleShuffle() {
   isShuffle = !isShuffle;
   document.getElementById('btn-shuf').classList.toggle('lit', isShuffle);
-  if (isShuffle) { buildShuffleQueue(curIdx); toast('Acak: ON — urutan baru diacak'); }
+  if (isShuffle) { buildShuffleQueue(curIdx); toast('Acak: ON'); }
   else { shuffleQueue = []; shufflePos = 0; toast('Acak: OFF'); }
 }
-
 function toggleRepeat() {
   repeatMode = (repeatMode + 1) % 3;
   var btn = document.getElementById('btn-rep');
@@ -1758,7 +1834,6 @@ function doSearch() {
   corsProxyIdx = 0;
   trySearchWithProxy(q, btn);
 }
-
 function trySearchWithProxy(q, btn) {
   var ytUrl = 'https://www.googleapis.com/youtube/v3/search'
     + '?part=snippet&type=video&videoCategoryId=10&maxResults=20'
@@ -1782,15 +1857,13 @@ function trySearchWithProxy(q, btn) {
         return { id: it.id.videoId, title: it.snippet.title, ch: it.snippet.channelTitle, thumb: (it.snippet.thumbnails.default||{}).url||'' };
       });
       renderTracks(); btn.disabled = false; btn.textContent = 'Cari';
-      setModeText('Qoovy (' + (corsProxyIdx === 0 ? 'Aktif' : 'via proxy') + ')');
+      setModeText('Qoovy aktif (' + (corsProxyIdx === 0 ? 'Direct' : 'via proxy') + ')');
       toast('Ditemukan ' + tracks.length + ' lagu');
       if (isShuffle) buildShuffleQueue(curIdx);
     })
     .catch(function() { corsProxyIdx++; trySearchWithProxy(q, btn); });
 }
-
 function setModeText(text) { document.getElementById('mode-text').textContent = text; }
-
 function showDemoPlaylist(q) {
   tracks = [
     { id:'dQw4w9WgXcQ', title:'Rick Astley - Never Gonna Give You Up', ch:'Rick Astley', thumb:'https://i.ytimg.com/vi/dQw4w9WgXcQ/default.jpg' },
@@ -1805,26 +1878,20 @@ function showDemoPlaylist(q) {
     { id:'7wtfhZwyrcc', title:'Post Malone - Circles', ch:'Post Malone', thumb:'https://i.ytimg.com/vi/7wtfhZwyrcc/default.jpg' }
   ];
   renderTracks();
-  setModeText('Mode demo — masukkan Code Key');
+  setModeText('Mode demo — masukkan Code Key untuk pencarian nyata');
   toast('Mode demo aktif — ' + tracks.length + ' lagu tersedia');
 }
-
 function showSearchingState() {
   document.getElementById('track-list').innerHTML =
-    '<div class="empty-wrap">'
-    + '<div class="empty-icon-wrap"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>'
-    + '<div class="empty-title">Mencari...</div>'
-    + '<div class="spinner-sm"></div>'
-    + '</div>';
+    '<div class="empty-wrap"><div class="empty-icon-wrap"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>'
+    + '<div class="empty-title">Mencari...</div><div class="spinner-sm"></div></div>';
   switchTab('playlist');
 }
-
 function renderEmpty(msg) {
   document.getElementById('track-list').innerHTML = '<div class="empty-wrap"><div class="empty-title">' + esc(msg) + '</div></div>';
   document.getElementById('track-badge').textContent = '0 lagu';
   document.getElementById('badge-playlist').textContent = '0';
 }
-
 function renderTracks() {
   var n = tracks.length;
   document.getElementById('track-badge').textContent = n + ' lagu';
@@ -1844,7 +1911,6 @@ function renderTracks() {
   }).join('');
   document.getElementById('track-list').innerHTML = html;
 }
-
 function scrollToTrack(i) {
   var el = document.getElementById('ti-' + i);
   if (el) el.scrollIntoView({ behavior:'smooth', block:'nearest' });
@@ -1855,7 +1921,6 @@ function scrollToTrack(i) {
 // ═══════════════════════════════════════════
 function showLdr() { document.getElementById('vid-loading').classList.add('show'); }
 function hideLdr() { document.getElementById('vid-loading').classList.remove('show'); }
-
 var toastTmr = null;
 function toast(msg, type) {
   var el = document.getElementById('toast');
@@ -1865,7 +1930,6 @@ function toast(msg, type) {
   if (toastTmr) clearTimeout(toastTmr);
   toastTmr = setTimeout(function() { el.classList.remove('show'); }, 3200);
 }
-
 function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
@@ -1886,7 +1950,7 @@ function saveApiKey() {
   var val = document.getElementById('api-key-input').value.trim();
   API_KEY = val; updateApiStatus(); closeModal(); corsProxyIdx = 0;
   if (val) { toast('Code Key tersimpan!'); setModeText('Qoovy Key aktif'); }
-  else { toast('Mode demo aktif.'); setModeText('Mode demo — masukkan Code Key untuk pencarian nyata'); }
+  else { toast('Mode demo aktif.'); setModeText('Mode demo — masukkan Code Key'); }
 }
 function updateApiStatus() {
   var dot = document.getElementById('status-dot');
@@ -1923,314 +1987,147 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ═══════════════════════════════════════════════════════════
-//  ██████╗ ██╗    ██╗ █████╗
-//  ██╔══██╗██║    ██║██╔══██╗
-//  ██████╔╝██║ █╗ ██║███████║
-//  ██╔═══╝ ██║███╗██║██╔══██║
-//  ██║     ╚███╔███╔╝██║  ██║
-//  ╚═╝      ╚══╝╚══╝ ╚═╝  ╚═╝
-//  Progressive Web App — Single File Edition
+//  PWA — MANIFEST
 // ═══════════════════════════════════════════════════════════
-
-// ── 1. MANIFEST via Blob URL ─────────────────────────────
 (function injectManifest() {
   var manifest = {
-    name: 'Qoovy Music Streaming',
-    short_name: 'Qoovy',
+    name: 'Qoovy Music Streaming', short_name: 'Qoovy',
     description: 'Putar musik favoritmu tanpa iklan — by Qabil',
-    start_url: './',
-    display: 'standalone',
-    orientation: 'portrait-primary',
-    background_color: '#080810',
-    theme_color: '#080810',
-    lang: 'id',
-    categories: ['music', 'entertainment'],
+    start_url: './', display: 'standalone',
+    background_color: '#080810', theme_color: '#080810', lang: 'id',
     icons: [
-      {
-        src: "/icons/icon-512.png",
-        sizes: '512x512',
-        type: 'image/svg+xml',
-        purpose: 'any maskable'
-      },
-      {
-        src: "/icons/icon-192.png",
-        sizes: '192x192',
-        type: 'image/svg+xml',
-        purpose: 'any maskable'
-      }
-    ],
-    shortcuts: [
-      {
-        name: 'Putar Demo',
-        short_name: 'Demo',
-        description: 'Langsung putar playlist demo',
-        url: './?autoplay=1',
-        icons: [{ src: "/icons/icon-96.png", sizes: '96x96' }]
-      }
-    ],
-    screenshots: []
+      { src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='115' fill='%23080810'/%3E%3Ccircle cx='256' cy='256' r='160' fill='none' stroke='%23a78bfa' stroke-width='8'/%3E%3Ccircle cx='256' cy='256' r='36' fill='%23a78bfa'/%3E%3Ccircle cx='256' cy='256' r='18' fill='%23080810'/%3E%3C/svg%3E", sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' },
+      { src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%23080810'/%3E%3Ccircle cx='96' cy='96' r='60' fill='none' stroke='%23a78bfa' stroke-width='6'/%3E%3Ccircle cx='96' cy='96' r='16' fill='%23ec64a2'/%3E%3C/svg%3E", sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' }
+    ]
   };
-
   try {
     var blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
-    var url = URL.createObjectURL(blob);
     var link = document.createElement('link');
-    link.rel = 'manifest';
-    link.href = url;
+    link.rel = 'manifest'; link.href = URL.createObjectURL(blob);
     document.head.appendChild(link);
-  } catch(e) {
-    // Blob URL not supported — graceful degradation
-  }
+  } catch(e) {}
 })();
 
-
-// ── 2. SERVICE WORKER via Blob URL ───────────────────────
+// ═══════════════════════════════════════════════════════════
+//  PWA — SERVICE WORKER
+// ═══════════════════════════════════════════════════════════
 (function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
-
-  var CACHE_NAME = 'qoovy-v1';
-
-  // The SW script as a string — will be turned into a Blob URL
   var swCode = `
-var CACHE_NAME = '${CACHE_NAME}';
-
-// Files to pre-cache on install (minimal shell — only self)
-var PRECACHE_URLS = [
-  self.location.href   // cache the HTML file itself
-];
-
-// ── Install: pre-cache the app shell ──────────────────
-self.addEventListener('install', function(event) {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll(PRECACHE_URLS);
-    }).then(function() {
-      return self.skipWaiting();
-    })
-  );
+var CACHE_NAME = 'qoovy-v2';
+self.addEventListener('install', function(e) {
+  e.waitUntil(caches.open(CACHE_NAME).then(function(c) { return c.addAll([self.location.href]); }).then(function() { return self.skipWaiting(); }));
 });
-
-// ── Activate: clean old caches ────────────────────────
-self.addEventListener('activate', function(event) {
-  event.waitUntil(
-    caches.keys().then(function(keys) {
-      return Promise.all(
-        keys.filter(function(k) { return k !== CACHE_NAME; })
-          .map(function(k) { return caches.delete(k); })
-      );
-    }).then(function() {
-      return self.clients.claim();
-    })
-  );
+self.addEventListener('activate', function(e) {
+  e.waitUntil(caches.keys().then(function(keys) {
+    return Promise.all(keys.filter(function(k) { return k !== CACHE_NAME; }).map(function(k) { return caches.delete(k); }));
+  }).then(function() { return self.clients.claim(); }));
 });
-
-// ── Fetch: Network-first with cache fallback ──────────
-self.addEventListener('fetch', function(event) {
-  var url = event.request.url;
-
-  // Skip non-GET, chrome-extension, YouTube API & embeds
-  if (event.request.method !== 'GET') return;
+self.addEventListener('fetch', function(e) {
+  var url = e.request.url;
+  if (e.request.method !== 'GET') return;
   if (url.startsWith('chrome-extension://')) return;
-  if (url.includes('youtube') || url.includes('googleapis') ||
-      url.includes('ytimg') || url.includes('corsproxy') ||
-      url.includes('allorigins')) return;
-
-  event.respondWith(
-    fetch(event.request)
-      .then(function(response) {
-        // Cache successful same-origin responses
-        if (response && response.status === 200 && response.type !== 'opaque') {
-          var toCache = response.clone();
-          caches.open(CACHE_NAME).then(function(cache) {
-            try { cache.put(event.request, toCache); } catch(e) {}
-          });
-        }
-        return response;
-      })
-      .catch(function() {
-        // Network failed — try cache
-        return caches.match(event.request).then(function(cached) {
-          if (cached) return cached;
-          // For navigation, return the cached HTML shell
-          if (event.request.mode === 'navigate') {
-            return caches.match(PRECACHE_URLS[0]);
-          }
-        });
-      })
-  );
+  if (url.includes('youtube') || url.includes('googleapis') || url.includes('ytimg') || url.includes('corsproxy') || url.includes('allorigins')) return;
+  e.respondWith(fetch(e.request).then(function(r) {
+    if (r && r.status === 200 && r.type !== 'opaque') {
+      var c = r.clone();
+      caches.open(CACHE_NAME).then(function(cache) { try { cache.put(e.request, c); } catch(ex) {} });
+    }
+    return r;
+  }).catch(function() {
+    return caches.match(e.request).then(function(cached) {
+      if (cached) return cached;
+      if (e.request.mode === 'navigate') return caches.match(self.location.href);
+    });
+  }));
 });
-
-// ── Message: trigger skipWaiting for updates ──────────
-self.addEventListener('message', function(event) {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
-});
+self.addEventListener('message', function(e) { if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting(); });
 `;
-
   try {
     var blob = new Blob([swCode], { type: 'application/javascript' });
-    var swUrl = URL.createObjectURL(blob);
-
-    navigator.serviceWorker.register(swUrl, { scope: './' })
+    navigator.serviceWorker.register(URL.createObjectURL(blob), { scope: './' })
       .then(function(reg) {
-        // Listen for updates
         reg.addEventListener('updatefound', function() {
-          var newWorker = reg.installing;
-          if (!newWorker) return;
-          newWorker.addEventListener('statechange', function() {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              // New version available — show update banner
-              showUpdateBanner(newWorker);
-            }
+          var nw = reg.installing;
+          if (!nw) return;
+          nw.addEventListener('statechange', function() {
+            if (nw.state === 'installed' && navigator.serviceWorker.controller) showUpdateBanner(nw);
           });
         });
-      })
-      .catch(function(err) {
-        // SW registration failed — possibly file:// protocol; graceful fail
-        console.log('[Qoovy PWA] SW registration skipped:', err.message);
-      });
-
-    // Listen for SW controller change (after skipWaiting)
-    navigator.serviceWorker.addEventListener('controllerchange', function() {
-      if (pwaReloading) window.location.reload();
-    });
-
-  } catch(e) {
-    // Blob URL for SW failed (some browsers restrict this); graceful degradation
-    console.log('[Qoovy PWA] SW Blob URL not supported');
-  }
+      }).catch(function(err) { console.log('[Qoovy PWA] SW skip:', err.message); });
+    navigator.serviceWorker.addEventListener('controllerchange', function() { if (pwaReloading) window.location.reload(); });
+  } catch(e) { console.log('[Qoovy PWA] SW Blob not supported'); }
 })();
 
-
-// ── 3. OFFLINE / ONLINE INDICATOR ────────────────────────
+// ═══════════════════════════════════════════════════════════
+//  PWA — ONLINE/OFFLINE
+// ═══════════════════════════════════════════════════════════
 var offlineBar = document.getElementById('offline-bar');
-
 function updateOnlineStatus() {
-  if (navigator.onLine) {
-    offlineBar.classList.remove('show');
-  } else {
-    offlineBar.classList.add('show');
-    toast('Koneksi terputus — mode offline', 'warn');
-  }
+  if (navigator.onLine) { offlineBar.classList.remove('show'); }
+  else { offlineBar.classList.add('show'); toast('Koneksi terputus', 'warn'); }
 }
-
-window.addEventListener('online', function() {
-  updateOnlineStatus();
-  toast('Koneksi kembali!');
-});
+window.addEventListener('online', function() { updateOnlineStatus(); toast('Koneksi kembali!'); });
 window.addEventListener('offline', updateOnlineStatus);
+if (!navigator.onLine) setTimeout(function() { offlineBar.classList.add('show'); }, 1200);
 
-// Run once on load
-if (!navigator.onLine) {
-  setTimeout(function() { offlineBar.classList.add('show'); }, 1200);
-}
-
-
-// ── 4. INSTALL PROMPT (beforeinstallprompt) ──────────────
+// ═══════════════════════════════════════════════════════════
+//  PWA — INSTALL PROMPT
+// ═══════════════════════════════════════════════════════════
 var deferredInstallPrompt = null;
 var installBanner = document.getElementById('install-banner');
 var installBannerTimer = null;
-
-// Capture the native install prompt event
 window.addEventListener('beforeinstallprompt', function(e) {
-  e.preventDefault();
-  deferredInstallPrompt = e;
-
-  // Show our custom banner after a short delay (don't be intrusive)
+  e.preventDefault(); deferredInstallPrompt = e;
   if (!localStorage.getItem('qoovy_pwa_dismissed')) {
     installBannerTimer = setTimeout(showInstallBanner, 8000);
   }
 });
-
-function showInstallBanner() {
-  if (installBanner) installBanner.classList.add('show');
-}
-
-function hideInstallBanner() {
-  if (installBanner) installBanner.classList.remove('show');
-  if (installBannerTimer) clearTimeout(installBannerTimer);
-}
-
-// "Pasang" button click
+function showInstallBanner() { if (installBanner) installBanner.classList.add('show'); }
+function hideInstallBanner() { if (installBanner) installBanner.classList.remove('show'); if (installBannerTimer) clearTimeout(installBannerTimer); }
 document.getElementById('btn-install-pwa').addEventListener('click', function() {
   hideInstallBanner();
-  if (!deferredInstallPrompt) {
-    toast('Gunakan menu browser untuk memasang Qoovy', 'warn');
-    return;
-  }
+  if (!deferredInstallPrompt) { toast('Gunakan menu browser untuk memasang Qoovy', 'warn'); return; }
   deferredInstallPrompt.prompt();
-  deferredInstallPrompt.userChoice.then(function(result) {
-    if (result.outcome === 'accepted') {
-      toast('Qoovy berhasil dipasang! 🎵');
-      localStorage.setItem('qoovy_pwa_installed', '1');
-    } else {
-      toast('Instalasi dibatalkan');
-    }
+  deferredInstallPrompt.userChoice.then(function(r) {
+    if (r.outcome === 'accepted') { toast('Qoovy berhasil dipasang!'); localStorage.setItem('qoovy_pwa_installed','1'); }
+    else { toast('Instalasi dibatalkan'); }
     deferredInstallPrompt = null;
   });
 });
-
-// "Nanti" button click
 document.getElementById('btn-install-dismiss').addEventListener('click', function() {
-  hideInstallBanner();
-  localStorage.setItem('qoovy_pwa_dismissed', Date.now().toString());
-  toast('Kamu bisa pasang nanti lewat menu browser');
+  hideInstallBanner(); localStorage.setItem('qoovy_pwa_dismissed', Date.now().toString());
+  toast('Bisa dipasang nanti lewat menu browser');
 });
+window.addEventListener('appinstalled', function() { hideInstallBanner(); deferredInstallPrompt = null; toast('Qoovy terpasang!'); });
 
-// App installed event
-window.addEventListener('appinstalled', function() {
-  hideInstallBanner();
-  deferredInstallPrompt = null;
-  toast('Qoovy sudah terpasang di perangkatmu! 🎵');
-});
-
-
-// ── 5. UPDATE BANNER ─────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+//  PWA — UPDATE BANNER
+// ═══════════════════════════════════════════════════════════
 var pwaReloading = false;
 var updateBanner = document.getElementById('update-banner');
 var updateWorker = null;
-
 function showUpdateBanner(worker) {
   updateWorker = worker;
-  if (updateBanner) {
-    setTimeout(function() { updateBanner.classList.add('show'); }, 1000);
-  }
+  if (updateBanner) setTimeout(function() { updateBanner.classList.add('show'); }, 1000);
 }
-
-function hideUpdateBanner() {
-  if (updateBanner) updateBanner.classList.remove('show');
-}
-
+function hideUpdateBanner() { if (updateBanner) updateBanner.classList.remove('show'); }
 function pwaReloadForUpdate() {
-  hideUpdateBanner();
-  pwaReloading = true;
-  if (updateWorker) {
-    updateWorker.postMessage({ type: 'SKIP_WAITING' });
-  } else if (navigator.serviceWorker.controller) {
-    navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
-  } else {
-    window.location.reload();
-  }
+  hideUpdateBanner(); pwaReloading = true;
+  if (updateWorker) { updateWorker.postMessage({ type: 'SKIP_WAITING' }); }
+  else if (navigator.serviceWorker.controller) { navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' }); }
+  else { window.location.reload(); }
 }
 
-
-// ── 6. DISPLAY MODE DETECTION ────────────────────────────
+// ═══════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════
 (function detectDisplayMode() {
   var isStandalone = window.navigator.standalone === true
-    || window.matchMedia('(display-mode: standalone)').matches
-    || window.matchMedia('(display-mode: fullscreen)').matches;
-
-  if (isStandalone) {
-    // Running as installed PWA
-    document.title = 'Qoovy';
-    // Optionally hide install prompts entirely
-    localStorage.setItem('qoovy_pwa_installed', '1');
-  }
+    || window.matchMedia('(display-mode: standalone)').matches;
+  if (isStandalone) { document.title = 'Qoovy'; localStorage.setItem('qoovy_pwa_installed','1'); }
 })();
 
-
-// ── 7. INIT ──────────────────────────────────────────────
 window.addEventListener('load', function() {
   loadFromStorage();
   showDemoPlaylist('demo');
