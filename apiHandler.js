@@ -745,7 +745,7 @@ function trySearchWithProxy(q, btn) {
       });
       renderTracks();
       btn.disabled = false; btn.textContent = 'Cari';
-      setModeText('YouTube API (' + (corsProxyIdx === 0 ? 'langsung' : 'via proxy') + ')');
+      setModeText('Qoovy Aktif (' + (corsProxyIdx === 0 ? 'Tekan Icon Tambah Untuk Antrean' : 'via proxy') + ')');
       toast('Ditemukan ' + tracks.length + ' lagu');
       if (isShuffle) buildShuffleQueue(curIdx);
     })
