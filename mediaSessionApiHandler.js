@@ -1,7 +1,3 @@
-// ═══════════════════════════════════════════
-//  MEDIA SESSION API
-// ═══════════════════════════════════════════
-
 var mediaSessionSupported = ('mediaSession' in navigator);
 
 // Artwork fallback bertingkat: thumbnail track → YouTube hqdefault → placeholder SVG
